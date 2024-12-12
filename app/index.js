@@ -34,8 +34,8 @@ import {
           </TouchableOpacity>
         </View>
         {showText && <Text>This is the text below the btn!!!!!!!!</Text>}
-          <TouchableOpacity onPress={()=>router.push('/about')}>
-            <Text>Go to home</Text>
+          <TouchableOpacity onPress={()=>router.push('/profile')}>
+            <Text>Go to Profile</Text>
           </TouchableOpacity>
       </SafeAreaView>
     );
