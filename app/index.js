@@ -1,46 +1,31 @@
 import {
-    View,
-    Text,
-    ScrollView,
-    SafeAreaView,
-    TouchableOpacity,
-  } from "react-native";
-  import { useState } from "react";
-  import { Stack, useRouter } from "expo-router";
-  
-  import styles from './components/Header/HeaderStyles'
-  const Home = () => {
-    const router = useRouter();
-    const [showText, setShowText] = useState(false);
-    const toggleVisibility = () => {
-      setShowText(!showText);
-    };
-  
-    return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: "pink" }}>
-        <Stack.Screen
-          options={{
-            headerStyle: { backgroundColor: "blue" },
-            headerShadowVisible: false,
-          }}
-        />
-        <Text>Home vnaaa</Text>
-        <View style={styles.container}>
-          <TouchableOpacity onPress={toggleVisibility}>
-            <Text>Click Me</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Text>Second Btn</Text>
-          </TouchableOpacity>
-        </View>
-        {showText && <Text>This is the text below the btn!!!!!!!!</Text>}
-          <TouchableOpacity onPress={()=>router.push('/profile')}>
-            <Text>Go to Profile</Text>
-          </TouchableOpacity>
-      </SafeAreaView>
-    );
-  };
-  export default Home;
-  
-// app.js/index.js-> this is the main root page
-// app/home.js-> this should be /home page
+  View,
+  Text,
+  ScrollView,
+  SafeAreaView,
+  TouchableOpacity,
+} from "react-native";
+import { useState } from "react";
+import { Stack, useRouter } from "expo-router";
+
+const Home = () => {
+  const router = useRouter();
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: "pink" }}>
+      <Stack.Screen
+        options={{
+          headerStyle: { backgroundColor: "blue" },
+          headerShadowVisible: false,
+        }}
+      />
+      <Text>Index page</Text>
+
+      <TouchableOpacity onPress={()=>router.push('/downloads')
+      }>
+        <Text style={{padding:6,border:"1px solid blue", width:"180px", borderRadius:"14px",paddingLeft:"10px",marginLeft:"20px"}}>Go to Downloads page</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
+  );
+};
+export default Home;
+
