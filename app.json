@@ -5,6 +5,17 @@
       "expo-router"
     ],
     "name": "eGrabMobileApplication",
-    "slug": "eGrabMobileApplication"
+    "slug": "eGrabMobileApplication",
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "974d7166-c0c2-4a0c-94f3-fe1cbc49ab65"
+      }
+    },
+    "android": {
+      "package": "com.egradweb.eGrabMobileApplication"
+    }
   }
 }

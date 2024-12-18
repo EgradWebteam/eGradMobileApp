@@ -3,19 +3,17 @@ import { View, Image, ScrollView, Text, TouchableOpacity } from "react-native";
 import downloadsStyles from "./components/styles/downloadsStyles";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useRouter } from "expo-router";
-import { Link } from 'expo-router';
-
+import { Link } from "expo-router";
 
 const Downloads = () => {
-    const router=useRouter();
-    const navigateToQB=(id)=>{
-        console.log(id)
-        console.log("In navigate to qb page");
-        router.push(`/questionBank/${id}`);
-    }
+  const router = useRouter();
+  const navigateToQB = (id) => {
+    console.log(id);
+    console.log("In navigate to qb page");
+    router.push(`/questionBank/${id}`);
+  };
 
   return (
-
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={downloadsStyles.container}>
         <View style={downloadsStyles.qBankImgDiv}>
@@ -32,8 +30,7 @@ const Downloads = () => {
 
         <View style={downloadsStyles.subContainer}>
           <View style={downloadsStyles.examDiv}>
-            <TouchableOpacity style={downloadsStyles.examText} onPress={()=>navigateToQB(1)}>JEE(Mains)</TouchableOpacity>
-            <Link href="/questionBank/1">View first user details</Link>
+            <Link href="/questionBank/1">JEE(Mains)</Link>
             <Icon
               name="arrow-forward"
               size={20}
@@ -42,7 +39,12 @@ const Downloads = () => {
             />
           </View>
           <View style={downloadsStyles.examDiv}>
-            <TouchableOpacity style={downloadsStyles.examText} onPress={()=>navigateToQB(2)}>JEE (Advanced)</TouchableOpacity>
+            <TouchableOpacity
+              style={downloadsStyles.examText}
+              onPress={() => navigateToQB(2)}
+            >
+              JEE (Advanced)
+            </TouchableOpacity>
             <Icon
               name="arrow-forward"
               size={20}
@@ -51,7 +53,9 @@ const Downloads = () => {
             />
           </View>
           <View style={downloadsStyles.examDiv}>
-            <TouchableOpacity style={downloadsStyles.examText} >NEET</TouchableOpacity>
+            <TouchableOpacity style={downloadsStyles.examText}>
+              NEET
+            </TouchableOpacity>
             <Icon
               name="arrow-forward"
               size={20}
@@ -60,7 +64,9 @@ const Downloads = () => {
             />
           </View>
           <View style={downloadsStyles.examDiv}>
-            <TouchableOpacity style={downloadsStyles.examText}>AP-EAPCET</TouchableOpacity>
+            <TouchableOpacity style={downloadsStyles.examText}>
+              AP-EAPCET
+            </TouchableOpacity>
             <Icon
               name="arrow-forward"
               size={20}
@@ -69,7 +75,9 @@ const Downloads = () => {
             />
           </View>
           <View style={downloadsStyles.examDiv}>
-            <TouchableOpacity style={downloadsStyles.examText}>TS-EAMCET</TouchableOpacity>
+            <TouchableOpacity style={downloadsStyles.examText}>
+              TS-EAMCET
+            </TouchableOpacity>
             <Icon
               name="arrow-forward"
               size={20}
@@ -78,7 +86,9 @@ const Downloads = () => {
             />
           </View>
           <View style={downloadsStyles.examDiv}>
-            <TouchableOpacity style={downloadsStyles.examText}>KCET</TouchableOpacity>
+            <TouchableOpacity style={downloadsStyles.examText}>
+              KCET
+            </TouchableOpacity>
             <Icon
               name="arrow-forward"
               size={20}
@@ -87,7 +97,9 @@ const Downloads = () => {
             />
           </View>
           <View style={downloadsStyles.examDiv}>
-            <TouchableOpacity style={downloadsStyles.examText}>MHCET</TouchableOpacity>
+            <TouchableOpacity style={downloadsStyles.examText}>
+              MHCET
+            </TouchableOpacity>
             <Icon
               name="arrow-forward"
               size={20}
@@ -96,7 +108,9 @@ const Downloads = () => {
             />
           </View>
           <View style={downloadsStyles.examDiv}>
-            <TouchableOpacity style={downloadsStyles.examText}>WBJEE </TouchableOpacity>
+            <TouchableOpacity style={downloadsStyles.examText}>
+              WBJEE{" "}
+            </TouchableOpacity>
             <Icon
               name="arrow-forward"
               size={20}
