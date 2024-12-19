@@ -20,7 +20,7 @@ const Downloads = () => {
           <View style={downloadsStyles.imagePC}>
             <Image
               style={downloadsStyles.image}
-              source={require("./components/assets/QuestionBankImages/qbImage-removebg-preview.png")}
+              source={require("./assets/QuestionBankImages/qbImage-removebg-preview.png")}
             />
           </View>
           <Text style={downloadsStyles.headding}>
