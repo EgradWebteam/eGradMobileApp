@@ -4,13 +4,13 @@ export default StyleSheet.create({
         // backgroundColor:"red",
         width:"80%",
         margin:"auto",
-        marginTop:"20px",
-        display:1,
+        marginTop:20,
+        // display:1,
         flexWrap:"wrap",
         flexDirection:"row",
         gap:"2rem",
         padding:"2rem",
-        boxShadow:" rgba(0, 0, 0, 0.35) 0px 5px 15px",
+        // boxShadow:" rgba(0, 0, 0, 0.35) 0px 5px 15px",
         alignItems:"center",
         justifyContent:"center",
         backgroundColor:"white",
@@ -38,21 +38,21 @@ export default StyleSheet.create({
     },  
     examText:{
         color:"white",
-        fontSize:"20px",
+        fontSize:20,
         fontSize: 20,
         flex: 1,  // Take available space to ensure text is centered
         textAlign: 'center', 
     },
     icon:{
-        marginTop: "6px",
+        marginTop: 6,
     },
     examDiv:{
         height:"auto",
         display:1,
         alignItems:"center",
         justifyContent:"center",
-        boxShadow:" rgba(0, 0, 0, 0.1) 0px 4px 12px",
-        width:"150px",
+        // boxShadow:" rgba(0, 0, 0, 0.1) 0px 4px 12px",
+        width:150,
         backgroundColor:"rgba(42, 159, 227, 0.86)",
         color:"white",
         flexDirection:"row",
@@ -67,13 +67,13 @@ export default StyleSheet.create({
         flexDirection:"column-reverse",
     },
     headding:{
-        fontSize:"20px",
+        fontSize:20,
         fontWeight:"700",
 
     },
     imagePC:{
-        width:"200px",
-        height:"200px"
+        width:200,
+        height:200
     },
     image:{
         height:"100%",

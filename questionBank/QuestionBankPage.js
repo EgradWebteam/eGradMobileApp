@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 // import { ScrollView, View } from "react-native-web";
-import { TouchableOpacity,Text ,ScrollView, View,Image } from "react-native";
+import { TouchableOpacity, Text, ScrollView, View, Image } from "react-native";
 import qbStyles from "../styles/qbStyles";
+import { TextInput } from "react-native-gesture-handler";
 const dataForQuestions = {
-  id: 1,
+  // id: 1,
   2024: [
     {
       year: 2024,
@@ -15,12 +16,12 @@ const dataForQuestions = {
             {
               id: 501,
               shift: "10th Jan - Shift-1",
-              shiftDataUrl: "JeeMains.json",
+              shiftDataUrl: "JeeMains (3).json",
             },
             {
               id: 502,
               shift: "10th Jan - Shift-2",
-              shiftDataUrl: "FinalTest.json",
+              shiftDataUrl: "JeeMains (3).json",
             },
           ],
         },
@@ -37,12 +38,12 @@ const dataForQuestions = {
             {
               id: 701,
               shift: "10th Jan - Shift-1",
-              shiftDataUrl: "JeeMains_Two.json",
+              shiftDataUrl: "JeeMains (3).json",
             },
             {
               id: 702,
               shift: "10th Jan - Shift-2",
-              shiftDataUrl: "FinalTest.json",
+              shiftDataUrl: "JeeMains (3).json",
             },
           ],
         },
@@ -53,7 +54,7 @@ const dataForQuestions = {
 const QuestionBankPage = ({ route }) => {
   const { id } = route.params;
   const [userAnswers, setUserAnswers] = useState([]);
-  
+
   const [selectedYearsData, setselectedYearsData] = useState(null);
   console.log(id, "this is the id");
   const [idPrams, setIdPrams] = useState();
@@ -86,13 +87,14 @@ const QuestionBankPage = ({ route }) => {
     console.log(selectedMonthData);
   }, [selectedMonthData]);
 
-
   const getDataFromBlob = async (shiftDataUrl) => {
     try {
       // Base URL of your Azure Blob Storage container
       const BASE_BLOB_URL =
-        "https://egradstorage.blob.core.windows.net/downloads-json-files1/downloads-json-files1/";
-    
+        "https://egradstorage.blob.core.windows.net/egradwebsite-test-json-files/egradwebsite-test-json-files/";
+
+      const baseBlobUrl = `https://egradstorage.blob.core.windows.net/egradwebsite-test-json-files/egradwebsite-test-json-files/?sp=r&st=2024-12-21T06:14:05Z&se=2025-03-02T14:14:05Z&spr=https&sv=2022-11-02&sr=c&sig=s9SL4aWbZPrqOTVjDd7gB8ovN58ZeaIOpPK2p56FvIs%3D`;
+
       const blobUrl = `${BASE_BLOB_URL}${shiftDataUrl}`;
 
       console.log("Generated Blob URL:", blobUrl); // Log the URL for verification
@@ -173,145 +175,172 @@ const QuestionBankPage = ({ route }) => {
   };
 
   return (
-    <SafeAreaView style={[qbStyles.safeAreaViewInQB,{flex:1}]}>
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }} >
+    <SafeAreaView style={qbStyles.safeAreaViewInQB}>
+      <ScrollView
+        style={qbStyles.scrollViewContainer}
+        contentContainerStyle={{ flex: 1, overflow: "auto" , flexGrow: 1 }}
+      >
         <View style={{ flex: 1 }}>
-        <View>
+          {/* <View>
            <Text>Question bank page {id}</Text> 
-           </View>
-        <View style={{ flex: 1 }}>
-        {dataForQuestions ? (
-            <View style={{ display: "flex", flexDirection: "row", gap: 20 }}>
-              {Object.keys(dataForQuestions).map((item, index) => (
-                <View
-                  style={{ display: "flex", flexDirection: "row", gap: 20 }}
-                  key={index}
-                >
-                  <TouchableOpacity
-                    onPress={() => handleYearClick(item, dataForQuestions[item])}
-                    style={{ border: "1px solid black", padding: 20 }}
-                  >
-                    <Text> {item}</Text>
-                  </TouchableOpacity>
-                </View>
-              ))}
-            </View>
-          ) : (
-            <View>
-              <Text>No data available</Text>
-            </View>
-          )}
-          {selectedYearsData && (
-            <View>
-              {selectedYearsData[0].months.map((monthItem, index) => (
-                <View key={index}>
-                  <TouchableOpacity onPress={() => handleMonthClick(monthItem)}>
-                    <Text> {monthItem.month}</Text>
-                  </TouchableOpacity>
-                </View>
-              ))}
-              {selectedMonthData && (
-                <View>
-                  {selectedMonthData.data.map((shiftItem, index) => (
-                    // <View key={index}>
-                      <TouchableOpacity key={index}
-                        onPress={() => handleShiftClick(shiftItem)}
-                      >
-                        <Text>{shiftItem.shift}</Text>
-                      </TouchableOpacity>
-                    // </View>
-                  ))}
-                </View>
-              )}
-            </View>
-          )}
-        </View>
-        <View>
-          <View style={qbStyles.btnContainer}>
-            {selectedShiftData &&
-              selectedShiftData.map((shiftItem, index) => (
-                <View key={index}>
-                  <TouchableOpacity
-                    style={qbStyles.subBtn}
-                    onPress={() => handleSubjectClick(shiftItem)}
-                  >
-                    <Text> {shiftItem.SubjectName}</Text>
-                  </TouchableOpacity>
-                </View>
-              ))}
-          </View>
-          {selectedSubjectData.sections &&
-            selectedSubjectData.sections.map((sections, index) => (
-              <View key={index}>
-                {/* <Text>{sections.SectionName}</Text> */}
-                {sections.questions.map((questionImg, indexForQ) => (
+           </View> */}
+          <View>
+            {dataForQuestions ? (
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  gap: 20,
+                }}
+              >
+                {Object.keys(dataForQuestions).map((item, index) => (
                   <View
-                    key={indexForQ}
-                    style={qbStyles.questionOptionsContainer}
+                    style={{ display: "flex", flexDirection: "row", gap: 20 }}
+                    key={index}
                   >
-                    <View>
-                      <Text>Question No.{questionImg.question_id}</Text>
-                      <View style={qbStyles.qImgContainer}>
-                        <img
-                          style={qbStyles.qImg}
-                          src={`${questionImg.questionImgName}`}
-                        // source={{uri:`${questionImg.questionImgName}`}}
-                        />
-                      </View>
-                      <Text>{questionImg.qtype}</Text>
-                      {questionImg.qtype === "NATI" ? (
-                        <View style={qbStyles.natiInputDiv}>
-                          <input
-                            type="number"
-                            placeholder="Enter your answer"
-                            style={qbStyles.natInput}
-                          />
-                          <TouchableOpacity style={qbStyles.natiSubmit}>
-                            <Text style={{ color: "white" }}>Submit</Text>
-                          </TouchableOpacity>
-                        </View>
-                      ) : (
-                        ""
-                      )}
-                      {/*  i need to get options image here */}
-                      {questionImg.options &&
-                        questionImg.options.map((question, index) => (
-                          <View
-                            key={index}
-                            style={qbStyles.optionIndexContainer}
-                            onPress={() =>
-                              handleOptionPress(
-                                question,
-                                selectedSubjectData.SubjectName,
-                                sections.SectionName,
-                                questionImg.answer,
-                                questionImg
-                              )
-                            }
-                          >
-                            <TouchableOpacity>
-                              <Text style={qbStyles.optionIndex}>
-                                {question.option_index}
-                              </Text>
-                            </TouchableOpacity>
-
-                            <View style={qbStyles.optionImgContainer}>
-                              <img 
-                                src={question.optionImgName}
-                                style={qbStyles.optionImg}
-                              />
-                            </View>
-                          </View>
-                        ))}
-                    </View>
+                    <TouchableOpacity
+                      onPress={() =>
+                        handleYearClick(item, dataForQuestions[item])
+                      }
+                      // style={{ border: "1px solid black", padding: 20 }}
+                      style={{ padding: 20, borderWidth: 1, width: "100%" }}
+                    >
+                      <Text> {item}</Text>
+                    </TouchableOpacity>
                   </View>
                 ))}
               </View>
-            ))}
-        </View>
+            ) : (
+              <View>
+                <Text>No data available</Text>
+              </View>
+            )}
+            {selectedYearsData && (
+              <View>
+                {selectedYearsData[0].months.map((monthItem, index) => (
+                  <View key={index}>
+                    <TouchableOpacity
+                      onPress={() => handleMonthClick(monthItem)}
+                      style={{ padding: 20, borderWidth: 1, width: "100%" }}
+                    >
+                      <Text> {monthItem.month}</Text>
+                    </TouchableOpacity>
+                  </View>
+                ))}
+                {selectedMonthData && (
+                  <View>
+                    {selectedMonthData.data.map((shiftItem, index) => (
+                      // <View key={index}>
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => handleShiftClick(shiftItem)}
+                        style={{ padding: 20, borderWidth: 1, width: "100%" }}
+                      >
+                        <Text>{shiftItem.shift}</Text>
+                      </TouchableOpacity>
+                      // </View>
+                    ))}
+                  </View>
+                )}
+              </View>
+            )}
+          </View>
+          <View>
+            <View style={qbStyles.btnContainer}>
+              {selectedShiftData &&
+                selectedShiftData.map((shiftItem, index) => (
+                  <View key={index}>
+                    <TouchableOpacity
+                      // style={qbStyles.subBtn}
+                      onPress={() => handleSubjectClick(shiftItem)}
+                      style={{ padding: 20, borderWidth: 1, width: "100%" }}
+                    >
+                      <Text> {shiftItem.SubjectName}</Text>
+                    </TouchableOpacity>
+                  </View>
+                ))}
+            </View>
+            {selectedSubjectData.sections &&
+              selectedSubjectData.sections.map((sections, index) => (
+                <View key={index}>
+                  {/* <Text>{sections.SectionName}</Text> */}
+                  {sections.questions.map((questionImg, indexForQ) => (
+                    <View
+                      key={indexForQ}
+                      style={qbStyles.questionOptionsContainer}
+                    >
+                      <View>
+                        <Text>Question No.{questionImg.question_id}</Text>
+                        <View style={qbStyles.qImgContainer}>
+                          <Image
+                            style={qbStyles.qImg}
+                            // src={`${questionImg.questionImgName}`}
+                            source={{ uri: `${questionImg.questionImgName}` }}
+                          />
+                        </View>
+                        <Text>{questionImg.qtype}</Text>
+                        {questionImg.qtype === "NATI" ? (
+                          <View style={qbStyles.natiInputDiv}>
+                            <TextInput
+                              type="number"
+                              placeholder="Enter your answer"
+                              style={qbStyles.natInput}
+                            />
+                            <TouchableOpacity
+                              // style={qbStyles.natiSubmit}
+                              style={{
+                                padding: 20,
+                                borderWidth: 1,
+                                width: "100%",
+                              }}
+                            >
+                              <Text style={{ color: "white" }}>Submit</Text>
+                            </TouchableOpacity>
+                          </View>
+                        ) : (
+                          ""
+                        )}
+                        {/*  i need to get options image here */}
+                        {questionImg.options &&
+                          questionImg.options.map((question, index) => (
+                            <View
+                              key={index}
+                              style={qbStyles.optionIndexContainer}
+                              onPress={() =>
+                                handleOptionPress(
+                                  question,
+                                  selectedSubjectData.SubjectName,
+                                  sections.SectionName,
+                                  questionImg.answer,
+                                  questionImg
+                                )
+                              }
+                            >
+                              <TouchableOpacity>
+                                <Text style={qbStyles.optionIndex}>
+                                  {question.option_index}
+                                </Text>
+                              </TouchableOpacity>
+
+                              <View style={qbStyles.optionImgContainer}>
+                                <Image
+                                  // src={question.optionImgName}
+                                  style={qbStyles.optionImg}
+                                  source={{ uri: `${question.optionImgName}` }}
+                                />
+                              </View>
+                            </View>
+                          ))}
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              ))}
+          </View>
         </View>
       </ScrollView>
-     </SafeAreaView>
+    </SafeAreaView>
   );
 };
 

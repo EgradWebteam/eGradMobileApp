@@ -51,9 +51,10 @@ export default function App() {
     <NavigationContainer style={styles.container}
     // onStateChange={(state) => saveNavigationState(state)} 
       // initialState={getNavigationState()}
+      
     >
       <StatusBar style="auto" />
-      <Stack.Navigator initialRouteName="Home">
+      <Stack.Navigator initialRouteName="Home" style={styles.container}>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Next" component={NextScreen} />
         <Stack.Screen
@@ -72,6 +73,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+    // overflow:"auto",
+    backgroundColor:"red",
   },
   title: {
     fontSize: 30,
