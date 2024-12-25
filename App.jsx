@@ -11,7 +11,7 @@ function HomeScreen() {
       <Text>Home Screen</Text>
     </View>
   );
-}
+} 
 
 const RootStack = createNativeStackNavigator({
   screens: {
