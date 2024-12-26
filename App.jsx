@@ -5,6 +5,7 @@ import { View, Text ,StyleSheet} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './src/screen/HomeScreen';
+import { QBScreen } from './src/screen/QBScreen';
 const Stack=createNativeStackNavigator()
 const App = () => {
   return (
@@ -13,7 +14,15 @@ const App = () => {
       <Stack.Navigator initialRouteName='Home' screenOptions={{
         headerShown:false,
       }}>
-      <Stack.Screen name={"Home"} component={HomeScreen}/>
+      <Stack.Screen name={'Home'} component={HomeScreen} 
+      // options={{
+      //   title:"HomeScreen",
+      //   headerStyle:{
+      //     backgroundColor:"orange",
+      //   },statusBarBackgroundColor:"green"
+      // }}
+      />
+      <Stack.Screen name={'QBScreen'} component={QBScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   )

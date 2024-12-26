@@ -1,90 +1,36 @@
 import React from 'react'
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
-import { fontSize, spacing } from '../constants/dimensions'
-import { colors } from '../constants/colors'
+import { View, Text, Image, TouchableOpacity, Dimensions } from 'react-native'
+import { homeScreenStyles } from '../styles/HomeScreenStyles'
+const { width } = Dimensions.get('window')
+const HomeScreen = (props) => {
+    console.log(props, "these r props");
 
-const HomeScreen = () => {
+    const isTablet = width > 768;
     return (
-        <View style={styles.container}>
-            <View style={styles.headdingDiv}>
+        <View style={homeScreenStyles.container}>
+            <View style={[homeScreenStyles.headdingDiv, isTablet ? homeScreenStyles.headdingDivTablet : homeScreenStyles.headdingDivMobile]}>
                 <Image source={require('../images/capImg.png')}
-                    style={[styles.capImg, styles.boxShadow]}
+                    style={[homeScreenStyles.capImg, homeScreenStyles.boxShadow]}
                 />
-                <Text style={styles.headLine}>Weclome to eGRADTutor</Text>
-                <View style={styles.tutoringDiv}>
-                    <Text style={styles.tutoringHeadLine}>...tutoring by GRAD's from IIT's/IISc</Text>
+                <View style={homeScreenStyles.welcomeDiv}>
+                    <Text style={homeScreenStyles.headLine}>Weclome to eGRADTutor</Text>
+                    <View style={[homeScreenStyles.tutoringDiv]}>
+                        <Text style={[homeScreenStyles.tutoringHeadLine, isTablet ? homeScreenStyles.tutoringHeadLineT : homeScreenStyles.tutoringHeadLineM]}>...tutoring by GRAD's from IIT's/IISc</Text>
+                    </View>
                 </View>
+
             </View>
-        <View style={styles.qbBtnContainer}>
-            <TouchableOpacity>
-                <Text >
-                    Go to QuestionBank Page.
-                </Text>
-            </TouchableOpacity>
-        </View>
+            <View style={homeScreenStyles.qbBtnContainer}>
+                <TouchableOpacity style={homeScreenStyles.qbBtn} onPress={() => props.navigation.navigate('QBScreen', {
+                    name: "VeenaRagi"
+                })}>
+                    <Text style={homeScreenStyles.qbBtnText} >
+                        Go to QuestionBank Page
+                    </Text>
+                </TouchableOpacity>
+            </View>
         </View>
     )
 }
 
 export default HomeScreen
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "white",
-        alignItems: "start",
-        width: "100%",
-        // borderWidth: 3,
-        // borderColor: "red",
-    },
-    headdingDiv: {
-        width: "100%",
-        height: 250,
-        alignItems: "center",
-        justifyContent: "flex-start",
-        position: "relative",
-        backgroundColor: "#00222c",
-        padding: 40
-    },
-    headLine: {
-        fontSize: fontSize.xl,
-        color: "white",
-        paddingTop: 20,
-        fontWeight: "bold",
-
-    },
-    tutoringHeadLine: {
-        color: colors.white,
-        fontWeight: "bold",
-
-    },
-    tutoringDiv: {
-        position: "absolute",
-        left: "33%",
-        top: "115%",
-
-    },
-    capImg: {
-        width: 200,
-        height: 100,
-        resizeMode: "contain",
-        backgroundColor: "white",
-    },
-    boxShadow: {
-        shadowColor: 'black', 
-        shadowOffset: { width: 6, height: 10 }, // Apply shadow offset for iOS
-        shadowOpacity: 0.6, // Apply shadow opacity for iOS
-        shadowRadius: 5, // Apply shadow radius for iOS
-        elevation: 10, // Apply elevation for Android
-    },
-    qbBtnContainer:{
-        // flex:1,
-        alignItems:"center",
-        justifyContent:"center",
-        width:"100%",
-        height:100,
-        // borderWidth: 3,
-        // borderColor: "red",
-    },
-
-    
-})
