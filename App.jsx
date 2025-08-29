@@ -6,6 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './src/screen/HomeScreen';
 import { QBScreen } from './src/screen/QBScreen';
+import { LoginScreen } from './src/screen/LoginScreen';
 const Stack=createNativeStackNavigator()
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
       //   },statusBarBackgroundColor:"green"
       // }}
       />
+      <Stack.Screen name={"login"} component={LoginScreen}/>
       <Stack.Screen name={'QBScreen'} component={QBScreen} />
       </Stack.Navigator>
     </NavigationContainer>

@@ -27,6 +27,12 @@ const HomeScreen = (props) => {
                     <Text style={homeScreenStyles.qbBtnText} >
                         Go to QuestionBank Page
                     </Text>
+
+                </TouchableOpacity>
+                <TouchableOpacity  style={homeScreenStyles.qbBtn} onPress={()=>props.navigation.navigate("login")}>
+                    <Text >
+                        Login
+                    </Text>
                 </TouchableOpacity>
             </View>
         </View>
