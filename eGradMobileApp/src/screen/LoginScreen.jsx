@@ -1,30 +1,49 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react'
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 export const LoginScreen = () => {
+    const navigation = useNavigation();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const handleLogin = async () => {
-         console.log("handleLogin called ✅");
+        console.log("handleLogin called ✅");
         if (!email || !password) {
             Alert.alert("Validaion Error, Please enter email and password");
             return;
         }
-        console.log(password,email,"these r password nd emails");
-        console.log()
+        console.log(password, email, "these r password nd emails");
         try {
             const response = await fetch("http://192.168.0.106:5003/login/studentLogin", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    email,password,
-                    instituteOrDomain:"http://192.168.0.106:19000"
+                    email, password,
+                    instituteOrDomain: "http://192.168.0.106:19000"
                 }),
             });
-            console.log(response,"this is the responseee");
+            const data = await response.json();
+            console.log(data.message, "this is the responseee");
+            if (response.ok) {
+                // Alert.alert("Login successfull  ");
+                Toast.show({
+                    type: "success",
+                    text1: "Login Successful",
+                    text2: `Welcome ${data.userDetails.candidate_name}`,
+                    position: 'top',
+                    visibilityTime: 2000,
+                    autoHide: true,
+                    onHide: () => navigation.replace("studentDashboard")
+
+                })
+                console.log("Login successful", data);
+            } else {
+                console.error("Login failed", data);
+            }
 
         } catch (error) {
-            console.log(error,"error while login")
+            console.log(error, "error while login")
         }
     }
     return (
