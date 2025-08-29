@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import Footer from '../components/Footer';
+import { LoginHomeHeader } from '../components/LoginHomeHeader';
 
 export const LoginScreen = () => {
     const navigation = useNavigation();
@@ -49,6 +50,7 @@ export const LoginScreen = () => {
     }
     return (
         <View>
+            <LoginHomeHeader/>
             <Text style={styles.title}>LoginScreen</Text>
             <TextInput style={styles.input} placeholder='Email' value={email} onChangeText={setEmail} />
             <TextInput value={password} secureTextEntry onChangeText={setPassword} style={styles.input} placeholder='Password' />
