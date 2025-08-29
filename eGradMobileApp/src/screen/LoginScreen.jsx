@@ -2,6 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react'
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-toast-message';
+import Footer from '../components/Footer';
 
 export const LoginScreen = () => {
     const navigation = useNavigation();
@@ -34,7 +35,7 @@ export const LoginScreen = () => {
                     position: 'top',
                     visibilityTime: 2000,
                     autoHide: true,
-                    onHide: () => navigation.replace("studentDashboard")
+                    onHide: () => navigation.navigate("studentDashboard")
 
                 })
                 console.log("Login successful", data);
@@ -56,6 +57,7 @@ export const LoginScreen = () => {
                     Login
                 </Text>
             </TouchableOpacity>
+            <Footer/>
         </View>
     )
 }
