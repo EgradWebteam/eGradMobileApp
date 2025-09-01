@@ -7,6 +7,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './src/screen/HomeScreen';
 import { QBScreen } from './src/screen/QBScreen';
 import { LoginScreen } from './src/screen/LoginScreen';
+import { RegisterationPage  } from './src/screen/RegisterationPage';
 import { StudentDashboard } from './src/screen/StudentDashboardScreens/StudentDashboard';
 const Stack=createNativeStackNavigator()
 const App = () => {
@@ -25,6 +26,7 @@ const App = () => {
       // }}
       />
       <Stack.Screen name={"login"} component={LoginScreen}/>
+      <Stack.Screen name={"register"} component={RegisterationPage}/>
       <Stack.Screen name={'QBScreen'} component={QBScreen} />
       <Stack.Screen name={"studentDashboard"} component={StudentDashboard}/>
       </Stack.Navigator>
