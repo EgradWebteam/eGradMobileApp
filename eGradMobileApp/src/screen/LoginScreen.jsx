@@ -4,6 +4,7 @@ import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'reac
 import Toast from 'react-native-toast-message';
 import Footer from '../components/Footer';
 import { LoginHomeHeader } from '../components/LoginHomeHeader';
+import { backEndPort, frontEndUrl } from '../apiConfig';
 
 export const LoginScreen = () => {
     const navigation = useNavigation();
@@ -17,12 +18,12 @@ export const LoginScreen = () => {
         }
         console.log(password, email, "these r password nd emails");
         try {
-            const response = await fetch("http://192.168.0.106:5003/login/studentLogin", {
+            const response = await fetch(`${frontEndUrl}:${backEndPort}/login/studentLogin`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     email, password,
-                    instituteOrDomain: "http://192.168.0.106:19000"
+                    instituteOrDomain: `${frontEndUrl}`
                 }),
             });
             const data = await response.json();

@@ -1,12 +1,15 @@
 import React from 'react'
 import { View, Text, Image, TouchableOpacity, Dimensions } from 'react-native'
 import { homeScreenStyles } from '../styles/HomeScreenStyles'
+import { LoginHomeHeader } from '../components/LoginHomeHeader'
 const { width } = Dimensions.get('window')
 const HomeScreen = (props) => {
     console.log(props, "these r props");
 
     const isTablet = width > 768;
     return (
+        <>
+        <LoginHomeHeader/>
         <View style={homeScreenStyles.container}>
             <View style={[homeScreenStyles.headdingDiv, isTablet ? homeScreenStyles.headdingDivTablet : homeScreenStyles.headdingDivMobile]}>
                 <Image source={require('../images/capImg.png')}
@@ -36,6 +39,7 @@ const HomeScreen = (props) => {
                 </TouchableOpacity>
             </View>
         </View>
+        </>
     )
 }
 
