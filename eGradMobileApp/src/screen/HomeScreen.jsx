@@ -1,6 +1,7 @@
 import React from 'react'
 import { View, Text, Image, TouchableOpacity, Dimensions } from 'react-native'
 import { homeScreenStyles } from '../styles/HomeScreenStyles'
+import Footer from '../components/Footer';
 import { LoginHomeHeader } from '../components/LoginHomeHeader'
 const { width } = Dimensions.get('window')
 const HomeScreen = (props) => {
@@ -11,6 +12,7 @@ const HomeScreen = (props) => {
         <>
         <LoginHomeHeader/>
         <View style={homeScreenStyles.container}>
+            {/* <LandingHeader /> */}
             <View style={[homeScreenStyles.headdingDiv, isTablet ? homeScreenStyles.headdingDivTablet : homeScreenStyles.headdingDivMobile]}>
                 <Image source={require('../images/capImg.png')}
                     style={[homeScreenStyles.capImg, homeScreenStyles.boxShadow]}
@@ -37,7 +39,13 @@ const HomeScreen = (props) => {
                         Login
                     </Text>
                 </TouchableOpacity>
+                   <TouchableOpacity  style={homeScreenStyles.qbBtn} onPress={()=>props.navigation.navigate("register")}>
+                    <Text >
+                        Register
+                    </Text>
+                </TouchableOpacity>
             </View>
+            <Footer />
         </View>
         </>
     )
