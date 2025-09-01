@@ -8,7 +8,38 @@ import CalendarPicker from 'react-native-calendar-picker';
 import { launchImageLibrary } from 'react-native-image-picker';
 import stateList from "./StatesJson.json";
 import districtsMap from "./DistrictsJson.json";
-// import { BASE_URL, frontEndURL } from "../../../ConfigFile/ApiConfigURL";
+
+ import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig";
+const getDOBLimits = (portalId) => {
+  const today = new Date();
+
+  const subtractYears = (date, years) => {
+    const newDate = new Date(date);
+    newDate.setFullYear(newDate.getFullYear() - years);
+    return newDate;
+  };
+
+  switch (portalId) {
+    case 1: // UG: Age between 15 and 30 years
+      return {
+        minDate: subtractYears(today, 100),
+        maxDate: subtractYears(today, 10),
+      };
+
+    case 2: // PG: Age between 21 and 50 years
+      return {
+        minDate: subtractYears(today, 100),
+        maxDate: subtractYears(today, 21),
+      };
+
+    default: // Fallback: Age between 10 and 70 years
+      return {
+        minDate: subtractYears(today, 100),
+        maxDate: subtractYears(today, 10),
+      };
+  }
+};
+
 
  const qualificationOptions = [
   "B.Tech",
@@ -91,7 +122,7 @@ export const RegisterationPage = ({ navigation }) => {
   const [portalId, setPortalId] = useState(null);
   const [collegeModalVisible, setCollegeModalVisible] = useState(false);
  const [showCalendar, setShowCalendar] = useState(false);
-  const colleges = ["College A", "College B", "College C"]; // Replace with your actual list
+
 
   const validateForm = () => {
     const validationErrors = {};
@@ -108,9 +139,7 @@ export const RegisterationPage = ({ navigation }) => {
       }
     });
 
-    if (formData.emailId !== formData.confirmEmailId) {
-      validationErrors.confirmEmailId = "Email and Confirm Email must match.";
-    }
+ 
     if (formData.mobileNo?.length !== 10) {
       validationErrors.mobileNo = "Mobile number must be exactly 10 digits.";
     }
@@ -127,87 +156,141 @@ export const RegisterationPage = ({ navigation }) => {
     return validationErrors;
   };
 
-  const handleChange = (name, value) => {
-    let error = "";
 
-    if (["candidateName", "fatherName"].includes(name)) {
-      if (!/^[A-Za-z\s]*$/.test(value)) {
-        error = `${name === "candidateName" ? "Candidate Name" : "Father Name"} must contain only alphabets and spaces.`;
-      } else if (value.length > 50) {
-        error = `${name === "candidateName" ? "Candidate Name" : "Father Name"} cannot exceed 50 characters.`;
-      }
-    }
 
-    if (["nameOfCollege", "streamOther", "qualificationsOther"].includes(name)) {
-      if (!/^[A-Za-z\s]*$/.test(value)) {
-        error = `${name} must only contain alphabets and spaces.`;
-      } else if (value.length > 50) {
-        error = `${name} cannot be more than 50 characters.`;
-      }
-    }
+const handleChange = (name, value) => {
+  let error = "";
 
-    if (name === "dateOfBirth") {
-      const selectedDate = new Date(value);
-      const today = new Date();
-      today.setFullYear(today.getFullYear() - 10);
-      if (selectedDate > today) {
-        error = "You must be at least 10 years old.";
-      }
-    }
+  // 📁 File handling
+  if (["uploadedPhoto", "proof"].includes(name) && value && typeof value === "object" && value.size) {
+    const file = value;
+    const fileSizeKB = file.size / 1024;
+    const rules = FILE_SIZE_RULES[name];
 
-    if (["city", "districts"].includes(name)) {
-      if (!/^[A-Za-z\s]*$/.test(value)) {
-        error = `${name} must only contain alphabets and spaces.`;
-      } else if (value.length > 30) {
-        error = `${name} cannot be more than 30 characters.`;
-      }
-    }
+    if (rules && (fileSizeKB < rules.min || fileSizeKB > rules.max)) {
+      Alert.alert("File Error", rules.message);
 
-    if (["contactNo", "mobileNo"].includes(name)) {
-      if (/[^0-9]/.test(value)) {
-        error = "Only numbers are allowed for Contact number.";
-      } else if (value.length > 10) {
-        error = "Contact number must contain exactly 10 digits.";
-      }
-    }
+      // if (name === "uploadedPhoto" && photoInputRef?.current) {
+      //   photoInputRef.current.clear(); // Use .clear() for RN file inputs if supported
+      //   setPhotoPreview(null);
+      // }
 
-    if (name === "pincode") {
-      if (/[^0-9]/.test(value)) {
-        error = "Only numbers are allowed for Pincode.";
-      } else if (value.length > 6) {
-        error = "Pincode must be exactly 6 digits.";
-      }
-    }
+      // if (name === "proof" && proofInputRef?.current) {
+      //   proofInputRef.current.clear();
+      //   setProofPreview(null);
+      // }
 
-    if (name === "marks") {
-      if (value < 0 || value > 100 || isNaN(value) || value.length > 3) {
-        error = "Percentage must be between 0 and 100.";
-      }
-    }
-
-    if (name === "line1" && value.length > 60) {
-      error = `${name} cannot be more than 50 characters.`;
-    }
-
-    if (name === "state") {
-      const selectedState = stateList.find(s => s.state_name === value);
-      const stateId = selectedState?.state_id;
-      setDistrictOptions(stateId && districtsMap[stateId]
-        ? Object.entries(districtsMap[stateId])
-        : []);
-      setFormData(prev => ({ ...prev, state: value, districts: "" }));
-      setErrors(prev => ({ ...prev, state: "", districts: "" }));
+      // setFormData((prev) => ({ ...prev, [name]: null }));
+     
       return;
     }
 
-    if (name === "qualifications") {
-      setFormData(prev => ({ ...prev, qualifications: value, stream: "" }));
-      return;
-    }
+    // Valid file
+    setFormData((prev) => ({ ...prev, [name]: file }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
 
-    setFormData(prev => ({ ...prev, [name]: value }));
-    setErrors(prev => ({ ...prev, [name]: error }));
-  };
+    // In React Native, preview handling depends on image picker library
+    // setPhotoPreview(...) or setProofPreview(...) can be set with file.uri
+    // const previewURL = file.uri || null;
+    // if (name === "uploadedPhoto") setPhotoPreview(previewURL);
+    // if (name === "proof") setProofPreview(previewURL);
+    // return;
+  }
+
+  // 📍 State change
+  if (name === "state") {
+    const selectedState = stateList.find((s) => s.state_name === value);
+    const stateId = selectedState?.state_id;
+    const districts = stateId && districtsMap[stateId] ? Object.entries(districtsMap[stateId]) : [];
+
+    setDistrictOptions(districts);
+    setFormData((prev) => ({ ...prev, state: value, districts: "" }));
+    setErrors((prev) => ({ ...prev, state: "", districts: "" }));
+    return;
+  }
+
+  // 🎓 Qualification change
+  if (name === "qualifications") {
+    setFormData((prev) => ({ ...prev, qualifications: value, stream: "" }));
+    return;
+  }
+
+  // 📆 Date of Birth validation
+  if (name === "dateOfBirth") {
+    const selectedDate = new Date(value);
+    const today = new Date();
+    today.setFullYear(today.getFullYear() - 10);
+    if (selectedDate > today) {
+      error = "You must be at least 10 years old.";
+    }
+  }
+
+  // 🔤 Text fields with specific limits
+  if (["candidateName", "fatherName"].includes(name)) {
+    if (!/^[A-Za-z\s]*$/.test(value)) {
+      error = `${name === "candidateName" ? "Candidate Name" : "Father Name"} must contain only letters and spaces.`;
+    } else if (value.length > 40) {
+      error = `${name === "candidateName" ? "Candidate Name" : "Father Name"} cannot exceed 40 characters.`;
+    }
+  }
+
+  if (["nameOfCollege", "qualificationsOther", "streamOther"].includes(name)) {
+    if (!/^[A-Za-z\s]*$/.test(value)) {
+      error = `${name} must contain only letters and spaces.`;
+    } else if (value.length > 50) {
+      error = `${name} cannot exceed 50 characters.`;
+    }
+  }
+
+  if (["city", "districts"].includes(name)) {
+    if (!/^[A-Za-z\s]*$/.test(value)) {
+      error = `${name} must contain only letters and spaces.`;
+    } else if (value.length > 30) {
+      error = `${name} cannot exceed 30 characters.`;
+    }
+  }
+
+  if (name === "line1" && value.length > 60) {
+    error = "Address Line 1 cannot exceed 60 characters.";
+  }
+
+  // 📞 Contact and mobile numbers
+  if (["contactNo", "mobileNo"].includes(name)) {
+    if (/[^0-9]/.test(value)) {
+      error = "Only numbers are allowed.";
+    } else if (value.length !== 10) {
+      error = "Number must be exactly 10 digits.";
+    }
+  }
+
+  // 📮 Pincode
+  if (name === "pincode") {
+    if (/[^0-9]/.test(value)) {
+      error = "Only numbers are allowed.";
+    } else if (value.length !== 6) {
+      error = "Pincode must be exactly 6 digits.";
+    }
+  }
+
+  // 📊 Marks
+  if (name === "marks") {
+    const numericValue = parseFloat(value);
+    if (isNaN(numericValue) || numericValue < 0 || numericValue > 100) {
+      error = "Percentage must be between 0 and 100.";
+    }
+  }
+
+  // 🔄 Update state if no error
+  // if (!error) {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  // } else {
+    setErrors((prev) => ({ ...prev, [name]: error }));
+    //   Alert.alert("Validation Error", error);
+  // }
+
+  return error;
+};
+
 
   const pickImage = (field) => {
     launchImageLibrary({ mediaType: 'photo', quality: 1 }, response => {
@@ -221,34 +304,93 @@ export const RegisterationPage = ({ navigation }) => {
       field === "uploadedPhoto" ? setPhotoPreview(file.uri) : setProofPreview(file.uri);
     });
   };
+const clearFormData = () => {
+  setFormData({
+
+    candidateName: "", dateOfBirth: "",
+    gender: "", category: "",
+    emailId: "", confirmEmailId: "",
+    contactNo: "", fatherName: "",
+    EmailId: "", mobileNo: "",
+    line1: "", city: "", state: "", districts: "", pincode: "",
+    qualifications: "", qualificationsOther: "",
+    stream: "", streamOther: "",
+    nameOfCollege: "", passingYear: "", marks: "",
+    uploadedPhoto: null, proof: null,
+    termsAccepted: false,
+  });
+  setErrors({});
+};
+const { minDate, maxDate } = getDOBLimits(portalId);
 
   const handleSubmit = async () => {
     const validationErrors = validateForm();
+    await handleEmailBlur();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       Alert.alert("Validation Error", "Please complete all required fields correctly.");
       return;
     }
+  const formDataToSend = new FormData();
+    formDataToSend.append("candidateName", formData.candidateName);
+    formDataToSend.append("dateOfBirth", formData.dateOfBirth);
+    formDataToSend.append("gender", formData.gender);
+    formDataToSend.append("category", formData.category);
+    formDataToSend.append("emailId", formData.emailId);
+      formDataToSend.append("contactNo", formData.contactNo);
+    formDataToSend.append("confirmEmailId", formData.confirmEmailId);
+  
+    formDataToSend.append("fatherName", formData.fatherName);
+    formDataToSend.append("EmailId", formData.EmailId);
+    formDataToSend.append("mobileNo", formData.mobileNo);
+    formDataToSend.append("line1", formData.line1);
+    formDataToSend.append("city",formData.city);
+    formDataToSend.append("state", formData.state);
+    formDataToSend.append("districts", formData.districts);
+    formDataToSend.append("pincode", formData.pincode);
+    formDataToSend.append("qualifications", formData.qualifications);
+    formDataToSend.append("stream", formData.stream);
+    formDataToSend.append("nameOfCollege", formData.nameOfCollege);
+    formDataToSend.append("passingYear", formData.passingYear);
+    formDataToSend.append("marks", formData.marks);
 
-    setIsSubmitting(true);
+    if (formData.uploadedPhoto) {
+      formDataToSend.append("uploadedPhoto", formData.uploadedPhoto);
+    }
+    if (formData.proof) {
+      formDataToSend.append("proof", formData.proof);
+    }
+
+    formDataToSend.append("termsAccepted", formData.termsAccepted.toString());
+    formDataToSend.append("instituteOrDomain",`${frontEndUrl}`);
+
     try {
       const fd = new FormData();
       Object.entries(formData).forEach(([key, val]) => {
-        if (val !== null) fd.append(key, val);
+  if (val !== undefined && val !== null) {
+    fd.append(key, val);
+  } else {
+    fd.append(key, ""); // Or optionally skip appending
+  }
+});
+
+  
+    if (isSubmitting) { return; }
+
+      setIsSubmitting(true);
+      const response = await fetch(`${frontEndUrl}:${backEndPort}/login/studentRegistration`, {
+        method: "POST",
+        body: formDataToSend,
       });
+        const result = await response.json();
 
-      // Example API call structure:
-      // const response = await fetch(`${BASE_URL}/login/studentRegistration`, {
-      //   method: "POST", body: fd
-      // });
-      // const result = await response.json();
-
-      // Mock response handling:
-      // if (result.message === "Your email already exists.") …
-      // else if (result.success) …
-
+if (result.success) {
       Alert.alert("Success", "Registration simulated successfully!");
-      navigation.navigate("LoginPage");
+      navigation.navigate("login");
+      clearFormData();
+}else {
+  Alert.alert("Error", "Registration failed. Please try again.");
+}
     } catch (err) {
       Alert.alert("Error", "Something went wrong. Please try again later.");
       console.error(err);
@@ -258,16 +400,88 @@ export const RegisterationPage = ({ navigation }) => {
   };
 
   useEffect(() => {
+    console.log("into the useEffect");
     if (hasFetchedRef.current) return;
     hasFetchedRef.current = true;
     (async () => {
       // Simulated fetch:
-      // const resp = await fetch(`${BASE_URL}/navbar/get-logo`, { … });
-      // const data = await resp.json();
+      const resp = await fetch(`${frontEndUrl}:${backEndPort}/navbar/get-logo`,  {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        
+        body: JSON.stringify({ domain: frontEndUrl }),
+      });
+      const data = await resp.json();
+      console.log(`${frontEndUrl}:${backEndPort}/navbar/get-logo`, data);
       // setPortalId(data.portalId);
-      setPortalId(1); // Stub for UI path
+      setPortalId(2); // Stub for UI path
     })();
   }, []);
+const handleEmailBlur = async () => {
+  const email_id = formData.emailId;
+  const instituteOrDomain = frontEndUrl;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!email_id) return;
+
+  try {
+    let message = "";
+
+    const { emailId, confirmEmailId } = formData;
+
+    const isEmailValid = emailRegex.test(emailId);
+    const isConfirmEmailValid = emailRegex.test(confirmEmailId);
+
+    if (emailId && !isEmailValid && confirmEmailId && !isConfirmEmailValid) {
+      message = `Both Email "${emailId}" and Confirm Email "${confirmEmailId}" fields have an invalid format.`;
+    } else if (emailId && !isEmailValid) {
+      message = `Email "${emailId}" field has an invalid format.`;
+    } else if (confirmEmailId && !isConfirmEmailValid) {
+      message = `Confirm Email "${confirmEmailId}" field has an invalid format.`;
+    }
+
+    if (message) {
+      Alert.alert("Invalid Email", message);
+      return;
+    }
+
+    // Check if email exists
+    const response = await fetch(`${frontEndUrl}:${backEndPort}/login/checkEmailExists`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email_id, instituteOrDomain }),
+    });
+
+    const result = await response.json();
+
+    if (result.message === "Your email already exists. Please use a different email.") {
+      Alert.alert(
+        "Email Exists",
+        `Your email "${confirmEmailId || emailId}" already exists. Please use a different email or Login`,
+        [
+          { text: "Login", onPress: () => navigation.navigate("login") },
+          { text: "Close", style: "cancel" }
+        ]
+      );
+      setFormData(prev => ({ ...prev, emailId: "", confirmEmailId: "" }));
+      return;
+    }
+
+    // Email formats are valid and email doesn't exist
+    if (emailId && confirmEmailId && emailId !== confirmEmailId) {
+      Alert.alert("Email Mismatch", `Email (${emailId}) and Confirm Email (${confirmEmailId}) do not match. Please recheck both fields.`);
+      return;
+    }
+
+  } catch (error) {
+    console.error('Error checking email:', error);
+    Alert.alert("Error", "Failed to verify email. Please try again.");
+  }
+};
 
   const renderRadioGroup = (options, selected, onSelect) => (
     <View style={{ flexDirection: 'row', marginBottom: 10 }}>
@@ -320,11 +534,14 @@ export const RegisterationPage = ({ navigation }) => {
         </TouchableOpacity>
         {showCalendar && (
           <CalendarPicker
-            maxDate={new Date()}
-            onDateChange={date => {
-              handleChange("dateOfBirth", date.format("YYYY-MM-DD"));
-              setShowCalendar(false);
-            }}
+          minDate={minDate}
+        maxDate={maxDate}
+        initialDate={maxDate}
+          onDateChange={date => {
+    const formattedDate = date.toISOString().split('T')[0]; // or use dayjs
+    handleChange("dateOfBirth", formattedDate);
+    setShowCalendar(false);
+  }}
             selectedDayColor="#007AFF"
             selectedDayTextColor="#FFF"
           />
@@ -337,27 +554,29 @@ export const RegisterationPage = ({ navigation }) => {
         {errors.gender && <Text style={styles.error}>{errors.gender}</Text>}
 
         <Text style={styles.label}>Category</Text>
-        {renderRadioGroup(["OC", "BC", "SC", "ST"], formData.category, val => handleChange("category", val))}
+        {renderRadioGroup(["OC", "BC", "SC/ST"], formData.category, val => handleChange("category", val))}
         {errors.category && <Text style={styles.error}>{errors.category}</Text>}
-
+        <Text style={styles.label}>Email ID</Text>
         <TextInput
           style={styles.input}
           placeholder="Email ID"
           value={formData.emailId}
           onChangeText={text => handleChange("emailId", text)}
           keyboardType="email-address" autoCapitalize="none"
+          onBlur={handleEmailBlur}
         />
         {errors.emailId && <Text style={styles.error}>{errors.emailId}</Text>}
-
+        <Text style={styles.label}>Confirm Email ID</Text>
         <TextInput
           style={styles.input}
           placeholder="Confirm Email ID"
           value={formData.confirmEmailId}
           onChangeText={text => handleChange("confirmEmailId", text)}
           keyboardType="email-address" autoCapitalize="none"
+          onBlur={handleEmailBlur}
         />
         {errors.confirmEmailId && <Text style={styles.error}>{errors.confirmEmailId}</Text>}
-
+        <Text style={styles.label}>Contact Number</Text>
         <TextInput
           style={styles.input}
           placeholder="Contact Number"
@@ -369,6 +588,7 @@ export const RegisterationPage = ({ navigation }) => {
       </View>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Parents/Guardian Details</Text>
+        <Text style={styles.label}>Parents/Guardian Name</Text>
         <TextInput
           style={styles.input}
           placeholder="Father's Name"
@@ -376,7 +596,7 @@ export const RegisterationPage = ({ navigation }) => {
           onChangeText={text => handleChange("fatherName", text)}
         />
         {errors.fatherName && <Text style={styles.error}>{errors.fatherName}</Text>}
-
+  <Text style={styles.label}>Parents/Guardian Email ID</Text>
         <TextInput
           style={styles.input}
           placeholder="Father's Email"
@@ -385,7 +605,7 @@ export const RegisterationPage = ({ navigation }) => {
           keyboardType="email-address" autoCapitalize="none"
         />
         {errors.EmailId && <Text style={styles.error}>{errors.EmailId}</Text>}
-
+  <Text style={styles.label}>Parents/Guardian Phone Number</Text>
         <TextInput
           style={styles.input}
           placeholder="Father's Phone"
@@ -398,7 +618,7 @@ export const RegisterationPage = ({ navigation }) => {
 
       {/* Address */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Address</Text>
+        <Text style={styles.sectionTitle}>Address Line 1</Text>
         <TextInput
           style={styles.input}
           placeholder="Address Line 1"
@@ -407,6 +627,7 @@ export const RegisterationPage = ({ navigation }) => {
         />
         {errors.line1 && <Text style={styles.error}>{errors.line1}</Text>}
 
+        <Text style={styles.label}>City</Text>
         <TextInput
           style={styles.input}
           placeholder="City"
@@ -415,8 +636,7 @@ export const RegisterationPage = ({ navigation }) => {
         />
         {errors.city && <Text style={styles.error}>{errors.city}</Text>}
 
-       
-  <Text style={styles.label}>State</Text>
+       <Text style={styles.label}>State</Text>
 <View style={styles.pickerContainer}>
   <Picker
     selectedValue={formData.state}
@@ -429,8 +649,8 @@ export const RegisterationPage = ({ navigation }) => {
   </Picker>
 </View>
 {errors.state && <Text style={styles.error}>{errors.state}</Text>}
-      
 
+  <Text style={styles.label}>Pincode</Text>
         <TextInput
           style={styles.input}
           placeholder="Pincode"
