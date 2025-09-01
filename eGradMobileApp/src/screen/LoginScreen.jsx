@@ -10,12 +10,22 @@ export const LoginScreen = () => {
     const navigation = useNavigation();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+     const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [resetCode, setResetCode] = useState("");
+    const [isForgotPassword, setIsForgotPassword] = useState(false);
+    const [isResetPassword, setIsResetPassword] = useState(false);
+    const [failedAttempts, setFailedAttempts] = useState(0);
+    const [isSendingResetCode, setIsSendingResetCode] = useState(false);
+
     const handleLogin = async () => {
         console.log("handleLogin called ✅");
         if (!email || !password) {
             Alert.alert("Validaion Error, Please enter email and password");
             return;
         }
+
+
         console.log(password, email, "these r password nd emails");
         try {
             const response = await fetch(`${frontEndUrl}:${backEndPort}/login/studentLogin`, {
@@ -28,51 +38,243 @@ export const LoginScreen = () => {
             });
             const data = await response.json();
             console.log(data.message, "this is the responseee");
-            if (response.ok) {
-                // Alert.alert("Login successfull  ");
-                Toast.show({
-                    type: "success",
-                    text1: "Login Successful",
-                    text2: `Welcome ${data.userDetails.candidate_name}`,
-                    position: 'top',
-                    visibilityTime: 2000,
-                    autoHide: true,
-                    onHide: () => navigation.navigate("studentDashboard")
+            // if (response.ok) {
+            //     // Alert.alert("Login successfull  ");
+            //     Toast.show({
+            //         type: "success",
+            //         text1: "Login Successful",
+            //         text2: `Welcome ${data.userDetails.candidate_name}`,
+            //         position: 'top',
+            //         visibilityTime: 2000,
+            //         autoHide: true,
+            //         onHide: () => navigation.navigate("studentDashboard")
 
-                })
-                console.log("Login successful", data);
+            //     })
+            //     console.log("Login successful", data);
+            // } 
+
+            if (response.ok && data.user_Id) {
+                // ✅ save session
+                // (replace with SecureStore or AsyncStorage if you need persistence)
+                global.accessToken = data.accessToken;
+
+                Alert.alert("Success", "Login successful", [
+                    {
+                        text: "Go to Dashboard",
+                        onPress: () => navigation.navigate("StudentDashboard", { userId: data.user_Id }),
+                    },
+                ]);
             } else {
-                console.error("Login failed", data);
-            }
+                setFailedAttempts((prev) => prev + 1);
 
+                if (failedAttempts >= 2) {
+                    Alert.alert("Error", "Too many failed attempts. Reset password.");
+                    setIsForgotPassword(true);
+                    return;
+                }
+
+                Alert.alert("Error", data.message || "Invalid credentials");
+            }
         } catch (error) {
             console.log(error, "error while login")
         }
     }
-    return (
-        <View>
-            <LoginHomeHeader/>
-            <Text style={styles.title}>LoginScreen</Text>
-            <TextInput style={styles.input} placeholder='Email' value={email} onChangeText={setEmail} />
-            <TextInput value={password} secureTextEntry onChangeText={setPassword} style={styles.input} placeholder='Password' />
-            <TouchableOpacity style={styles.qbBtn} onPress={handleLogin}>
-                <Text >
-                    Login
-                </Text>
-            </TouchableOpacity>
-            <Footer/>
-        </View>
-    )
-}
+     const handleSendResetCode = async () => {
+    if (!email) {
+      Alert.alert('Validation Error', 'Please enter your email first');
+      return;
+    }
+
+    setIsSendingResetCode(true);
+    try {
+      const response = await fetch(
+        `${frontEndUrl}:${backEndPort}/login/forgot-password`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email,instituteOrDomain:`${frontEndUrl}` }),
+        }
+      );
+
+      const data = await response.json();
+      if (response.ok) {
+        Alert.alert('Success', 'Reset code sent to your email');
+        setIsResetPassword(true);
+      } else {
+        console.log()
+        Alert.alert('Error', data.message || 'Failed to send reset code');
+      }
+    } catch (err) {
+      console.log(err, 'error while sending reset code');
+      Alert.alert('Error', 'Something went wrong');
+    } finally {
+      setIsSendingResetCode(false);
+    }
+  };
+  const handleResetPassword = async () => {
+    if (!resetCode || !newPassword || !confirmPassword) {
+      Alert.alert("Validation Error", "Please enter reset code, new password, and confirm password.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      Alert.alert("Validation Error", "Passwords do not match.");
+      return;
+    }
+
+    const resetPasswordData = {
+      email: username,
+      resetCode,
+      newPassword,
+      instituteOrDomain: frontEndURL,
+    };
+
+    console.log("resetPasswordData", resetPasswordData);
+
+    try {
+      const response = await fetch(`${BASE_URL}/login/reset-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(resetPasswordData),
+      });
+
+      const text = await response.text();
+      console.log("Raw response:", text);
+
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = { message: "Invalid server response" };
+      }
+
+      if (response.ok) {
+        Alert.alert("Success", "Password has been reset successfully. You can now log in.", [
+          { text: "OK", onPress: () => navigation.navigate("Login") },
+        ]);
+      } else {
+        Alert.alert("Error", data.message || "Something went wrong. Please try again.");
+      }
+    } catch (error) {
+      console.log("Reset password error:", error);
+      Alert.alert("Error", "Something went wrong. Please try again later.");
+    }
+  };
+ return (
+    <View >
+      <LoginHomeHeader />
+      <Text style={styles.title}>Login Screen</Text>
+
+      {/* 🔹 Normal Login */}
+      {!isForgotPassword && !isResetPassword && (
+        <>
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+          />
+          <TextInput
+            value={password}
+            secureTextEntry
+            onChangeText={setPassword}
+            style={styles.input}
+            placeholder="Password"
+          />
+
+          <TouchableOpacity style={styles.qbBtn} onPress={handleLogin}>
+            <Text style={styles.btnText}>Login</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => setIsForgotPassword(true)}>
+            <Text style={styles.link}>Forgot Password?</Text>
+          </TouchableOpacity>
+        </>
+      )}
+
+      {/* 🔹 Forgot Password */}
+      {isForgotPassword && !isResetPassword && (
+        <>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your email"
+            value={email}
+            onChangeText={setEmail}
+          />
+
+          <TouchableOpacity
+            style={styles.qbBtn}
+            onPress={handleSendResetCode}
+            disabled={isSendingResetCode}
+          >
+            <Text style={styles.btnText}>
+              {isSendingResetCode ? 'Sending...' : 'Send Reset Code'}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => setIsForgotPassword(false)}>
+            <Text style={styles.link}>Back to Login</Text>
+          </TouchableOpacity>
+        </>
+      )}
+
+      {/* 🔹 Reset Password */}
+      {isResetPassword && (
+        <>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter reset code"
+            value={resetCode}
+            onChangeText={setResetCode}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="New Password"
+            value={password}
+            secureTextEntry
+            onChangeText={setPassword}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            secureTextEntry
+            onChangeText={setConfirmPassword}
+          />
+
+          <TouchableOpacity style={styles.qbBtn} onPress={handleResetPassword}>
+            <Text style={styles.btnText}>Reset Password</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => setIsResetPassword(false)}>
+            <Text style={styles.link}>Back to Forgot Password</Text>
+          </TouchableOpacity>
+        </>
+      )}
+
+      <Footer />
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
-    container: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
-    title: { fontSize: 24, marginBottom: 20 },
-    input: {
-        width: '100%',
-        borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 10,
-        marginBottom: 15,
-        borderRadius: 5,
-    },
+  container: { flex: 1, justifyContent: 'center', padding: 20 },
+  title: { fontSize: 24, marginBottom: 20, textAlign: 'center' },
+  input: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+    marginBottom: 15,
+    borderRadius: 5,
+  },
+  qbBtn: {
+    backgroundColor: '#007bff',
+    padding: 12,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  btnText: { color: '#fff', fontWeight: 'bold' },
+  link: { color: '#007bff', textAlign: 'center', marginTop: 10 },
 });
