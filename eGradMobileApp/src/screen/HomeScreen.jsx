@@ -1,14 +1,15 @@
 import React from 'react'
 import { View, Text, Image, TouchableOpacity, Dimensions } from 'react-native'
 import { homeScreenStyles } from '../styles/HomeScreenStyles'
-import Footer from '../components/Footer';
-import LandingHeader from '../components/LandingPageHeader';
+import { LoginHomeHeader } from '../components/LoginHomeHeader'
 const { width } = Dimensions.get('window')
 const HomeScreen = (props) => {
     console.log(props, "these r props");
 
     const isTablet = width > 768;
     return (
+        <>
+        <LoginHomeHeader/>
         <View style={homeScreenStyles.container}>
             {/* <LandingHeader /> */}
             <View style={[homeScreenStyles.headdingDiv, isTablet ? homeScreenStyles.headdingDivTablet : homeScreenStyles.headdingDivMobile]}>
@@ -45,6 +46,7 @@ const HomeScreen = (props) => {
             </View>
             <Footer />
         </View>
+        </>
     )
 }
 
