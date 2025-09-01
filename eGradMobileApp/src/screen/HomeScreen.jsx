@@ -1,6 +1,7 @@
 import React from 'react'
 import { View, Text, Image, TouchableOpacity, Dimensions } from 'react-native'
 import { homeScreenStyles } from '../styles/HomeScreenStyles'
+import Footer from '../components/Footer';
 import { LoginHomeHeader } from '../components/LoginHomeHeader'
 const { width } = Dimensions.get('window')
 const HomeScreen = (props) => {
