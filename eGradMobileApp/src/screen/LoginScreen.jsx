@@ -5,7 +5,7 @@ import Toast from 'react-native-toast-message';
 import Footer from '../components/Footer';
 import { LoginHomeHeader } from '../components/LoginHomeHeader';
 import { backEndPort, frontEndUrl } from '../apiConfig';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 export const LoginScreen = () => {
     const navigation = useNavigation();
     const [email, setEmail] = useState("");
@@ -18,67 +18,63 @@ export const LoginScreen = () => {
     const [failedAttempts, setFailedAttempts] = useState(0);
     const [isSendingResetCode, setIsSendingResetCode] = useState(false);
 
-    const handleLogin = async () => {
-        console.log("handleLogin called ✅");
-        if (!email || !password) {
-            Alert.alert("Validaion Error, Please enter email and password");
-            return;
-        }
+ const handleLogin = async () => {
+  console.log("handleLogin called ✅");
 
+  if (!email || !password) {
+    Alert.alert("Validation Error", "Please enter email and password");
+    return;
+  }
 
-        console.log(password, email, "these r password nd emails");
-        try {
-            const response = await fetch(`${frontEndUrl}:${backEndPort}/login/studentLogin`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    email, password,
-                    instituteOrDomain: `${frontEndUrl}`
-                }),
-            });
-            const data = await response.json();
-            console.log(data.message, "this is the responseee");
-            // if (response.ok) {
-            //     // Alert.alert("Login successfull  ");
-            //     Toast.show({
-            //         type: "success",
-            //         text1: "Login Successful",
-            //         text2: `Welcome ${data.userDetails.candidate_name}`,
-            //         position: 'top',
-            //         visibilityTime: 2000,
-            //         autoHide: true,
-            //         onHide: () => navigation.navigate("studentDashboard")
+  console.log(password, email, "these r password nd emails");
 
-            //     })
-            //     console.log("Login successful", data);
-            // } 
+  try {
+    const response = await fetch(`${frontEndUrl}:${backEndPort}/login/studentLogin`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        password,
+        instituteOrDomain: `${frontEndUrl}`
+      }),
+    });
 
-            if (response.ok && data.user_Id) {
-                // ✅ save session
-                // (replace with SecureStore or AsyncStorage if you need persistence)
-                global.accessToken = data.accessToken;
+    const data = await response.json();
+    console.log(data.message, "this is the responseee");
 
-                Alert.alert("Success", "Login successful", [
-                    {
-                        text: "Go to Dashboard",
-                        onPress: () => navigation.navigate("StudentDashboard", { userId: data.user_Id }),
-                    },
-                ]);
-            } else {
-                setFailedAttempts((prev) => prev + 1);
+    if (response.ok && data.user_Id) {
+      // Save session tokens & user data to AsyncStorage
+      try {
+        await AsyncStorage.setItem('accessToken', data.accessToken);
+        await AsyncStorage.setItem('decryptedId', data.decryptedId || '');
+        await AsyncStorage.setItem('sessionId', data.sessionId || '');
+        await AsyncStorage.setItem('userId', data.user_Id);
+      } catch (storageError) {
+        console.error('AsyncStorage saving error:', storageError);
+      }
 
-                if (failedAttempts >= 2) {
-                    Alert.alert("Error", "Too many failed attempts. Reset password.");
-                    setIsForgotPassword(true);
-                    return;
-                }
+      Alert.alert("Success", "Login successful", [
+        {
+          text: "Go to Dashboard",
+          onPress: () => navigation.navigate("studentDashboard", { userId: data.user_Id }),
+        },
+      ]);
+    } else {
+      setFailedAttempts((prev) => prev + 1);
 
-                Alert.alert("Error", data.message || "Invalid credentials");
-            }
-        } catch (error) {
-            console.log(error, "error while login")
-        }
+      if (failedAttempts >= 2) {
+        Alert.alert("Error", "Too many failed attempts. Reset password.");
+        setIsForgotPassword(true);
+        return;
+      }
+
+      Alert.alert("Error", data.message || "Invalid credentials");
     }
+  } catch (error) {
+    console.log(error, "error while login");
+    Alert.alert("Error", "Something went wrong during login. Please try again.");
+  }
+};
      const handleSendResetCode = async () => {
     if (!email) {
       Alert.alert('Validation Error', 'Please enter your email first');
