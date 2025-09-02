@@ -13,7 +13,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
- import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig";
+ import { backEndUrl, frontEndUrl,backEndPort } from "../../apiConfig";
 // import LoadingSpinner from '../../ContextFolder/LoadingSpinner';
 // import { closeTestWindowIfOpen } from '../../ContextFolder/windowManager';
 import StudentDashboardHeader from '../../components/StudentDashboardHeader';
@@ -68,7 +68,7 @@ export const StudentDashboard = () => {
 
   const fetchPortalData = async () => {
     try {
-      const response = await fetch(`${backEndUrl}/navbar/get-logo`, {
+      const response = await fetch(`${frontEndUrl}:${backEndPort}/navbar/get-logo`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ domain: frontEndUrl }),

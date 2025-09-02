@@ -2,9 +2,9 @@ import React from 'react';
 
 const StudentDashboardBookMarks = () => {
     return (
-        <div>
-            Hello, World!
-        </div>
+         <View style={styles.container}>
+             <Text style={styles.header}>My Courses</Text>
+           </View>
     );
 };
 

@@ -46,9 +46,10 @@ export const LoginScreen = () => {
       // Save session tokens & user data to AsyncStorage
       try {
         await AsyncStorage.setItem('accessToken', data.accessToken);
-        await AsyncStorage.setItem('decryptedId', data.decryptedId || '');
-        await AsyncStorage.setItem('sessionId', data.sessionId || '');
-        await AsyncStorage.setItem('userId', data.user_Id);
+     await AsyncStorage.setItem('decryptedId', String(data.decryptedId || ''));
+
+        await AsyncStorage.setItem('sessionId', String(data.sessionId || ''));
+        await AsyncStorage.setItem('userId', String(data.user_Id || ''));
       } catch (storageError) {
         console.error('AsyncStorage saving error:', storageError);
       }
