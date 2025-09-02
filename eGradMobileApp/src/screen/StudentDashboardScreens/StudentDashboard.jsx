@@ -46,7 +46,7 @@ export const StudentDashboard = () => {
     const data = await AsyncStorage.getItem('studentData');
     setStudentData(JSON.parse(data));
   };
-
+  console.log(studentData);
   const handleLogout = async () => {
     try {
       await fetch(`${backEndUrl}/login/studentLogout`, {
@@ -113,13 +113,13 @@ export const StudentDashboard = () => {
           />
         );
       case 'myCourses':
-        return <StudentDashboardMyCourses studentId={studentData?.userDetails?.id} />;
+        return <StudentDashboardMyCourses studentId={studentData?.userDetails?.student_registration_id} />;
       case 'buyCourses':
-        return <StudentDashboardBuyCourses studentId={studentData?.userDetails?.id} />;
+        return <StudentDashboardBuyCourses studentId={studentData?.userDetails?.student_registration_id} />;
       case 'results':
-        return <StudentDashboardMyResults studentId={studentData?.userDetails?.id} />;
+        return <StudentDashboardMyResults studentId={studentData?.userDetails?.student_registration_id} />;
       case 'bookmarks':
-        return <StudentDashboardBookMarks studentId={studentData?.userDetails?.id} />;
+        return <StudentDashboardBookMarks studentId={studentData?.userDetails?.student_registration_id} />;
       case 'account':
         return (
           <StudentDashboard_AccountSettings

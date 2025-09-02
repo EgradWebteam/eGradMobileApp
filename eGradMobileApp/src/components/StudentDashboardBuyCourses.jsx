@@ -12,7 +12,7 @@ import {
 import RazorpayCheckout from 'react-native-razorpay';
 import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import CourseCards from "./CourseCards.jsx";
 // import { useSession } from '../hooks/SessionContext';
 
 const StudentDashboardBuyCourses = ({ setActiveSection, studentId, preselectedPortalId }) => {
@@ -22,8 +22,9 @@ const StudentDashboardBuyCourses = ({ setActiveSection, studentId, preselectedPo
   const [loading, setLoading] = useState(true);
   const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
 //   const { validateSession } = useSession();
-
+    console.log(`${backEndUrl}/studentbuycourses/UnPurchasedcourses/${studentId}`);
   const fetchCoursesInBuyCourses = async () => {
+      console.log(`${backEndUrl}/studentbuycourses/UnPurchasedcourses/${studentId}`);
     try {
       setLoading(true);
    const token = await AsyncStorage.getItem('accessToken');
@@ -37,6 +38,7 @@ const StudentDashboardBuyCourses = ({ setActiveSection, studentId, preselectedPo
           },
         }
       );
+      console.log(res,`${backEndUrl}/studentbuycourses/UnPurchasedcourses/${studentId}`);
       if (!res.ok) {
         if (res.status === 401 || res.status === 403) {
           console.error('Unauthorized access – invalid or expired token');
@@ -158,7 +160,7 @@ const StudentDashboardBuyCourses = ({ setActiveSection, studentId, preselectedPo
     setSelectedExam(examName);
   };
 
-  const studentPaymentCreation = async (courseId, price, isUpgrade) => {
+  const studentpaymentcreation = async (courseId, price, isUpgrade) => {
     // if (!(await validateSession())) return;
     try {
       setIsPaymentProcessing(true);
@@ -275,155 +277,202 @@ const StudentDashboardBuyCourses = ({ setActiveSection, studentId, preselectedPo
     );
   }
 
-  return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.heading}>Buy Courses</Text>
+return (
+  <ScrollView style={styles.container}>
+    <Text style={styles.heading}>Buy Courses</Text>
 
-      {/* Portal Buttons */}
-      <ScrollView horizontal style={styles.buttonRow}>
-        {portalList.map(([pid, pname]) => (
-          <TouchableOpacity
-            key={pid}
+    {/* Portal Buttons */}
+    <ScrollView horizontal style={styles.buttonRow}>
+      {portalList.map(([pid, pname]) => (
+        <TouchableOpacity
+          key={pid}
+          style={[
+            styles.portalButton,
+            selectedPortal === pid && styles.portalButtonActive,
+          ]}
+          onPress={() => handlePortalSelect(pid)}
+        >
+          <Text
             style={[
-              styles.portalButton,
-              selectedPortal === pid && styles.portalButtonActive,
+              styles.portalButtonText,
+              selectedPortal === pid && styles.portalButtonTextActive,
             ]}
-            onPress={() => handlePortalSelect(pid)}
           >
-            <Text
-              style={[
-                styles.portalButtonText,
-                selectedPortal === pid && styles.portalButtonTextActive,
-              ]}
-            >
-              {pname}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-
-      {/* Exam Buttons */}
-      <ScrollView horizontal style={styles.buttonRow}>
-        {examNames.map((exam, idx) => (
-          <TouchableOpacity
-            key={idx}
-            style={[
-              styles.examButton,
-              selectedExam === exam && styles.examButtonActive,
-            ]}
-            onPress={() => handleExamSelect(exam)}
-          >
-            <Text
-              style={[
-                styles.examButtonText,
-                selectedExam === exam && styles.examButtonTextActive,
-              ]}
-            >
-              {exam}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-
-      {selectedPortal === 2 && (fullCourses.length > 0 || subjectWiseGroups.length > 0) ? (
-        <>
-          {/* Full Courses */}
-          {fullCourses.length > 0 && (
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Full Courses</Text>
-              <View style={styles.cardsContainer}>
-                {fullCourses.map(course => (
-                  <CourseCardRN
-                    key={course.course_id}
-                    course={course}
-                    onBuy={price =>
-                      studentPaymentCreation(
-                        course.course_id,
-                        price,
-                        course.course_portal_id === 2 &&
-                          Number(course.already_paid_amount) > 0
-                      )
-                    }
-                  />
-                ))}
-              </View>
-            </View>
-          )}
-
-          {/* Subject-Wise Groups */}
-          {subjectWiseGroups.map((group, idx) => (
-            <View key={idx} style={styles.section}>
-              <Text style={styles.sectionTitle}>{group.subject_name}</Text>
-              <View style={styles.cardsContainer}>
-                {group.courses.map(course => (
-                  <CourseCardRN
-                    key={course.course_id}
-                    course={course}
-                    onBuy={price =>
-                      studentPaymentCreation(
-                        course.course_id,
-                        price,
-                        course.course_portal_id === 2 &&
-                          Number(course.already_paid_amount) > 0
-                      )
-                    }
-                  />
-                ))}
-              </View>
-            </View>
-          ))}
-        </>
-      ) : filteredCourses.length > 0 ? (
-        <View style={styles.cardsContainer}>
-          {filteredCourses.map(course => (
-            <CourseCardRN
-              key={course.course_id}
-              course={course}
-              onBuy={price =>
-                studentPaymentCreation(
-                  course.course_id,
-                  price,
-                  course.course_portal_id === 2 &&
-                    Number(course.already_paid_amount) > 0
-                )
-              }
-            />
-          ))}
-        </View>
-      ) : (
-        <View style={styles.noCourses}>
-          <Text>No courses available at the moment.</Text>
-        </View>
-      )}
+            {pname}
+          </Text>
+        </TouchableOpacity>
+      ))}
     </ScrollView>
-  );
+
+    {/* Exam Buttons */}
+    <ScrollView horizontal style={styles.buttonRow}>
+      {examNames.map((exam, idx) => (
+        <TouchableOpacity
+          key={idx}
+          style={[
+            styles.examButton,
+            selectedExam === exam && styles.examButtonActive,
+          ]}
+          onPress={() => handleExamSelect(exam)}
+        >
+          <Text
+            style={[
+              styles.examButtonText,
+              selectedExam === exam && styles.examButtonTextActive,
+            ]}
+          >
+            {exam}
+          </Text>
+        </TouchableOpacity>
+      ))}
+    </ScrollView>
+
+    {selectedPortal === 2 && (fullCourses.length > 0 || subjectWiseGroups.length > 0) ? (
+      <>
+        {/* Full Courses */}
+        {fullCourses.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Full Courses</Text>
+            <View style={styles.cardsContainer}>
+              {fullCourses.map((course) => (
+                <CourseCards
+                   key={course.course_id}
+                      title={course.course_name}
+                      cardImage={course.course_img}
+                      // numOfTests={course.test_count}
+                      portalId={course.course_portal_id}
+                      VideoLectures={course.lecture_count}
+                      totalPracticeQuestions={course.exercise_questions}
+                      price={
+                        course.course_portal_id === 1 || course.course_type_id === 3
+                          ? course.course_total_price
+                          : course.final_upgrade_price
+                      }
+                      isUpgrade={
+                        course.course_portal_id === 2 &&
+                        course.course_type_id !== 3 &&
+                        Number(course.already_paid_amount) > 0
+                      }
+                      context="buyCourses"
+                      onBuy={(price) => {
+                        studentpaymentcreation(
+                          course.course_id,
+                          studentId,
+                          price,
+                          course.course_portal_id === 2 &&
+                          Number(course.already_paid_amount) > 0
+                        );
+                      }}
+                      //  numOfQuestions={course.total_question_count}
+                      //  subjects={course.subject_names?.join(", ")} 
+
+                      originalPrice={course.course_price}
+                      courseTypeId={course.course_type_id}
+                />
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* Subject-wise Courses */}
+        {subjectWiseGroups.map((group, idx) => (
+          <View key={idx} style={styles.section}>
+            <Text style={styles.sectionTitle}>{group.subject_name}</Text>
+            <View style={styles.cardsContainer}>
+              {group.courses.map((course) => (
+                <CourseCards
+                      key={course.course_id}
+                      title={course.course_name}
+                      cardImage={course.course_img}
+                      portalId={course.course_portal_id}
+                      // numOfTests={course.test_count}
+                      VideoLectures={course.lecture_count}
+                      totalPracticeQuestions={course.exercise_questions}
+                      price={
+                        course.course_portal_id === 1 || course.course_type_id === 3
+                          ? course.course_total_price
+                          : course.final_upgrade_price
+                      }
+                      isUpgrade={
+                        course.course_portal_id === 2 &&
+                        course.course_type_id !== 3 &&
+                        Number(course.already_paid_amount) > 0
+                      }
+                      context="buyCourses"
+                      onBuy={(price) => {
+                        studentpaymentcreation(
+                          course.course_id,
+                          studentId,
+                          price,
+                          course.course_portal_id === 2 &&
+                          Number(course.already_paid_amount) > 0
+                        );
+                      }}
+                      // numOfQuestions={course.total_question_count}
+                      // subjects={course.subject_names?.join(", ")} 
+                      originalPrice={course.course_price}
+                      courseTypeId={course.course_type_id}
+                />
+              ))}
+            </View>
+          </View>
+        ))}
+      </>
+    ) : filteredCourses.length > 0 ? (
+      <View style={styles.cardsContainer}>
+        {filteredCourses.map((course) => (
+          <CourseCards
+               key={course.course_id}
+                    title={course.course_name}
+                    cardImage={course.course_img}
+                    portalId={course.course_portal_id}
+
+                    numOfTests={course.test_count}
+                    price={
+                      course.course_portal_id === 1 || course.course_type_id === 3
+                        ? course.course_total_price
+                        : course.final_upgrade_price
+                    }
+                    isUpgrade={
+                      course.course_portal_id === 2 &&
+                      course.course_type_id !== 3 &&
+                      Number(course.already_paid_amount) > 0
+                    }
+                    context="buyCourses"
+                    onBuy={(price) => {
+                      const courseId = course.course_id;
+                      if (!courseId) {
+                        console.error("Course ID is missing:", course);
+                        return;
+                      }
+                      studentpaymentcreation(
+                        courseId,
+                        studentId,
+                        price,
+                        course.course_portal_id === 2 &&
+                        Number(course.already_paid_amount) > 0
+                      );
+                    }}
+                    //  numOfQuestions={course.total_question_count}
+                    //  subjects={course.subject_names?.join(", ")} 
+                    originalPrice={course.course_price}
+                    courseTypeId={course.course_type_id}
+          />
+        ))}
+      </View>
+    ) : (
+      <View style={styles.noCourses}>
+        <Text>No courses available at the moment.</Text>
+      </View>
+    )}
+  </ScrollView>
+);
+
 };
 
 export default StudentDashboardBuyCourses;
 
-// CourseCardRN component
-const CourseCardRN = ({ course, onBuy }) => {
-  const price =
-    course.course_portal_id === 1 || course.course_type_id === 3
-      ? course.course_total_price
-      : course.final_upgrade_price;
 
-  return (
-    <View style={styles.card}>
-      <Image source={{ uri: course.course_img }} style={styles.cardImage} />
-      <Text style={styles.cardTitle}>{course.course_name}</Text>
-      <Text>Lectures: {course.lecture_count}</Text>
-      <Text>Practice Qs: {course.exercise_questions}</Text>
-      <Text style={styles.price}>₹{price}</Text>
-      <TouchableOpacity
-        style={styles.buyButton}
-        onPress={() => onBuy(price)}
-      >
-        <Text style={styles.buyButtonText}>Buy</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
 
 // Styles
 const styles = StyleSheet.create({

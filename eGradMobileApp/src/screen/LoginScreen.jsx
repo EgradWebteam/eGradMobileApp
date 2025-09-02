@@ -6,6 +6,7 @@ import Footer from '../components/Footer';
 import { LoginHomeHeader } from '../components/LoginHomeHeader';
 import { backEndPort, frontEndUrl } from '../apiConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useStudent } from '../hooks/StudentContext';
 export const LoginScreen = () => {
     const navigation = useNavigation();
     const [email, setEmail] = useState("");
@@ -17,7 +18,7 @@ export const LoginScreen = () => {
     const [isResetPassword, setIsResetPassword] = useState(false);
     const [failedAttempts, setFailedAttempts] = useState(0);
     const [isSendingResetCode, setIsSendingResetCode] = useState(false);
-
+ const { setStudentData } = useStudent();
  const handleLogin = async () => {
   console.log("handleLogin called ✅");
 
@@ -50,6 +51,7 @@ export const LoginScreen = () => {
 
         await AsyncStorage.setItem('sessionId', String(data.sessionId || ''));
         await AsyncStorage.setItem('userId', String(data.user_Id || ''));
+        setStudentData(data);
       } catch (storageError) {
         console.error('AsyncStorage saving error:', storageError);
       }

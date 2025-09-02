@@ -1,9 +1,9 @@
 import React from 'react';
-
+import { View, Text } from 'react-native';
 const StudentDashboardMyResults = () => {
     return (
-  <View style={styles.container}>
-      <Text style={styles.header}>My Courses</Text>
+  <View >
+      <Text >My Courses</Text>
     </View>
     );
 };
