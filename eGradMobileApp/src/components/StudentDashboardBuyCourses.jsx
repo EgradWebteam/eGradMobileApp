@@ -12,7 +12,7 @@ import {
 import RazorpayCheckout from 'react-native-razorpay';
 import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import CourseCards from "./CourseCards.jsx";
+import CourseCards from "./CourseCards";
 // import { useSession } from '../hooks/SessionContext';
 
 const StudentDashboardBuyCourses = ({ setActiveSection, studentId, preselectedPortalId }) => {

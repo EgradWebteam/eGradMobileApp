@@ -8,7 +8,9 @@ import { LoginScreen } from './src/screen/LoginScreen';
 import { RegisterationPage } from './src/screen/RegisterationPage';
 import { StudentDashboard } from './src/screen/StudentDashboardScreens/StudentDashboard';
 import StudentProvider from './src/hooks/StudentContext';
-import {TestScreen}  from "./src/screen/TestScreen.jsx";
+import TestScreen  from "./src/screen/TestScreen";
+import ExamInstructionsScreen  from "./src/screen/ExamInstructionsScreen";
+import GeneralInstructionsScreen from './src/screen/GeneralInstructionsScreen';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -22,6 +24,8 @@ const App = () => {
           }}
         >
           <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="ExamInstructions" component={ExamInstructionsScreen} />
+          <Stack.Screen name="GeneralInstructions" component={GeneralInstructionsScreen} />
           <Stack.Screen name="login" component={LoginScreen} />
           <Stack.Screen name="TestScreen" component={TestScreen} />
           <Stack.Screen name="register" component={RegisterationPage} />

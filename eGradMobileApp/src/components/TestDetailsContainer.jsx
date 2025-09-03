@@ -2,14 +2,14 @@ import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator, Alert } from "react-native";
 import { Picker } from "@react-native-picker/picker"; // or use react-native-dropdown-picker
 import { useNavigation } from "@react-navigation/native";
-import { BASE_URL } from "../../ConfigFile/ApiConfigURL";
-import { encryptBatch } from "../../utils/CryptoUtils";
+ import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig";
+import { encryptBatch } from "../utils/CryptoUtils";
 // import { useSession } from "./hooks/SessionContext";
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import imageStarted from "../images/startTest.png";
 import imageResumed from "../images/resomeTest.png";
 import imageViewReport from "../images/viewReport.png";
-
+console.log("Picker:", Picker);
 const TestDetailsContainer = ({ course, studentId, data, userData, selectedPortalId }) => {
   const [groupedTests, setGroupedTests] = useState({});
   const [selectedSubjectId, setSelectedSubjectId] = useState("");
@@ -20,7 +20,7 @@ const TestDetailsContainer = ({ course, studentId, data, userData, selectedPorta
 
 //   const { validateSession } = useSession();
   const navigation = useNavigation();
-  const token = sessionStorage.getItem("accessToken");
+
   const courseId = course?.course_id;
 
   const images = {
@@ -56,21 +56,25 @@ const TestDetailsContainer = ({ course, studentId, data, userData, selectedPorta
   }, []);
 
   // Fetch tests from API
-  const fetchCourseTests = useCallback(async () => {
-    if (!courseId || !studentId) return;
-    try {
-      setLoading(true);
-      const res = await fetch(`${BASE_URL}/studentmycourses/coursetestdetails/${courseId}/${studentId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const result = await res.json();
-      processTestDetails(result);
-    } catch (err) {
-      console.error("Failed to fetch test details", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [courseId, studentId, token, processTestDetails]);
+
+const fetchCourseTests = useCallback(async () => {
+  const token = await AsyncStorage.getItem("accessToken");
+  if (!courseId || !studentId || !token) return;
+
+  try {
+    setLoading(true);
+    const res = await axios.get(`${backEndUrl}/studentmycourses/coursetestdetails/${courseId}/${studentId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const result = res.data;
+    processTestDetails(result);
+  } catch (err) {
+    console.error("Failed to fetch test details", err);
+  } finally {
+    setLoading(false);
+  }
+}, [courseId, studentId, processTestDetails]);
+
 
   useEffect(() => {
     if (data) processTestDetails(data);
@@ -91,38 +95,108 @@ const TestDetailsContainer = ({ course, studentId, data, userData, selectedPorta
   };
 
   const allTests = flattenGroupedTests(groupedTests);
-  const filteredTests = selectedSubjectId
-    ? allTests.filter(test => test.subject_ids?.split(",").map(id => id.trim()).includes(selectedSubjectId))
-    : allTests;
+const filteredTests = allTests.filter(test => {
+  const matchesSubject = selectedSubjectId
+    ? test.subject_ids?.split(",").map(id => id.trim()).includes(selectedSubjectId)
+    : true;
+
+  const matchesTestType = selectedTestType && selectedTestType !== "All Tests"
+    ? test.type === selectedTestType
+    : true;
+
+  return matchesSubject && matchesTestType;
+});
+
 
   // Open test
   const handleStartTestClick = async (test) => {
-    // const isValid = await validateSession();
-    if (!isValid) return;
+  const testCreationTableId = test.test_id;
+  const formattedTime = new Date().toISOString();
+  const courseCreationId = courseId ?? test.course_id;
 
-    if (sessionStorage.getItem("navigationToken")) {
-      setShowPopup(true);
+  // Validate session, assume it returns boolean
+//   const isValid = await validateSession();
+//   if (!isValid) return;
+
+  try {
+    // Check if there's an active test session (replace sessionStorage with AsyncStorage)
+    const navigationToken = await AsyncStorage.getItem('navigationToken');
+    if (navigationToken) {
+      // Show some modal or alert in React Native
+      Alert.alert(
+        "Active Test",
+        "You already have an active test in progress. Please complete it before starting another one."
+      );
       return;
     }
 
-    try {
+    // Encrypt IDs
     const [encryptedTestId, encryptedStudentId, encryptedCourseId] = await encryptBatch([
-      test.test_id,
+      testCreationTableId,
       studentId,
-      courseId ?? test.course_id
+      courseCreationId
     ]);
 
-    // Navigate to Test Screen
-    navigation.navigate("TestScreen", {
-      testId: encryptedTestId,
-      studentId: encryptedStudentId,
-      courseId: encryptedCourseId
-    });
+    const testStatusData = {
+      studentregistrationId: studentId,
+      courseCreationId: courseCreationId,
+      testCreationTableId: testCreationTableId,
+      studentTestStartTime: formattedTime,
+      testAttemptStatus: 'started',
+      testConnectionStatus: 'active',
+      testConnectionTime: formattedTime
+    };
 
-    } catch (err) {
-      console.error("Error starting test:", err);
+    const response = await axios.post(
+      `${BASE_URL}/studentmycourses/InsertOrUpdateTestAttemptStatus`,
+      testStatusData,
+      {
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
+
+    if (response.status === 200) {
+      await AsyncStorage.setItem('navigationToken', 'valid');
+
+      // Refresh UI triggers (if you have any)
+      setRefreshTrigger((prev) => !prev);
+      if (setRefreshTriggerBundle) setRefreshTriggerBundle((prev) => !prev);
+
+      // Decide which screen to navigate based on test time
+      const convertToHHMMSS = (minutes) => {
+        const totalSeconds = minutes * 60;
+        const hrs = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+        const mins = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+        const secs = String(totalSeconds % 60).padStart(2, '0');
+        return `${hrs}:${mins}:${secs}`;
+      };
+
+      const durationHHMMSS = convertToHHMMSS(test.duration || 0);
+      const timeSpent = test.time_spent ?? "00:00:00";
+
+      if (durationHHMMSS === timeSpent) {
+        // Test is completed, navigate to results or something
+        navigation.navigate('TestResultScreen', {
+          testId: encryptedTestId,
+          studentId: encryptedStudentId,
+          courseId: encryptedCourseId
+        });
+      } else {
+        // Navigate to instructions screen
+        navigation.navigate('GeneralInstructions', {
+          testId: encryptedTestId,
+          studentId: encryptedStudentId,
+          courseId: encryptedCourseId
+        });
+      }
+    } else {
+      Alert.alert("Error", "Failed to update test status");
     }
-  };
+  } catch (error) {
+    console.error("Error starting test:", error);
+    Alert.alert("Error", "An error occurred while starting the test");
+  }
+};
 
   const handleViewReport = (test) => {
     navigation.navigate("StudentReport", {
@@ -150,18 +224,19 @@ const TestDetailsContainer = ({ course, studentId, data, userData, selectedPorta
       )}
 
       {/* Picker for test type / subject */}
-      <Picker
-        selectedValue={selectedTestType || selectedSubjectId}
-        onValueChange={(value) => {
-          if (value.startsWith("type-")) {
-            setSelectedTestType(value.replace("type-", ""));
-            setSelectedSubjectId("");
-          } else if (value.startsWith("subject-")) {
-            setSelectedSubjectId(value.replace("subject-", ""));
-            setSelectedTestType("");
-          }
-        }}
-      >
+<Picker
+  selectedValue={selectedTestType || selectedSubjectId}
+  onValueChange={(itemValue, itemIndex) => {
+    if (itemValue.startsWith("type-")) {
+      setSelectedTestType(itemValue.replace("type-", ""));
+      setSelectedSubjectId("");
+    } else if (itemValue.startsWith("subject-")) {
+      setSelectedSubjectId(itemValue.replace("subject-", ""));
+      setSelectedTestType("");
+    }
+  }}
+>
+
         <Picker.Item label="Select Test Type / Subject" value="type-All Tests" />
         {Object.keys(groupedTests).map(type => (
           <Picker.Item key={type} label={type} value={`type-${type}`} />
@@ -192,14 +267,31 @@ const TestDetailsContainer = ({ course, studentId, data, userData, selectedPorta
               </View>
             </View>
 
-            <TouchableOpacity
-              style={{ marginTop: 10, padding: 10, backgroundColor: attemptStatus === "completed" ? "green" : "blue", borderRadius: 5 }}
-              onPress={() => attemptStatus === "completed" ? handleViewReport(test) : handleStartTestClick(test)}
-            >
-              <Text style={{ color: "#fff", textAlign: "center" }}>
-                {attemptStatus === "completed" ? "View Report" : attemptStatus === "started" || attemptStatus === "resumed" ? "Resume Test" : "Start Test"}
-              </Text>
-            </TouchableOpacity>
+         {test.test_status !== "0" && (
+  <TouchableOpacity
+    style={{
+      marginTop: 10,
+      padding: 10,
+      width:"130px",
+      backgroundColor: attemptStatus === "completed" ? "#2ecc71" : "#06b6d4",
+      borderRadius: 5,
+    }}
+    onPress={() =>
+      attemptStatus === "completed"
+        ? handleViewReport(test)
+        : handleStartTestClick(test)
+    }
+  >
+    <Text style={{ color: "#fff", textAlign: "center" }}>
+      {attemptStatus === "completed"
+        ? "View Report"
+        : attemptStatus === "started" || attemptStatus === "resumed"
+        ? "Resume Test"
+        : "Start Test"}
+    </Text>
+  </TouchableOpacity>
+)}
+
           </View>
         );
       })}

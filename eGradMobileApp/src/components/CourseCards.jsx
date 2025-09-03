@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#000',
   },
   imageContainer: {
     alignItems: 'center',

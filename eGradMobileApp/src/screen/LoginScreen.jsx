@@ -20,7 +20,7 @@ export const LoginScreen = () => {
     const [isSendingResetCode, setIsSendingResetCode] = useState(false);
  const { setStudentData } = useStudent();
  const handleLogin = async () => {
-  console.log("handleLogin called ✅");
+//   console.log("handleLogin called ✅");
 
   if (!email || !password) {
     Alert.alert("Validation Error", "Please enter email and password");
