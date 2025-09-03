@@ -15,7 +15,11 @@ import CourseCards from './CourseCards';
 import BundleCourseCard from './BundleCourseCard';
 import TestDetailsContainer from './TestDetailsContainer';
 import BundleCourseContainer from './BundleCourseContainer';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+// OR
+// import Icon from 'react-native-vector-icons/Feather';
 
+import axios from 'axios';
 const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
   const [loading, setLoading] = useState(true);
   const [selectedTestCourse, setSelectedTestCourse] = useState(null);
@@ -30,34 +34,34 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
 
 //   const { validateSession } = useSession();
 
-  useEffect(() => {
-    const fetchPurchasedCourses = async () => {
-      setLoading(true);
-      try {
-        const token = await AsyncStorage.getItem("accessToken");
-        const res = await fetch(`${backEndUrl}/studentmycourses/PurchasedCourses/${studentId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        setPortals(data || []);
-        if (data.length > 0) {
-          const defaultPortal = data[0];
-          const defaultExam = defaultPortal.exams[0];
-          setSelectedPortalId(defaultPortal.course_portal_id);
-          setSelectedExamId(defaultExam?.exam_id || null);
-        }
-      } catch (err) {
-        console.error("Error fetching courses:", err);
-        Alert.alert("Error", "Failed to fetch courses");
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    if (studentId) {
-      fetchPurchasedCourses();
+useEffect(() => {
+  const fetchPurchasedCourses = async () => {
+    setLoading(true);
+    try {
+      const token = await AsyncStorage.getItem("accessToken");
+      const res = await axios.get(`${backEndUrl}/studentmycourses/PurchasedCourses/${studentId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = res.data;
+      setPortals(data || []);
+      if (data.length > 0) {
+        const defaultPortal = data[0];
+        const defaultExam = defaultPortal.exams[0];
+        setSelectedPortalId(defaultPortal.course_portal_id);
+        setSelectedExamId(defaultExam?.exam_id || null);
+      }
+    } catch (err) {
+      console.error("Error fetching courses:", err);
+      Alert.alert("Error", "Failed to fetch courses");
+    } finally {
+      setLoading(false);
     }
-  }, [studentId]);
+  };
+  if (studentId) {
+    fetchPurchasedCourses();
+  }
+}, [studentId]);
 
   const selectedPortal = useMemo(() => {
     return portals.find(p => p.course_portal_id === selectedPortalId);
@@ -70,17 +74,62 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
   const filteredCourses = useMemo(() => {
     return selectedExam?.courses || [];
   }, [selectedExam]);
-
+// console.log(selectedTestCourse ,
+        // courseContainer , courseIds.length)
   const handleGoToTest = async (course) => {
     // const isValid = await validateSession();
-    if (!isValid) return;
+    // if (!isValid) return;
+// console.log(selectedTestCourse ,
+        // courseContainer , courseIds.length,course)
+        console.log(course);
+ setSelectedTestCourse(course);
+  setShowQuizContainer(false);
+  setShowTestContainer(selectedPortalId === 1);
+  setCourseContainer(selectedPortalId === 2);
 
-    setSelectedTestCourse(course);
-    setShowQuizContainer(false);
-    setShowTestContainer(selectedPortalId === 1);
-    setCourseContainer(selectedPortalId === 2);
+  try {
+    await AsyncStorage.setItem(
+      'studentDashboardState',
+      JSON.stringify({
+        activeSection: 'myCourses',
+        selectedTestCourse: course,
+        selectedPortalId,
+        showQuizContainer: false,
+        showTestContainer: selectedPortalId === 1,
+        courseContainer: selectedPortalId === 2,
+        selectedExamId
+      })
+    );
+  } catch (error) {
+    console.error('Failed to save dashboard state:', error);
+  }
+  };
+useEffect(() => {
+  const restoreDashboardState = async () => {
+    try {
+      const savedState = await AsyncStorage.getItem('studentDashboardState');
+      if (savedState) {
+        const parsed = JSON.parse(savedState);
+        if (parsed.activeSection === 'myCourses') {
+          setSelectedTestCourse(parsed.selectedTestCourse || null);
+          setShowQuizContainer(parsed.showQuizContainer ?? true);
+          setShowTestContainer(parsed.showTestContainer ?? false);
+        //   setShowTopicContainer(parsed.showTopicContainer ?? false);
+        //   setTopicId(parsed.topicId || '');
+          setSelectedPortalId(parsed.selectedPortalId || null);
+          setCourseIds(parsed.selectedTestCourse || []); // <- You might want course IDs here, not selectedTestCourse
+          setSelectedExamId(parsed.selectedExamId || null);
+          setCourseContainer(parsed.courseContainer ?? false);
+        //   setOpenCourseOrvl(parsed.openCourseOrvl ?? false);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to parse studentDashboardState on restore:', err);
+    }
   };
 
+  restoreDashboardState();
+}, []);
   const handleBackToCourses = () => {
     setSelectedTestCourse(null);
     setShowQuizContainer(true);
@@ -96,7 +145,7 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
           <Text style={styles.breadcrumbText}>My Courses</Text>
           {selectedExam && (
             <>
-              <Text> > </Text>
+              <Text>   <Icon name="chevron-right" size={16} color="#000" style={styles.icon} /> </Text>
               <TouchableOpacity onPress={handleBackToCourses}>
                 <Text style={styles.link}>{selectedExam.exam_name}</Text>
               </TouchableOpacity>
@@ -104,7 +153,7 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
           )}
           {selectedTestCourse && (
             <>
-              <Text> > </Text>
+              <Text>   <Icon name="chevron-right" size={16} color="#000" style={styles.icon} /> </Text>
               <Text style={styles.link}>{selectedTestCourse.course_name || "MINI / MICRO COURSES"}</Text>
             </>
           )}
@@ -166,17 +215,19 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
               onGoToCourse={(course) => handleGoToTest(course)}
             />
           ) : (
-            filteredCourses.map((course) => (
-              <CourseCards
+             filteredCourses.map((course) => (
+             <CourseCards
                 key={course.course_id}
                 title={course.course_name}
                 image={course.course_img}
-                onPress={() => handleGoToTest(course)}
-              />
-            ))
-          )}
-        </>
-      )}
+                context="myCourses"
+                actionLabel="Go to Test"
+                onGoToTest={() => handleGoToTest(course)}
+            />
+          ))
+        )}
+      </>
+    )}
 
       {/* Test / Bundle Container */}
       {selectedTestCourse && (

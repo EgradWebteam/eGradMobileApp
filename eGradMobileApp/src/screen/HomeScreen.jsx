@@ -5,7 +5,7 @@ import Footer from '../components/Footer';
 import { LoginHomeHeader } from '../components/LoginHomeHeader'
 const { width } = Dimensions.get('window')
 const HomeScreen = (props) => {
-    console.log(props, "these r props");
+    // console.log(props, "these r props");
 
     const isTablet = width > 768;
     return (

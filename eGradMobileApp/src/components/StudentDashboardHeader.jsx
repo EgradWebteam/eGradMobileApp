@@ -12,7 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig";
 import defaultImage from '../images/StudentImage.png';
 import headerImage from '../images/EGTLogoExamHeaderCompressed.png';
-// import { closeTestWindowIfOpen } from '../hooks/windowManager.jsx';
+// import { closeTestWindowIfOpen } from '../hooks/windowManager';
 // import { useSession } from './hooks/SessionContext';
 
 const StudentDashboardHeader = ({

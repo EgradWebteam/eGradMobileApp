@@ -3,7 +3,7 @@ import QBStyles from "../styles/QBStyles";
 import Icon from "react-native-vector-icons/Ionicons"; 
 
 export const QBScreen=(props)=>{
-    console.log(props,"these r props");
+    // console.log(props,"these r props");
     return(
         <View contentContainerStyle={QBStyles.container}>
         <View style={QBStyles.qBankImgDiv}>

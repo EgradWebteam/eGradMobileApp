@@ -20,12 +20,12 @@ import StudentDashboardHeader from '../../components/StudentDashboardHeader';
 import StudentDashboardLeftSidebar from '../../components/StudentDashboardLeftSidebar';
 
 // Dummy components to simulate lazy-loaded
-import StudentDashboardHome from '../../components/StudentDashboardHome.jsx';
-import StudentDashboardMyCourses from '../../components/StudentDashboardMyCourses.jsx';
-import StudentDashboardBuyCourses from '../../components/StudentDashboardBuyCourses.jsx';
-import StudentDashboardBookMarks from '../../components/StudentDashboardBookMarks.jsx';
-import StudentDashboardMyResults from '../../components/StudentDashboardMyResults.jsx';
-import StudentDashboard_AccountSettings from '../../components/StudentDashboard_AccountSettings.jsx';
+import StudentDashboardHome from '../../components/StudentDashboardHome';
+import StudentDashboardMyCourses from '../../components/StudentDashboardMyCourses';
+import StudentDashboardBuyCourses from '../../components/StudentDashboardBuyCourses';
+import StudentDashboardBookMarks from '../../components/StudentDashboardBookMarks';
+import StudentDashboardMyResults from '../../components/StudentDashboardMyResults';
+import StudentDashboard_AccountSettings from '../../components/StudentDashboard_AccountSettings';
 
 export const StudentDashboard = () => {
   const [activeSection, setActiveSection] = useState('dashboard');
