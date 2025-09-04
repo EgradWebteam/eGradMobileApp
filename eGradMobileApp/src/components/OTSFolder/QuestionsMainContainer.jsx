@@ -56,7 +56,9 @@ const QuestionsMainContainer = ({
   const subject = testData?.subjects?.find(sub => sub.SubjectName === activeSubject);
   const section = subject?.sections?.find(sec => sec.SectionName === activeSection);
   const question = section?.questions?.[activeQuestionIndex] || null;
-
+// const getScrollTarget = () => {
+//   return isMobile ? questionScrollRefMobile.current : questionScrollRefDesktop.current;
+// };
   useEffect(() => {
     const saved = userAnswers?.[String(question?.question_id)];
     if (saved?.type === 'MCQ' && saved.optionId) {
@@ -66,14 +68,14 @@ const QuestionsMainContainer = ({
       });
     }
   }, [question?.question_id]);
-useEffect(() => {
-  const scrollTarget = getScrollTarget();
-  if (scrollTarget) {
+// useEffect(() => {
+//   const scrollTarget = getScrollTarget();
+//   if (scrollTarget) {
 
-      scrollTarget.scrollTo(0, 0);
+//       scrollTarget.scrollTo(0, 0);
  
-  }
-}, [activeQuestionIndex, activeSection, activeSubject, isMobile]);
+//   }
+// }, [activeQuestionIndex, activeSection, activeSubject, isMobile]);
 
   const handleQuestionClick = async (index) => {
     // const isValid = await validateSessionWithoutNavigation();
@@ -166,7 +168,7 @@ useEffect(() => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.mainContainerforquestion}>
       {/* Question Numbers */}
       <ScrollView horizontal style={styles.questionNumberRow}>
         {section?.questions?.map((q, idx) => (

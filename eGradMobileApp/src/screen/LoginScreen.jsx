@@ -4,7 +4,7 @@ import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'reac
 import Toast from 'react-native-toast-message';
 import Footer from '../components/Footer';
 import { LoginHomeHeader } from '../components/LoginHomeHeader';
-import { backEndPort, frontEndUrl } from '../apiConfig';
+import { backEndPort, frontEndUrl,backEndUrl } from '../apiConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useStudent } from '../hooks/StudentContext';
 export const LoginScreen = () => {
@@ -46,6 +46,7 @@ export const LoginScreen = () => {
     if (response.ok && data.user_Id) {
       // Save session tokens & user data to AsyncStorage
       try {
+            // await AsyncStorage.clear();
         await AsyncStorage.setItem('accessToken', data.accessToken);
      await AsyncStorage.setItem('decryptedId', String(data.decryptedId || ''));
 
@@ -131,7 +132,7 @@ navigation.navigate("studentDashboard", { userId: data.user_Id });
     console.log("resetPasswordData", resetPasswordData);
 
     try {
-      const response = await fetch(`${BASE_URL}/login/reset-password`, {
+      const response = await fetch(`${backEndUrl}/login/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(resetPasswordData),

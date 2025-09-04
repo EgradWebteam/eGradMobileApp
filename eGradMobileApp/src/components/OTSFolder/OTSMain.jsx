@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef,useCallback } from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Alert
 } from 'react-native';
-import { styles } from '../../styles/OTSStyles.js';
+import { styles } from '../../styles/OTSStyles';
 import axios from 'axios';
 import { backEndUrl, frontEndUrl,backEndPort } from "../../apiConfig";
 import OTSTimer from './OTSTimer';
@@ -15,10 +15,13 @@ import QuestionsMainContainer from './QuestionsMainContainer';
 import SubjectsAndSectionsContainer from './SubjectsAndSectionsContainer';
 import OTSRightSideBar from './OTSRightSideBar'; // or omit if not needed
 import QuestionNavigationButtons from './QuestionNavigationButtons';
-import ExamSummaryCollector from './ExamSummaryCollector.jsx';
+import ExamSummaryCollector from './ExamSummaryCollector';
+import TimerProvider, { useTimer } from '../../hooks/TimerContext';
+import  QuestionStatusProvider  from '../../hooks/CountsContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // import { useSession } from '../../StudentDashboard/hooks/SessionContext';
 
-export default function OTSMain({
+const OTSMain = ({
   testData,
   realStudentId,
   realTestId,
@@ -34,7 +37,7 @@ export default function OTSMain({
   setNormalTestData,
   fullTestData,
   setFullTestData,
-}) {
+}) => {
   const [activeSubject, setActiveSubject] = useState(null);
   const [activeSection, setActiveSection] = useState(null);
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
@@ -336,7 +339,7 @@ export default function OTSMain({
       <QuestionStatusProvider testData={testData} activeSubject={activeSubject} activeSection={activeSection} userAnswers={userAnswers}>
         <TimerProvider testData={testData} resumeTime={resumeTime}>
           <ExamSummaryCollector
-            onDataReady
+             onDataReady={true}
             realStudentId={realStudentId}
             realTestId={realTestId}
             realCourseId={realCourseId}
@@ -347,7 +350,7 @@ export default function OTSMain({
     </View>
   );
 }
-
+export default OTSMain;
 // ✅ Helper functions
 function getButtonClass(status) {
   switch (status) {

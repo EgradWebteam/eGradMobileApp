@@ -9,8 +9,9 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useStudent } from '../../hooks/StudentContext.jsx';
- import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig.js";
+ import { backEndUrl, frontEndUrl,backEndPort } from "../../apiConfig.js";
 import defaultImage from '../../images/StudentImage.png';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import adminCapImg from '../../images/capImg.png';
  // Replace with RN vector icons
 // import { useSession } from "../../StudentDashboard/hooks/SessionContext.jsx";
@@ -55,10 +56,17 @@ const OTSRightSideBar = ({
 
   // Admin check (you might want to store this in context or state in RN)
   const [adminRole, setAdminRole] = useState(null);
-  useEffect(async () => {
-    // In RN you can't use localStorage - use AsyncStorage instead or pass as prop/context
-    // For demo, assuming adminRole comes from somewhere
-   setAdminRole(await AsyncStorage.getItem('adminRole'));
+  useEffect(() => {
+    const fetchAdminRole = async () => {
+      try {
+        const role = await AsyncStorage.getItem('adminRole');
+        setAdminRole(role);
+      } catch (error) {
+        console.error('Error retrieving admin role:', error);
+      }
+    };
+
+    fetchAdminRole(); // Call the async function inside useEffect
   }, []);
   useEffect(() => {
     const saveIfNewQuestion = async () => {

@@ -36,7 +36,7 @@ const ExamSummaryCollector = ({
     };
 
     if (onDataReady) {
-      onDataReady(summaryData.current);
+      summaryData = summaryData.current;
     }
   }, [
     realStudentId,

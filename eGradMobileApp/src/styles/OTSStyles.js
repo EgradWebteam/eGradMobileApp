@@ -6,7 +6,20 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
     flexGrow: 1,
   },
-  
+  navbarcontainer: {
+    backgroundColor: '#f8f8f8',
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  mainContainerforquestion: {
+    flex: 1,
+    padding: 16,
+  },
+  mainContainer: {
+    flex: 1,
+    padding: 16,
+  },
   heading: {
     fontSize: 22,
     fontWeight: 'bold',

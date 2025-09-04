@@ -5,8 +5,8 @@ import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from "axios";
  import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig.js";
-import { decryptBatch }from "../../utils/CryptoUtils";
-import { styles } from '../styles/OTSStyles.js';
+import { decryptBatch }from "../utils/CryptoUtils.jsx";
+import { styles } from '../styles/OTSStyles';
 import OTSHeader from "../components/OTSFolder/OTSHeader";
 import OTSNavbar from "../components/OTSFolder/OTSNavbar";
 import OTSMain from "../components/OTSFolder/OTSMain";
@@ -15,6 +15,7 @@ import TimerProvider from "../hooks/TimerContext";
 const TestScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
+
 
   const { testId, studentId, courseId } = route.params;
 
@@ -33,7 +34,7 @@ const TestScreen = () => {
   const [violationCount, setViolationCount] = useState(0);
 
   const appState = useRef(AppState.currentState);
-
+  const summaryData = useRef({});
 useEffect(() => {
   const fetchTestData = async () => {
     setIsLoading(true);
@@ -87,7 +88,7 @@ useEffect(() => {
     } catch (error) {
       console.error('Error fetching test data:', error);
       Alert.alert('Error', 'Failed to load test data.');
-      navigation.navigate('Error'); // assumes you're using react-navigation
+      // assumes you're using react-navigation
     } finally {
       setIsLoading(false);
     }
@@ -145,18 +146,20 @@ useEffect(() => {
       <TimerProvider testData={testPaperData}>
         <OTSMain
           testData={testPaperData}
-          realStudentId={realStudentId.current}
-          realCourseId={realCourseId.current}
-          realTestId={realTestId.current}
-          warningMessage={warningMessage}
-          userAnswers={userAnswers}
-          setUserAnswers={setUserAnswers}
-          hasBonus={hasBonus}
-          setTestPaperData={setTestPaperData}
-          normalTestData={normalTestData}
-          setNormalTestData={setNormalTestData}
-          fullTestData={fullTestData}
-          setFullTestData={setFullTestData}
+            realStudentId={realStudentId.current}
+            realCourseId={realCourseId.current}
+            realTestId={realTestId.current}
+            warningMessage={warningMessage}
+            summaryData={summaryData}
+            sectionType={testPaperData.sectionType}
+            userAnswers={userAnswers}
+            setUserAnswers={setUserAnswers}
+            hasBonus={hasBonus}
+            setTestPaperData={setTestPaperData}
+            normalTestData={normalTestData}
+            setNormalTestData={setNormalTestData}
+            fullTestData={fullTestData}
+            setFullTestData={setFullTestData}
         />
       </TimerProvider>
 

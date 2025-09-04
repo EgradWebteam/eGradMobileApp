@@ -28,7 +28,7 @@ const OTSNavbar = ({ testName, testData, realTestId, realCourseId }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.navbarcontainer}>
       <View style={styles.testNameHolder}>
         <Text style={styles.testName}>{testName}</Text>
       </View>

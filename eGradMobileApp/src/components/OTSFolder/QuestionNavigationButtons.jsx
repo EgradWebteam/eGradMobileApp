@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Modal, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Text, TouchableOpacity, Modal, StyleSheet, ActivityIndicator,ScrollView } from "react-native";
 import QuestionStatusProvider, { useQuestionStatus } from "../../hooks/CountsContext";
 import { useTimer } from "../../hooks/TimerContext.jsx";
 
@@ -715,20 +715,30 @@ useEffect(() => {
   if (timeLeft === 0) {
     const autoSubmit = async () => {
       setIsAutoSubmitted(true);
-      sessionStorage.setItem("examSummaryEntered", "true");
-      sessionStorage.setItem("autoSubmitted", "true");
+      await AsyncStorage.setItem("examSummaryEntered", "true");
+      await AsyncStorage.setItem("autoSubmitted", "true");
       await handleSubmitClick();
     };
     autoSubmit();
   }
 }, [timeLeft]);
 
-useEffect(() => {
-  // On mount, check if exam summary was already entered or submitted
-  const enteredSummary = sessionStorage.getItem("examSummaryEntered") === "true";
-  const alreadySubmitted = sessionStorage.getItem("examSubmitted") === "true";
-  if (enteredSummary || alreadySubmitted) setShowExamSummary(true);
-}, []);
+  useEffect(() => {
+    const checkExamStatus = async () => {
+      try {
+        const enteredSummary = await AsyncStorage.getItem("examSummaryEntered");
+        const alreadySubmitted = await AsyncStorage.getItem("examSubmitted");
+
+        if (enteredSummary === "true" || alreadySubmitted === "true") {
+          setShowExamSummary(true);
+        }
+      } catch (error) {
+        console.error("Error checking exam status:", error);
+      }
+    };
+
+    checkExamStatus();
+  }, []);
 
 const prepareForTimeSaveforQuestion = async () => {
   const subject = testData?.subjects?.find(sub => sub.SubjectName === activeSubject);
@@ -792,7 +802,7 @@ const handleSubmitClick = async () => {
 
 const submitExam = async (formattedTimeSpent, attemptedCount, notAttemptedCount) => {
   setIsSubmitClicked(true);
-  sessionStorage.setItem("examSummaryEntered", "true");
+  await AsyncStorage.setItem("examSummaryEntered", "true");
 
   setShowExamSummary(true);
 
@@ -828,7 +838,7 @@ const submitExam = async (formattedTimeSpent, attemptedCount, notAttemptedCount)
 
     if (response.ok) {
       console.log("Summary Submitted:", result.message);
-      sessionStorage.setItem("examSubmitted", "true");
+      await AsyncStorage.setItem("examSubmitted", "true");
     } else {
       console.error("Submit Failed:", result.message);
     }
@@ -942,39 +952,47 @@ const onCancelSubmit = async () => {
       <View style={styles.btnsSubContainer}>
         <View style={styles.navigationBtnHolderSubContainer}>
           <TouchableOpacity
-            style={getButtonStyle(isDisabled)}
+            // style={getButtonStyle(isDisabled)}
             onPress={handleMarkedForReview}
             disabled={isDisabled || isSaving}
           >
-            <Text style={getButtonTextStyle(isDisabled)}>Marked For Review & Next</Text>
+            <Text
+            //  style={getButtonTextStyle(isDisabled)}
+             >Marked For Review & Next</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={getButtonStyle(isDisabled)}
+            // style={getButtonStyle(isDisabled)}
             onPress={handleClearResponse}
             disabled={isDisabled || isSaving}
           >
-            <Text style={getButtonTextStyle(isDisabled)}>Clear Response</Text>
+            <Text 
+            // style={getButtonTextStyle(isDisabled)}
+            >Clear Response</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.navigationBtnHolderSubContainerForSubmit}>
           {activeQuestionIndex > 0 && (
             <TouchableOpacity
-              style={getButtonStyle(isDisabled)}
+              // style={getButtonStyle(isDisabled)}
               onPress={handlePrevious}
               disabled={isDisabled || isSaving}
             >
-              <Text style={getButtonTextStyle(isDisabled)}>Previous</Text>
+              <Text 
+              // style={getButtonTextStyle(isDisabled)}
+              >Previous</Text>
             </TouchableOpacity>
           )}
 
           <TouchableOpacity
-            style={getButtonStyle(isDisabled)}
+            // style={getButtonStyle(isDisabled)}
             onPress={handleSaveAndNext}
             disabled={isDisabled || isSaving}
           >
-            <Text style={getButtonTextStyle(isDisabled)}>Save & Next</Text>
+            <Text 
+            // style={getButtonTextStyle(isDisabled)}
+            >Save & Next</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -985,7 +1003,9 @@ const onCancelSubmit = async () => {
           onPress={handleSubmitClick}
           disabled={isSaving}
         >
-          <Text style={getButtonTextStyle(isSaving)}>Submit</Text>
+          <Text 
+          // style={getButtonTextStyle(isSaving)}
+          >Submit</Text>
         </TouchableOpacity>
 
         {/* Hidden Save & Next button equivalent, if needed, you can toggle with conditional rendering */}

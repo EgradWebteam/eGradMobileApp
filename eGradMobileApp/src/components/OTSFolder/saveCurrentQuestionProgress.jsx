@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BASE_URL } from "../../ConfigFile/ApiConfigURL.js";
+import { backEndUrl } from "../../apiConfig";
 
 export const saveCurrentQuestionProgress = async ({
   testData,
@@ -53,7 +53,7 @@ export const saveCurrentQuestionProgress = async ({
 
     // Save time to backend using axios
     try {
-      await axios.patch(`${BASE_URL}/OTSTestPaper/SaveTimeOnly`, {
+      await axios.patch(`${backEndUrl}/OTSTestPaper/SaveTimeOnly`, {
         realStudentId,
         realTestId,
         realCourseId,
