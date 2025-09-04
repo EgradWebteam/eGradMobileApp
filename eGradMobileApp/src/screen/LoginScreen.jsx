@@ -55,13 +55,13 @@ export const LoginScreen = () => {
       } catch (storageError) {
         console.error('AsyncStorage saving error:', storageError);
       }
-
-      Alert.alert("Success", "Login successful", [
-        {
-          text: "Go to Dashboard",
-          onPress: () => navigation.navigate("studentDashboard", { userId: data.user_Id }),
-        },
-      ]);
+navigation.navigate("studentDashboard", { userId: data.user_Id });
+    //   Alert.alert("Success", "Login successful", [
+    //     {
+    //       text: "Go to Dashboard",
+    //       onPress: () => navigation.navigate("studentDashboard", { userId: data.user_Id }),
+    //     },
+    //   ]);
     } else {
       setFailedAttempts((prev) => prev + 1);
 

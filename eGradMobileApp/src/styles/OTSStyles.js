@@ -6,6 +6,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
     flexGrow: 1,
   },
+  
   heading: {
     fontSize: 22,
     fontWeight: 'bold',
@@ -22,7 +23,7 @@ export const styles = StyleSheet.create({
   },
   profileImage: {
     width: 100,
-    height: 100,
+    // height: 100,
     borderRadius: 60,
   },
   studentName: {
@@ -82,7 +83,7 @@ export const styles = StyleSheet.create({
   rowTableClass: { flexDirection: "row", alignItems: "center", marginBottom: 8 },
   displayIcon: {
     width: 30,
-    height: 30,
+    // height: 30,
     borderRadius: 15,
     backgroundColor: "#ddd",
     justifyContent: "center",
@@ -106,7 +107,7 @@ export const styles = StyleSheet.create({
   },
   userImage: {
     width: 60,
-    height: 60,
+    // height: 60,
     borderRadius: 30,
     resizeMode: "cover",
   },
@@ -206,11 +207,11 @@ export const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 6,
   },
-  buttonText: {
-    marginLeft: 8,
-    fontSize: 14,
-    color: "#2c3e50",
-  },
+//   buttonText: {
+//     marginLeft: 8,
+//     fontSize: 14,
+//     color: "#2c3e50",
+//   },
    scrollContent: {
     padding: 15,
     paddingBottom: 50,
@@ -225,7 +226,7 @@ export const styles = StyleSheet.create({
   },
   logo: {
     width: 80,
-    height: 40,
+    // height: 40,
   },
   headerRight: {
     flex: 1,
@@ -255,16 +256,16 @@ export const styles = StyleSheet.create({
     marginTop: 15,
     marginBottom: 5,
   },
-  questionContainer: {
-    marginBottom: 20,
-  },
+//   questionContainer: {
+//     marginBottom: 20,
+//   },
   questionNumber: {
     fontWeight: "600",
     marginBottom: 8,
   },
   image: {
     width: "100%",
-    height: height * 0.25,
+    // height: height * 0.25,
     resizeMode: "contain",
     marginVertical: 10,
   },
@@ -279,7 +280,7 @@ export const styles = StyleSheet.create({
   },
   optionImage: {
     width: "80%",
-    height: 50,
+    // height: 50,
     resizeMode: "contain",
   },
   scrollButton: {
@@ -373,7 +374,7 @@ export const styles = StyleSheet.create({
   },
   statusCircle: {
     width: 28,
-    height: 28,
+    // height: 28,
     borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
@@ -409,7 +410,7 @@ export const styles = StyleSheet.create({
   },
   questionImage: {
     width: '100%',
-    height: 200,
+    // height: 200,
     marginBottom: 20,
   },
   scrollButtons: {
@@ -447,12 +448,12 @@ export const styles = StyleSheet.create({
   activeButton: {
     backgroundColor: "#6c5ce7",
   },
-  warningBox: {
-    backgroundColor: "#fff3cd",
-    padding: 10,
-    marginVertical: 10,
-    borderRadius: 6,
-  },
+//   warningBox: {
+//     backgroundColor: "#fff3cd",
+//     padding: 10,
+//     marginVertical: 10,
+//     borderRadius: 6,
+//   },
   buttonRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -477,21 +478,21 @@ export const styles = StyleSheet.create({
   navigationBtnHolderSubContainerForSubmit: {
     flexDirection: 'row',
   },
-  button: {
-    backgroundColor: '#007bff',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    marginHorizontal: 4,
-    borderRadius: 4,
-  },
-  disabledButton: {
-    backgroundColor: '#aaa',
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: '600',
-    textAlign: 'center',
-  },
+//   button: {
+//     backgroundColor: '#007bff',
+//     paddingVertical: 12,
+//     paddingHorizontal: 16,
+//     marginHorizontal: 4,
+//     borderRadius: 4,
+//   },
+//   disabledButton: {
+//     backgroundColor: '#aaa',
+//   },
+//   buttonText: {
+//     color: '#fff',
+//     fontWeight: '600',
+//     textAlign: 'center',
+//   },
   disabledButtonText: {
     color: '#ddd',
   },
@@ -536,9 +537,9 @@ export const styles = StyleSheet.create({
   yesButton: {
     backgroundColor: '#28a745',
   },
-  noButton: {
-    backgroundColor: '#dc3545',
-  },
+//   noButton: {
+//     backgroundColor: '#dc3545',
+//   },
   popupButtonText: {
     color: '#fff',
     fontWeight: '600',
@@ -548,5 +549,113 @@ export const styles = StyleSheet.create({
   },
   examSummarySubDiv: {
     // your styles here
+  },
+  //examsummmary
+  scrollView: {
+    paddingBottom: 40,
+  },
+//   title: {
+//     fontSize: 24,
+//     fontWeight: "bold",
+//     marginBottom: 20,
+//   },
+  summaryContainer: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 6,
+    marginBottom: 20,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    borderBottomWidth: 1,
+    borderColor: "#eee",
+  },
+  cellLabel: {
+    fontSize: 16,
+    color: "#444",
+  },
+  cellValue: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#222",
+  },
+  messageContainer: {
+    marginTop: 20,
+    alignItems: "center",
+  },
+//   heading: {
+//     fontSize: 20,
+//     fontWeight: "700",
+//     marginBottom: 10,
+//   },
+//   subHeading: {
+//     fontSize: 16,
+//     marginBottom: 20,
+//     textAlign: "center",
+//     paddingHorizontal: 10,
+//   },
+  confirmationText: {
+    fontSize: 16,
+    marginBottom: 20,
+    textAlign: "center",
+    paddingHorizontal: 10,
+  },
+  buttonGroup: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+    paddingHorizontal: 20,
+  },
+//   button: {
+//     backgroundColor: "#007AFF",
+//     paddingVertical: 12,
+//     paddingHorizontal: 25,
+//     borderRadius: 6,
+//     marginHorizontal: 10,
+//   },
+//   yesButton: {
+//     backgroundColor: "#28a745",
+//   },
+  noButton: {
+    backgroundColor: "#dc3545",
+  },
+//   buttonText: {
+//     color: "#fff",
+//     fontWeight: "600",
+//     fontSize: 16,
+//   },
+  submissionPopup: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+  submissionTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 15,
+  },
+  submissionText: {
+    fontSize: 18,
+    marginBottom: 30,
+    textAlign: "center",
+  },
+  //otsheader
+    headerContainer: {
+    height: 60,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+  },
+  logoHolder: {
+    width: 200,
+    height: 40,
+  },
+  logo: {
+    width: "100%",
+    height: "100%",
   },
 });

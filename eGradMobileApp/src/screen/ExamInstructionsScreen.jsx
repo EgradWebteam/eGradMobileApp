@@ -8,8 +8,10 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
-  CheckBox,
+ 
 } from 'react-native';
+import CheckBox from '@react-native-community/checkbox';
+
 import { styles } from '../styles/OTSStyles.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -19,12 +21,12 @@ import { decryptBatch, encryptBatch } from '../utils/CryptoUtils.jsx';
 import axios from 'axios';
 import defaultImage from '../images/StudentImage.png';
 import adminCapImg from '../images/capImg.png';
+import OTSHeader from "../components/OTSFolder/OTSHeader";
  import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig.js";
 const ExamInstructionsScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { testId, studentId, courseId } = route.params || {};
-
 //   const { validateSessionWithoutNavigation } = useSession();
   const [realTestId, setRealTestId] = useState('');
   const [realStudentId, setRealStudentId] = useState('');
@@ -73,7 +75,7 @@ const ExamInstructionsScreen = () => {
         setRealTestId(decryptedTestId);
         setRealStudentId(decryptedStudentId);
         setRealCourseId(decryptedCourseId);
-
+// console.log(decryptedTestId)
         const token = isAdmin
           ? await AsyncStorage.getItem('adminToken')
           : await AsyncStorage.getItem('accessToken');
@@ -109,7 +111,7 @@ const ExamInstructionsScreen = () => {
           ? await encryptBatch([realTestId, realStudentId, realCourseId])
           : await encryptBatch([realTestId]);
 
-        navigation.navigate('OTSRootFile', {
+        navigation.navigate('TestScreen', {
           testId: encodeURIComponent(encrypted[0]),
           studentId: studentId ? encodeURIComponent(encrypted[1]) : null,
           courseId: courseId ? encodeURIComponent(encrypted[2]) : null,
@@ -153,6 +155,7 @@ const ExamInstructionsScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <OTSHeader />
       <Text style={styles.heading}>{instructionHeading}</Text>
 
       {instructionPoints.map((point, index) => (

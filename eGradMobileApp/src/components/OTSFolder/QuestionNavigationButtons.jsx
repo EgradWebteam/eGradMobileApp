@@ -5,7 +5,7 @@ import { useTimer } from "../../hooks/TimerContext.jsx";
 
 
 import { backEndUrl, frontEndUrl,backEndPort } from "../../apiConfig";
-import { styles } from '../../styles/OTSStyles.js';
+import { styles } from '../../styles/OTSStyles';
 import OTSExamSummary from "./OTSExamSummary.jsx";
 // import { useSession } from "../../StudentDashboard/hooks/SessionContext.jsx";
 import AsyncStorage from '@react-native-async-storage/async-storage';

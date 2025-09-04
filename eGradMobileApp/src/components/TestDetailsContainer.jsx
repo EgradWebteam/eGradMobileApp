@@ -4,20 +4,21 @@ import { Picker } from "@react-native-picker/picker"; // or use react-native-dro
 import { useNavigation } from "@react-navigation/native";
  import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig";
 import { encryptBatch } from "../utils/CryptoUtils";
+import axios from 'axios';
 // import { useSession } from "./hooks/SessionContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import imageStarted from "../images/startTest.png";
 import imageResumed from "../images/resomeTest.png";
 import imageViewReport from "../images/viewReport.png";
 console.log("Picker:", Picker);
-const TestDetailsContainer = ({ course, studentId, data, userData, selectedPortalId }) => {
+const TestDetailsContainer = ({course, testDataLoading, refreshTriggerBundle, setRefreshTriggerBundle, onBack, studentId, data, userData, selectedPortalId  }) => {
   const [groupedTests, setGroupedTests] = useState({});
   const [selectedSubjectId, setSelectedSubjectId] = useState("");
   const [selectedTestType, setSelectedTestType] = useState("All Tests");
   const [allSubjects, setAllSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
-
+ const [refreshTrigger, setRefreshTrigger] = useState(false);
 //   const { validateSession } = useSession();
   const navigation = useNavigation();
 
@@ -73,7 +74,7 @@ const fetchCourseTests = useCallback(async () => {
   } finally {
     setLoading(false);
   }
-}, [courseId, studentId, processTestDetails]);
+}, [courseId, studentId, processTestDetails,refreshTrigger]);
 
 
   useEffect(() => {
@@ -106,31 +107,30 @@ const filteredTests = allTests.filter(test => {
 
   return matchesSubject && matchesTestType;
 });
-
-
+ const formattedTime = getCurrentLocalMySQLTime();
+  function getCurrentLocalMySQLTime() {
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60000;
+    const localTime = new Date(now - offset).toISOString().slice(0, 19).replace('T', ' ');
+    return localTime;
+  }
   // Open test
-  const handleStartTestClick = async (test) => {
+const handleStartTestClick = async (test) => {
+      console.log("handleStartTestClick CALLED with test:", test);
   const testCreationTableId = test.test_id;
-  const formattedTime = new Date().toISOString();
+
   const courseCreationId = courseId ?? test.course_id;
 
-  // Validate session, assume it returns boolean
-//   const isValid = await validateSession();
-//   if (!isValid) return;
-
   try {
-    // Check if there's an active test session (replace sessionStorage with AsyncStorage)
-    const navigationToken = await AsyncStorage.getItem('navigationToken');
-    if (navigationToken) {
-      // Show some modal or alert in React Native
-      Alert.alert(
-        "Active Test",
-        "You already have an active test in progress. Please complete it before starting another one."
-      );
-      return;
-    }
+    // const navigationToken = await AsyncStorage.getItem('navigationToken');
+    // if (navigationToken) {
+    //   Alert.alert(
+    //     "Active Test",
+    //     "You already have an active test in progress. Please complete it before starting another one."
+    //   );
+    //   return;
+    // }
 
-    // Encrypt IDs
     const [encryptedTestId, encryptedStudentId, encryptedCourseId] = await encryptBatch([
       testCreationTableId,
       studentId,
@@ -139,32 +139,34 @@ const filteredTests = allTests.filter(test => {
 
     const testStatusData = {
       studentregistrationId: studentId,
-      courseCreationId: courseCreationId,
-      testCreationTableId: testCreationTableId,
+      courseCreationId,
+      testCreationTableId,
       studentTestStartTime: formattedTime,
       testAttemptStatus: 'started',
       testConnectionStatus: 'active',
       testConnectionTime: formattedTime
     };
 
+    console.log("Sending test status data:", testStatusData);
+
     const response = await axios.post(
-      `${BASE_URL}/studentmycourses/InsertOrUpdateTestAttemptStatus`,
+      `${backEndUrl}/studentmycourses/InsertOrUpdateTestAttemptStatus`,
       testStatusData,
       {
         headers: { 'Content-Type': 'application/json' }
       }
     );
 
+    console.log("API response status:", response.status);
+
     if (response.status === 200) {
       await AsyncStorage.setItem('navigationToken', 'valid');
 
-      // Refresh UI triggers (if you have any)
-      setRefreshTrigger((prev) => !prev);
-      if (setRefreshTriggerBundle) setRefreshTriggerBundle((prev) => !prev);
+      setRefreshTrigger(prev => !prev);
+      if (setRefreshTriggerBundle) setRefreshTriggerBundle(prev => !prev);
 
-      // Decide which screen to navigate based on test time
       const convertToHHMMSS = (minutes) => {
-        const totalSeconds = minutes * 60;
+        const totalSeconds = Math.floor(minutes * 60);
         const hrs = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
         const mins = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
         const secs = String(totalSeconds % 60).padStart(2, '0');
@@ -174,21 +176,27 @@ const filteredTests = allTests.filter(test => {
       const durationHHMMSS = convertToHHMMSS(test.duration || 0);
       const timeSpent = test.time_spent ?? "00:00:00";
 
-      if (durationHHMMSS === timeSpent) {
-        // Test is completed, navigate to results or something
+      console.log("durationHHMMSS:", durationHHMMSS);
+      console.log("timeSpent:", timeSpent);
+
+      const isTestCompleted = durationHHMMSS === timeSpent;
+
+      if (isTestCompleted) {
+        console.log("Navigating to TestResultScreen");
         navigation.navigate('TestResultScreen', {
           testId: encryptedTestId,
           studentId: encryptedStudentId,
           courseId: encryptedCourseId
         });
       } else {
-        // Navigate to instructions screen
+        console.log("Navigating to GeneralInstructions");
         navigation.navigate('GeneralInstructions', {
           testId: encryptedTestId,
           studentId: encryptedStudentId,
           courseId: encryptedCourseId
         });
       }
+
     } else {
       Alert.alert("Error", "Failed to update test status");
     }
@@ -197,6 +205,7 @@ const filteredTests = allTests.filter(test => {
     Alert.alert("Error", "An error occurred while starting the test");
   }
 };
+
 
   const handleViewReport = (test) => {
     navigation.navigate("StudentReport", {

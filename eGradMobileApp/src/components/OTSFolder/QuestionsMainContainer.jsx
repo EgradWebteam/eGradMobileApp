@@ -10,7 +10,7 @@ import {
   Button
 } from 'react-native';
 // import { useSession } from '../../StudentDashboard/hooks/SessionContext'; // Assume it's RN-compatible
-import { styles } from '../../styles/OTSStyles.js';
+import { styles } from '../../styles/OTSStyles';
 import axios from 'axios';
 import { backEndUrl, frontEndUrl,backEndPort } from "../../apiConfig";
 import Icon from 'react-native-vector-icons/FontAwesome';

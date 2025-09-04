@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Image, StyleSheet, ActivityIndicator } from "react-native";
-
+import { styles } from "../../styles/OTSStyles";
 import { backEndUrl, frontEndUrl,backEndPort } from "../../apiConfig";
 // Replace this with your local image import or require path
 import OTSLogo from "../../images/EGTLogoExamHeaderCompressed.png"; 
@@ -13,31 +13,23 @@ const OTSHeader = () => {
 useEffect(() => {
   const fetchLogo = async () => {
     try {
-      const response = await axios.post(`${backEndUrl}/navbar/get-logo`, {
-        frontEndUrl
-      });
+      console.log('Sending frontEndUrl:', frontEndUrl);
 
-      if (response.status === 200) {
-        const data = response.data;
-        if (data?.logo) {
-          setLogoSrc({ uri: data.logo }); // React Native's remote image format
-        } else {
-          setLogoSrc(OTSLogo); // Fallback to local asset
-        }
-      }
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      const response = await axios.post(`${backEndUrl}/navbar/get-logo`, {  domain: frontEndUrl });
 
-      const data = await response.json();
+      console.log('Logo fetch response data:', response.data);
 
-      if (data?.logo) {
-        setLogoSrc({ uri: data.logo }); // React Native's remote image format
+      if (response.status === 200 && response.data?.logo) {
+        setLogoSrc({ uri: response.data.logo });
       } else {
-        setLogoSrc(OTSLogo); // Fallback to local asset
+        setLogoSrc(OTSLogo);
       }
     } catch (error) {
-      console.error('Failed to fetch logo:', error);
+      if (axios.isAxiosError(error)) {
+        console.error('Axios error response:', error.response?.data || error.message);
+      } else {
+        console.error('Unexpected error:', error);
+      }
       setLogoSrc(OTSLogo);
     } finally {
       setIsLoading(false);
@@ -46,6 +38,8 @@ useEffect(() => {
 
   fetchLogo();
 }, []);
+
+
 
 
   return (
@@ -65,21 +59,5 @@ useEffect(() => {
   );
 };
 
-const styles = StyleSheet.create({
-  headerContainer: {
-    height: 60,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
-  },
-  logoHolder: {
-    width: 200,
-    height: 40,
-  },
-  logo: {
-    width: "100%",
-    height: "100%",
-  },
-});
 
 export default OTSHeader;

@@ -1,12 +1,40 @@
-import React from 'react'
+import React,{useEffect} from 'react'
 import { View, Text, Image, TouchableOpacity, Dimensions } from 'react-native'
 import { homeScreenStyles } from '../styles/HomeScreenStyles'
 import Footer from '../components/Footer';
 import { LoginHomeHeader } from '../components/LoginHomeHeader'
 const { width } = Dimensions.get('window')
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 const HomeScreen = (props) => {
     // console.log(props, "these r props");
+      const navigation = useNavigation();
+  useEffect(() => {
+    const checkStudentData = async () => {
+      try {
+        const keys = ['accessToken', 'decryptedId', 'sessionId', 'userId', 'studentData'];
+        const values = await AsyncStorage.multiGet(keys);
+        console.log(values);
+        const hasAllKeys = values.every(([_, value]) => value !== null && value !== '');
 
+        if (hasAllKeys) {
+          // Navigate to Student Dashboard
+          const userId = values.find(([key]) => key === 'userId')[1];
+          console.log("Navigating to Student Dashboard with userId:", userId);
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'studentDashboard', params: { userId } }],
+          });
+        } else {
+          console.log('Missing some AsyncStorage keys. Stay on Home.');
+        }
+      } catch (error) {
+        console.error('Error checking AsyncStorage:', error);
+      }
+    };
+
+    checkStudentData();
+  }, []);
     const isTablet = width > 768;
     return (
         <>

@@ -12,9 +12,9 @@ export const encryptBatch = async (textsArray) => {
         'Content-Type': 'application/json',
         // Add authorization headers here if needed
       },
-      data: {
+    
         texts: textsArray.map(item => item.toString()),
-      },
+    
     });
 
     if (response.status !== 200) {
@@ -46,9 +46,9 @@ export const decryptBatch = async (shortCodesArray) => {
         'Content-Type': 'application/json',
         // Add authorization headers here if needed
       },
-      data: {
+      
         shortCodes: shortCodesArray,
-      },
+     
     });
 
     if (response.status !== 200) {

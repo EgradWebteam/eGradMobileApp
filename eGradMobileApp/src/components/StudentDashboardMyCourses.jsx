@@ -16,6 +16,7 @@ import BundleCourseCard from './BundleCourseCard';
 import TestDetailsContainer from './TestDetailsContainer';
 import BundleCourseContainer from './BundleCourseContainer';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+
 // OR
 // import Icon from 'react-native-vector-icons/Feather';
 
