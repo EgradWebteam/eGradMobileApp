@@ -2,8 +2,8 @@ import React, { memo, useState } from "react";
 import { View, Text, TouchableOpacity, Image, ScrollView, StyleSheet, Modal } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { BsFillPrinterFill } from "react-native-vector-icons/FontAwesome"; // Adjust as needed
-
-const MainPageCourseCards = memo(({ CardsportalId, LandingPage = false, onCourseClick, onCourseClickHandler, isOnStudentDashboard = false }) => {
+import { useRoute } from "@react-navigation/native";
+const MainPageCourseCards = memo(({ CardsportalId, LandingPage = false, onCourseClick, onCourseClickHandler}) => {
   const [popupContent, setPopupContent] = useState("Coming Soon!");
   const [showComingSoonPopup, setShowComingSoonPopup] = useState(false);
 
@@ -12,7 +12,10 @@ const MainPageCourseCards = memo(({ CardsportalId, LandingPage = false, onCourse
     { title: "MINI / MICRO COURSES", image: require("../images/microcourses.png"), portalId: 2 },
     { title: "PRACTICE QUESTION BANK", image: require("../images/pqb.png"), portalId: 3 },
   ];
-
+ // 👇 Equivalent of location.pathname.startsWith("/StudentDashboard")
+    const route = useRoute();
+    const isOnStudentDashboard = route.name === "studentDashboard";
+console.log("studnt dashhhhhboarddddd",isOnStudentDashboard)
   const handleExploreClick = (course) => {
     if (course.title === "PRACTICE QUESTION BANK") {
       setShowComingSoonPopup(true);

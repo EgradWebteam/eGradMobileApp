@@ -16,7 +16,7 @@ import BundleCourseCard from './BundleCourseCard';
 import TestDetailsContainer from './TestDetailsContainer';
 import BundleCourseContainer from './BundleCourseContainer';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
+import { styles } from '../styles/StudentDashboardStyles';
 // OR
 // import Icon from 'react-native-vector-icons/Feather';
 
@@ -139,7 +139,7 @@ useEffect(() => {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.containerMyCourses}>
       {/* Breadcrumb Navigation */}
       {(!showQuizContainer || selectedTestCourse) && (
         <View style={styles.breadcrumb}>
@@ -257,62 +257,5 @@ useEffect(() => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 15,
-    backgroundColor: '#fff',
-    flex: 1
-  },
-  heading: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginVertical: 10,
-  },
-  breadcrumb: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-    flexWrap: 'wrap'
-  },
-  breadcrumbText: {
-    fontWeight: 'bold',
-    fontSize: 16
-  },
-  link: {
-    color: 'blue',
-    marginHorizontal: 5,
-  },
-  portalButtons: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginVertical: 10,
-  },
-  portalButton: {
-    padding: 10,
-    margin: 5,
-    backgroundColor: '#eee',
-    borderRadius: 5,
-  },
-  examButtons: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginVertical: 10,
-  },
-  examButton: {
-    padding: 8,
-    margin: 5,
-    backgroundColor: '#ddd',
-    borderRadius: 5,
-  },
-  activeButton: {
-    backgroundColor: '#007bff',
-    color: 'white',
-  },
-  noCourses: {
-    textAlign: 'center',
-    marginTop: 20,
-    fontSize: 16,
-  }
-});
 
 export default StudentDashboardMyCourses;

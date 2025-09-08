@@ -28,7 +28,7 @@ export const LoginScreen = () => {
   }
 
   console.log(password, email, "these r password nd emails");
-
+console.log("url",frontEndUrl,backEndPort)
   try {
     const response = await fetch(`${frontEndUrl}:${backEndPort}/login/studentLogin`, {
       method: "POST",
@@ -39,7 +39,7 @@ export const LoginScreen = () => {
         instituteOrDomain: `${frontEndUrl}`
       }),
     });
-
+console.log("url",frontEndUrl,backEndPort)
     const data = await response.json();
     console.log(data.message, "this is the responseee");
 

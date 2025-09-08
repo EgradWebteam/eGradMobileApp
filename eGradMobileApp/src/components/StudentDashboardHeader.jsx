@@ -14,7 +14,7 @@ import defaultImage from '../images/StudentImage.png';
 import headerImage from '../images/EGTLogoExamHeaderCompressed.png';
 // import { closeTestWindowIfOpen } from '../hooks/windowManager';
 // import { useSession } from './hooks/SessionContext';
-
+import { styles } from '../styles/StudentDashboardStyles';
 const StudentDashboardHeader = ({
   userData,
   setActiveSection,
@@ -137,54 +137,4 @@ const StudentDashboardHeader = ({
 
 export default StudentDashboardHeader;
 
-const styles = StyleSheet.create({
-  headerContainer: {
-    flexDirection: 'row',
-    padding: 12,
-    backgroundColor: '#f1f1f1',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  logoContainer: {
-    flex: 1,
-  },
-  logo: {
-    width: 150,
-    height: 40,
-  },
-  profileContainer: {
-    padding: 5,
-    borderRadius: 20,
-    overflow: 'hidden',
-  },
-  profileImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: '#00000060',
-    justifyContent: 'flex-end',
-    padding: 10,
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 8,
-  },
-  modalItem: {
-    fontSize: 16,
-    paddingVertical: 10,
-  },
-  logoutButton: {
-    marginTop: 10,
-    backgroundColor: '#d9534f',
-    padding: 10,
-    borderRadius: 5,
-  },
-  logoutText: {
-    color: '#fff',
-    textAlign: 'center',
-  },
-});
+

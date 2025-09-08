@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-nati
 import MainPageCourseCards from "./MainPageCourseCards";
 // import DisableKeysAndMouseInteractions from "../../ContextFolder/DisableKeysAndMouseInteractions";
 import Icon from 'react-native-vector-icons/FontAwesome';
-
+import { styles } from "../styles/StudentDashboardStyles";
 const StudentDashboardHome = ({ studentName, handleSectionChange, portalId, logoText }) => {
   // Call your disable interactions logic if needed
 //   DisableKeysAndMouseInteractions(null);
@@ -50,57 +50,5 @@ const StudentDashboardHome = ({ studentName, handleSectionChange, portalId, logo
   );
 };
 
-const styles = StyleSheet.create({
-  dashboardContainer: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: "#fff",
-  },
-  greetingContainer: {
-    marginBottom: 20,
-  },
-  welcomeNote: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  studentHiMsg: {
-    fontSize: 16,
-    marginTop: 4,
-    color: "#555",
-  },
-  exploreCardsDiv: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 20,
-  },
-  cardDiv: {
-    alignItems: "center",
-    width: "48%",
-    padding: 16,
-    backgroundColor: "#f0f0f0",
-    borderRadius: 10,
-  },
-  icon: {
-    marginBottom: 10,
-  },
-  btn: {
-    backgroundColor: "#007bff",
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 6,
-  },
-  btnText: {
-    color: "#fff",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  exploreCoursesHeadingDiv: {
-    marginBottom: 12,
-  },
-  exploreCoursesHeading: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-});
 
 export default StudentDashboardHome;

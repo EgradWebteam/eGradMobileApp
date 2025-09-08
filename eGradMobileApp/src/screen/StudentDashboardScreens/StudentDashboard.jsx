@@ -110,6 +110,7 @@ export const StudentDashboard = () => {
             studentName={studentData?.userDetails?.candidate_name}
             portalId={portalData.portalId}
             logoText={portalData.logoText}
+            handleSectionChange={setActiveSection}
           />
         );
       case 'myCourses':
