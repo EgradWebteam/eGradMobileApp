@@ -14,7 +14,7 @@ import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CourseCards from "./CourseCards";
 // import { useSession } from '../hooks/SessionContext';
-
+import { styles } from '../styles/StudentDashboardStyles';
 const StudentDashboardBuyCourses = ({ setActiveSection, studentId, preselectedPortalId }) => {
   const [structuredCourses, setStructuredCourses] = useState([]);
   const [selectedExam, setSelectedExam] = useState('');
@@ -278,7 +278,7 @@ const StudentDashboardBuyCourses = ({ setActiveSection, studentId, preselectedPo
   }
 
 return (
-  <ScrollView style={styles.container}>
+  <ScrollView style={styles.containerBuyCourses}>
     <Text style={styles.heading}>Buy Courses</Text>
 
     {/* Portal Buttons */}
@@ -473,52 +473,3 @@ return (
 export default StudentDashboardBuyCourses;
 
 
-
-// Styles
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16 },
-  loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  heading: { fontSize: 24, fontWeight: 'bold', marginBottom: 16 },
-  buttonRow: { flexDirection: 'row', marginBottom: 12 },
-  portalButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 4,
-    backgroundColor: '#ddd',
-    marginRight: 8,
-  },
-  portalButtonActive: { backgroundColor: '#3399cc' },
-  portalButtonText: { color: '#333' },
-  portalButtonTextActive: { color: '#fff' },
-  examButton: {
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 4,
-    backgroundColor: '#eee',
-    marginRight: 6,
-  },
-  examButtonActive: { backgroundColor: '#3399cc' },
-  examButtonText: { color: '#333' },
-  examButtonTextActive: { color: '#fff' },
-  section: { marginBottom: 20 },
-  sectionTitle: { fontSize: 20, fontWeight: '600', marginBottom: 8 },
-  cardsContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
-  card: {
-    width: '48%',
-    backgroundColor: '#f9f9f9',
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 12,
-  },
-  cardImage: { width: '100%', height: 100, borderRadius: 4, marginBottom: 8 },
-  cardTitle: { fontSize: 16, fontWeight: '500', marginBottom: 4 },
-  price: { fontSize: 16, fontWeight: 'bold', marginVertical: 6 },
-  buyButton: {
-    backgroundColor: '#3399cc',
-    paddingVertical: 8,
-    borderRadius: 4,
-    alignItems: 'center',
-  },
-  buyButtonText: { color: '#fff', fontWeight: '600' },
-  noCourses: { alignItems: 'center', marginTop: 40 },
-});

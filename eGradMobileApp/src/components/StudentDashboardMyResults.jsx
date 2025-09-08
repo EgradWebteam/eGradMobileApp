@@ -12,6 +12,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 // import { BASE_URL } from "../../ConfigFile/ApiConfigURL";
 import { backEndUrl, frontEndUrl } from "../apiConfig";
+import { styles } from "../styles/StudentDashboardStyles";
 // import { useSession } from "./hooks/SessionContext";
 // import DisableKeysAndMouseInteractions from "../../ContextFolder/DisableKeysAndMouseInteractions";
 
@@ -153,7 +154,7 @@ const StudentDashboardMyResults = ({ studentId, userData }) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.containerMyresults}>
       <Text style={styles.heading}>My Results</Text>
 
       {loading ? (
@@ -241,93 +242,6 @@ const StudentDashboardMyResults = ({ studentId, userData }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-  },
-  heading: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 16,
-  },
-  noResultsContainer: {
-    alignItems: "center",
-    marginTop: 40,
-  },
-  noResultsText: {
-    fontSize: 16,
-    color: "#555",
-  },
-  portalButtonsScroll: {
-    flexDirection: "row",
-    marginBottom: 12,
-  },
-  portalButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 6,
-    backgroundColor: "#f0f0f0",
-    marginRight: 8,
-  },
-  portalButtonActive: {
-    backgroundColor: "#007bff",
-  },
-  portalButtonText: {
-    color: "#000",
-    fontWeight: "bold",
-  },
-  examButtonsScroll: {
-    flexDirection: "row",
-    marginBottom: 12,
-  },
-  examButton: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-    backgroundColor: "#e0e0e0",
-    marginRight: 6,
-  },
-  examButtonActive: {
-    backgroundColor: "#2196f3",
-  },
-  examButtonText: {
-    color: "#000",
-    fontWeight: "bold",
-  },
-  resultsContainer: {
-    marginTop: 12,
-  },
-  resultCard: {
-    borderWidth: 2,
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 12,
-  },
-  testName: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 8,
-  },
-  resultRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 4,
-  },
-  resultRowText: {
-    marginLeft: 8,
-    fontSize: 14,
-  },
-  viewReportButton: {
-    marginTop: 8,
-    paddingVertical: 10,
-    borderRadius: 6,
-    alignItems: "center",
-  },
-  viewReportButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-});
 
 export default StudentDashboardMyResults;
 

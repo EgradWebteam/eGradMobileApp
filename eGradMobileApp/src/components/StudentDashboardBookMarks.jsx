@@ -13,7 +13,7 @@ import { WebView } from "react-native-webview";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 // import AsyncStorage from "@react-native-async-storage/async-storage"; // ✅ use this in RN
 import { backEndUrl, frontEndUrl } from "../apiConfig";
-
+import { styles } from "../styles/StudentDashboardStyles";
 const StudentDashboardBookMarks = ({ studentId }) => {
   const [testPaperData, setTestPaperData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -150,7 +150,7 @@ const StudentDashboardBookMarks = ({ studentId }) => {
     : [];
 
   return (
-    <View style={styles.container}>
+    <View style={styles.containerBookMarks}>
       <Text style={styles.heading}>Bookmarks</Text>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.portalButtons}>
@@ -301,58 +301,5 @@ const StudentDashboardBookMarks = ({ studentId }) => {
 
 export default StudentDashboardBookMarks;
 
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 10, backgroundColor: "#fff" },
-  heading: { fontSize: 22, fontWeight: "bold", marginBottom: 10 },
-  portalButtons: { marginBottom: 10 },
-  portalButton: {
-    padding: 10,
-    backgroundColor: "#eee",
-    borderRadius: 10,
-    marginRight: 8,
-  },
-  activePortalButton: { backgroundColor: "#4CAF50" },
-  portalButtonText: { color: "#000" },
-  scrollContent: { flex: 1 },
-  testBlock: { marginBottom: 20, padding: 10, backgroundColor: "#f9f9f9" },
-  testTitle: { fontSize: 18, fontWeight: "600", marginBottom: 10 },
-  questionBlock: {
-    marginBottom: 15,
-    padding: 10,
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    elevation: 2,
-  },
-  questionHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 5,
-  },
-  image: { width: "100%", height: 200, resizeMode: "contain", marginBottom: 10 },
-  optionRow: { flexDirection: "row", alignItems: "center", marginVertical: 4 },
-  optionImage: { width: 120, height: 40, resizeMode: "contain", marginLeft: 5 },
-  solutionButtons: { flexDirection: "row", marginTop: 10 },
-  solutionBtn: {
-    backgroundColor: "#2196F3",
-    padding: 8,
-    borderRadius: 5,
-    marginRight: 10,
-  },
-  solutionBtnText: { color: "white" },
-  solutionImage: { width: "100%", height: 250, resizeMode: "contain", marginTop: 10 },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.7)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContent: {
-    width: "90%",
-    backgroundColor: "#000",
-    borderRadius: 10,
-    overflow: "hidden",
-  },
-  closeBtn: { position: "absolute", top: 10, right: 10, zIndex: 2 },
-  emptyMsg: { textAlign: "center", marginTop: 20, color: "gray" },
-});
+
 
