@@ -361,7 +361,7 @@ const OTSRightSideBar = ({
 
           <ScrollView
             style={styles.questionsContainer}
-            contentContainerStyle={{ flexDirection: "row", flexWrap: "wrap" }}
+           
             keyboardShouldPersistTaps="handled"
           >
             {section?.questions?.map((q, index) => {

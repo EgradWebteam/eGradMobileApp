@@ -9,7 +9,7 @@ import {
   BackHandler,
 } from "react-native";
 import { useQuestionStatus } from "../../hooks/CountsContext";
-import { useAlert } from "../../hooks/AlertContext.jsx";
+// import { useAlert } from "../../hooks/AlertContext.jsx";
 import { styles } from '../../styles/OTSStyles';
 import axios from 'axios';
 import { backEndUrl, frontEndUrl,backEndPort } from "../../apiConfig";
@@ -36,7 +36,7 @@ const OTSExamSummary = ({
   } = useQuestionStatus();
 
 //   const { validateSessionWithoutNavigation } = useSession();
-  const { alert } = useAlert();
+  // const { alert } = useAlert();
 
   const [showSubmittedPopup, setShowSubmittedPopup] = useState(false);
 

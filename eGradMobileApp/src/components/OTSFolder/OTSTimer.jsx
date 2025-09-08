@@ -20,7 +20,7 @@ const OTSTimer = ({ realStudentId, realTestId, testData, realCourseId }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.timersection}>
       <Text style={styles.sectionLabel}>Sections</Text>
 
       <View style={styles.timeAndCalcRow}>

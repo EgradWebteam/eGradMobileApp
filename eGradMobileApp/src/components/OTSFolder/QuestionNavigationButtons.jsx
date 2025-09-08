@@ -948,7 +948,7 @@ const onCancelSubmit = async () => {
 };
 
   return (
-    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+    <ScrollView contentContainerStyle={styles.footerContainer} keyboardShouldPersistTaps="handled">
       <View style={styles.btnsSubContainer}>
         <View style={styles.navigationBtnHolderSubContainer}>
           <TouchableOpacity
