@@ -3,17 +3,23 @@ import {
   View,
   Text,
   ScrollView,
-  TouchableOpacity,
   Image,
   Dimensions,
   StyleSheet,
-  Button
+  TouchableOpacity,
+  Alert,
 } from 'react-native';
 // import { useSession } from '../../StudentDashboard/hooks/SessionContext'; // Assume it's RN-compatible
 import { styles } from '../../styles/OTSStyles';
 import axios from 'axios';
+import QuestionOptionsContainer from './QuestionOptionsContainer';
 import { backEndUrl, frontEndUrl,backEndPort } from "../../apiConfig";
 import Icon from 'react-native-vector-icons/FontAwesome';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+
+
+
+
 
 const QuestionsMainContainer = ({
   testData,
@@ -36,87 +42,104 @@ const QuestionsMainContainer = ({
   setShowSidebar,
   showSidebar,
   selectedSubjects,
-  isDisabled
+  isDisabled,
 }) => {
-//   const { validateSessionWithoutNavigation } = useSession();
-  const scrollRef = useRef(null);
-  const [showUp, setShowUp] = useState(false);
-  const [showDown, setShowDown] = useState(false);
-  const [isMobile, setIsMobile] = useState(Dimensions.get('window').width <= 768 || Dimensions.get('window').height <= 768);
+  const questionScrollRefMobile = useRef(null);
+  const questionScrollRefDesktop = useRef(null);
 
+  const [isMobile, setIsMobile] = useState(
+    Dimensions.get('window').width <= 768 || Dimensions.get('window').height <= 768
+  );
+  const savedAnswer = userAnswers?.[String(question?.question_id)];
   useEffect(() => {
-    const handleResize = () => {
-      const { width, height } = Dimensions.get('window');
-      setIsMobile(width <= 768 || height <= 768);
+    const handleResize = ({ window }) => {
+      setIsMobile(window.width <= 768 || window.height <= 768);
     };
+
     const subscription = Dimensions.addEventListener('change', handleResize);
     return () => subscription?.remove();
   }, []);
 
-  const subject = testData?.subjects?.find(sub => sub.SubjectName === activeSubject);
-  const section = subject?.sections?.find(sec => sec.SectionName === activeSection);
-  const question = section?.questions?.[activeQuestionIndex] || null;
-// const getScrollTarget = () => {
-//   return isMobile ? questionScrollRefMobile.current : questionScrollRefDesktop.current;
-// };
-  useEffect(() => {
-    const saved = userAnswers?.[String(question?.question_id)];
-    if (saved?.type === 'MCQ' && saved.optionId) {
-      setSelectedOption({
-        option_id: saved.optionId,
-        option_index: saved.optionIndex,
-      });
-    }
-  }, [question?.question_id]);
-// useEffect(() => {
-//   const scrollTarget = getScrollTarget();
-//   if (scrollTarget) {
+  const getScrollTarget = () => {
+    return isMobile ? questionScrollRefMobile.current : questionScrollRefDesktop.current;
+  };
 
-//       scrollTarget.scrollTo(0, 0);
- 
-//   }
-// }, [activeQuestionIndex, activeSection, activeSubject, isMobile]);
+  const subject = testData?.subjects?.find(
+    (sub) => sub.SubjectName === activeSubject
+  );
+
+  const section = subject?.sections?.find(
+    (sec) => sec.SectionName === activeSection
+  );
+
+  const question = section?.questions?.[activeQuestionIndex] || null;
+
+//   useEffect(() => {
+//     const scrollTarget = getScrollTarget();
+//     if (scrollTarget) {
+//       setTimeout(() => {
+//         scrollTarget.scrollTo({ y: 0, animated: true });
+//       }, 100);
+//     }
+//   }, [activeQuestionIndex, activeSection, activeSubject, isMobile]);
+
+  useEffect(() => {
+    setSelectedOption(null);
+    setSelectedOptionsArray([]);
+    setNatValue('');
+
+    const currentQuestion = section?.questions?.[activeQuestionIndex];
+    const saved = userAnswers?.[currentQuestion?.question_id];
+
+    if (saved) {
+      if (saved.type === 'MCQ' && saved.optionId) {
+        setSelectedOption({
+          option_id: saved.optionId,
+          option_index: saved.optionIndex,
+        });
+      }
+      if (saved.type === 'MSQ' && Array.isArray(saved.selectedOptions)) {
+        setSelectedOptionsArray(saved.selectedOptions);
+      }
+      if (saved.type === 'NAT' && typeof saved.natAnswer === 'string') {
+        setNatValue(saved.natAnswer);
+      }
+    }
+  }, [activeSubject, activeSection, activeQuestionIndex, userAnswers]);
 
   const handleQuestionClick = async (index) => {
+    // Commented session validation for now
     // const isValid = await validateSessionWithoutNavigation();
-    // if (!isValid) return;
 
-    await autoSaveNATIfNeeded();
-    const q = section?.questions?.[index];
-    if (!q) return;
+    const question = section?.questions?.[index];
+    if (!question) return;
 
-    const existing = userAnswers?.[q.question_id];
+    const existing = userAnswers?.[question.question_id];
     if (!existing) {
       setUserAnswers((prev) => ({
         ...prev,
-        [q.question_id]: {
+        [question.question_id]: {
           subjectId: subject.subjectId,
           sectionId: section.sectionId,
-          questionId: q.question_id,
-          buttonClass: 'NotAnswered',
+          questionId: question.question_id,
+          buttonClass: 'NotAnsweredBtnCls',
           type: '',
         },
       }));
+
       await saveUserResponse({
         realStudentId,
         realTestId,
         realCourseId,
         subject_id: subject.subjectId,
         section_id: section.sectionId,
-        question_id: q.question_id,
-        question_type_id: q?.questionType?.quesionTypeId,
+        question_id: question.question_id,
+        question_type_id: question?.questionType?.quesionTypeId,
         answered: '3',
       });
     }
+
     setActiveQuestionIndex(index);
-  };
-
-  const scrollToTop = () => {
-    scrollRef.current?.scrollTo({ y: 0, animated: true });
-  };
-
-  const scrollToBottom = () => {
-    scrollRef.current?.scrollToEnd({ animated: true });
   };
 
   const saveUserResponse = async ({
@@ -127,7 +150,12 @@ const QuestionsMainContainer = ({
     section_id,
     question_id,
     question_type_id,
-    answered = '1'
+    optionIndexes1 = '',
+    optionIndexes2 = '',
+    optionIndexes1CharCodes = [],
+    optionIndexes2CharCodes = [],
+    calculatorInputValue = '',
+    answered = '1',
   }) => {
     try {
       const payload = {
@@ -138,80 +166,185 @@ const QuestionsMainContainer = ({
         section_id,
         questionId: question_id,
         questionTypeId: question_type_id,
+        optionIndexes1,
+        optionIndexes2,
+        optionIndexes1CharCodes,
+        optionIndexes2CharCodes,
+        calculatorInputValue,
         answered,
       };
 
-      const res = await fetch(`${backEndUrl}/OTSTestPaper/SaveResponse`, {
+      const response = await fetch(`${backEndUrl}/OTSTestPaper/SaveResponse`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
-      return await res.json();
+
+      const data = await response.json();
+      return data;
     } catch (error) {
-      console.error('Save Error:', error);
-      return { success: false };
+      console.error('Error in saveUserResponse:', error);
+      return { success: false, message: 'Network error' };
     }
   };
 
-  const renderQuestionImage = () => {
-    if (question?.questionImgName) {
-      return (
-        <Image
-          source={{ uri: question.questionImgName }}
-          style={styles.questionImage}
-          resizeMode="contain"
-        />
-      );
+  const getQuestionMeta = () => {
+    const questionTypeId = question?.questionType?.quesionTypeId;
+    let displayQuestionType = '';
+
+    if ([1, 2].includes(questionTypeId)) {
+      displayQuestionType = 'MCQ';
+    } else if ([3, 4].includes(questionTypeId)) {
+      displayQuestionType = 'MSQ';
+    } else if ([5, 6].includes(questionTypeId)) {
+      displayQuestionType = 'NAT';
+    } else if ([8].includes(questionTypeId)) {
+      displayQuestionType = 'CTQ';
     }
-    return <Text>No question available</Text>;
+
+    return {
+      questionType: displayQuestionType,
+      marks: question?.marks_text || 'N/A',
+      negativeMarks: question?.nmarks_text || 'N/A',
+    };
   };
 
-  return (
+  const handleLeftClickMain = () => {
+    setShowSidebar((prev) => !prev);
+  };
+
+  const { questionType, marks, negativeMarks } = getQuestionMeta();
+
+  const paragraphId = question?.paragraph?.paragraph_id;
+  const paragraph = testData?.paragraphs?.find(
+    (p) => p.paragraph_id === paragraphId
+  );
+
+  const isParagraphPresent = !!paragraph?.paragraphImgName;
+
+  const renderQuestion = (question) => {
+    console.log(question)
+    if (!question) return <Text>No question available.</Text>;
+
+    return (
+      <View style={styles.questionImageContainer}>
+        {question.questionImgName ? (
+          <Image
+           source={{ uri: question.questionImgName }}
+  style={{ width: 300, height: 300, backgroundColor: '#eee' }}
+  resizeMode="contain"
+  onError={(e) => {
+    console.log('Image load error:', e.nativeEvent.error);
+  }}
+          />
+        ) : (
+          <Text>No image available.</Text>
+        )}
+      </View>
+    );
+  }; 
+   return (
     <View style={styles.mainContainerforquestion}>
-      {/* Question Numbers */}
+      
       <ScrollView horizontal style={styles.questionNumberRow}>
-        {section?.questions?.map((q, idx) => (
-          <TouchableOpacity
-            key={q.question_id}
-            onPress={() => handleQuestionClick(idx)}
-            disabled={isDisabled}
-            style={[
-              styles.questionBtn,
-              idx === activeQuestionIndex && styles.activeBtn,
-            ]}
-          >
-            <Text style={styles.questionBtnText}>{idx + 1}</Text>
-          </TouchableOpacity>
-        ))}
+        {section?.questions?.map((q, index) => {
+         const savedAnswer = userAnswers?.[q.question_id];
+            const currentSectionId = Number(
+              section?.sectionId ?? section?.section_id ?? 0
+            );
+            const savedSectionId = Number(savedAnswer?.sectionId ?? 0);
+            const isFromCurrentSection = savedSectionId === currentSectionId;
+            const answerClass =
+              isFromCurrentSection && savedAnswer?.buttonClass
+                ? savedAnswer.buttonClass
+                : styles.NotVisitedBehaviourBtns;
+
+          return (
+            <View key={q.question_id} style={styles.questionNumberRow}>
+              <TouchableOpacity
+                style={[
+                  styles.questionBtn,
+                  index === activeQuestionIndex && styles.activeBtn,
+                  answerClass,
+                ]}
+                onPress={() => handleQuestionClick(index)}
+                disabled={isDisabled}
+              >
+                <Text style={styles.questionBtnText}>{index + 1}</Text>
+              </TouchableOpacity>
+            </View>
+          );
+        })}
       </ScrollView>
 
-      {/* Scrollable Question Container */}
-      <ScrollView ref={scrollRef} style={styles.questionContainer}>
-        {/* Question Type and Marks Info */}
-        <View style={styles.metaInfo}>
-          <Text>Question Type: {question?.questionType?.quesionTypeId || 'N/A'}</Text>
-          <Text>Marks: {question?.marks_text || 'N/A'} | Negative: {question?.nmarks_text || 'N/A'}</Text>
+      <View style={showSidebar ? styles.mainContainer : styles.fullWidth}>
+        <View style={styles.typeHolder}>
+          <Text>
+            Question Type: <Text style={styles.boldText}>{questionType}</Text>
+          </Text>
+          <View style={styles.marksContainer}>
+            <Text>
+              Marks for Correct Answer: <Text style={styles.correctMarks}>{marks}</Text>
+            </Text>
+            <Text style={styles.separator}> | </Text>
+            <Text>
+              Negative Marks: <Text style={styles.negativeMarks}>{negativeMarks}</Text>
+            </Text>
+          </View>
         </View>
 
-        {/* Question Image */}
-        {renderQuestionImage()}
+        <View style={styles.questionNumberContainer}>
+          <Text>Question No. {activeQuestionIndex + 1}</Text>
+        </View>
 
-        {/* Options would be a separate component */}
-        <Text>/* Options Component Here */</Text>
-      </ScrollView>
+        <ScrollView
+          ref={questionScrollRefDesktop}
+          style={
+            isParagraphPresent
+              ? styles.questionSplitContainer
+              : styles.optionsScroll
+          }
+        >
+          {isParagraphPresent && (
+            <View style={styles.paragraphContainer}>
+              {paragraph?.paragraphImgName ? (
+                <Image
+                  source={{ uri: paragraph.paragraphImgName }}
+                  style={styles.paragraphImage}
+                />
+              ) : (
+                <Text>Loading...</Text> // Replace with Skeleton if needed
+              )}
+            </View>
+          )}
 
-      {/* Scroll Controls */}
-      <View style={styles.scrollButtons}>
-        {showUp && (
-          <TouchableOpacity onPress={scrollToTop}>
-            <Icon name="arrow-up" size={24} />
-          </TouchableOpacity>
-        )}
-        {showDown && (
-          <TouchableOpacity onPress={scrollToBottom}>
-            <Icon name="arrow-down" size={24} />
-          </TouchableOpacity>
+          <View ref={questionScrollRefMobile} style={styles.questionContainer}>
+            {renderQuestion(question)}
+            <QuestionOptionsContainer
+              options={question?.options || []}
+              optPatternId={testData?.opt_pattern_id}
+              questionTypeId={question?.questionType?.quesionTypeId}
+              onSelectOption={setSelectedOption}
+              savedAnswer={savedAnswer}
+              selectedOption={selectedOption}
+              questionId={question?.question_id}
+              selectedOptionsArray={selectedOptionsArray}
+              setSelectedOptionsArray={setSelectedOptionsArray}
+              natValue={natValue}
+              setNatValue={setNatValue}
+              selectedSubjects={selectedSubjects}
+              isDisabled={isDisabled}
+            />
+          </View>
+        </ScrollView>
+
+        {showSidebar && (
+          <View style={styles.chevronButton}>
+            <TouchableOpacity onPress={handleLeftClickMain}>
+              {/* <FaChevronLeft /> Use VectorIcon here in real RN app */}erwr
+            </TouchableOpacity>
+          </View>
         )}
       </View>
     </View>

@@ -5,6 +5,7 @@ import {
   ScrollView,
   ActivityIndicator,
   StyleSheet,
+   Dimensions,
   Alert
 } from 'react-native';
 import { styles } from '../../styles/OTSStyles';
@@ -69,7 +70,16 @@ const OTSMain = ({
   const getElapsedTimeForCurrentQuestion = useCallback(() => {
     return Math.round((Date.now() - questionStartTimeRef.current) / 1000);
   }, []);
+  const [isMobile, setIsMobile] = useState(Dimensions.get('window').width <= 768 || Dimensions.get('window').height <= 768);
 
+  useEffect(() => {
+    const handleResize = () => {
+      const { width, height } = Dimensions.get('window');
+      setIsMobile(width <= 768 || height <= 768);
+    };
+    const subscription = Dimensions.addEventListener('change', handleResize);
+    return () => subscription?.remove();
+  }, []);
   useEffect(() => {
     questionStartTimeRef.current = Date.now();
   }, [qid]);
@@ -278,7 +288,7 @@ const OTSMain = ({
           getElapsedTimeForCurrentQuestion={getElapsedTimeForCurrentQuestion}
         />
       )}
-
+      {!isMobile && (
       <OTSRightSideBar
         saveUserResponse={saveUserResponse}
         testData={testData}
@@ -299,7 +309,7 @@ const OTSMain = ({
         getElapsedTimeForCurrentQuestion={getElapsedTimeForCurrentQuestion}
         setSelectedSubjects={setSelectedSubjects}
       />
-
+)}
       <QuestionStatusProvider testData={isBonusLoaded ? fullTestData : testData} activeSubject={activeSubject} activeSection={activeSection} userAnswers={userAnswers}>
         <TimerProvider testData={testData} resumeTime={resumeTime}>
           <QuestionNavigationButtons

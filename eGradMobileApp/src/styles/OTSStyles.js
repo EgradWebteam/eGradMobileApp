@@ -12,9 +12,29 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
+   timersection: {
+    paddingVertical: 4,         // very small vertical padding
+    paddingHorizontal: 8,
+    backgroundColor: '#fff',
+  },
+  subjectcontainer: {
+     paddingVertical: 4,         // very small vertical padding
+    paddingHorizontal: 8,
+    backgroundColor: '#fff',
+  },
+  footerContainer: {
+    padding: 12,
+
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
+  },
+  questionImageContainer: {
+   padding:5
+  },
   mainContainerforquestion: {
     flex: 1,
     padding: 16,
+   
   },
   mainContainer: {
     flex: 1,
@@ -401,7 +421,11 @@ export const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
   },
-    questionNumberRow: { marginVertical: 10, flexDirection: 'row' },
+    questionNumberRow: { marginVertical: 10,
+         flexDirection: 'row',
+         maxHeight: 60,
+         minHeight:50
+         },
   questionBtn: {
     marginRight: 5,
     padding: 10,
@@ -437,7 +461,7 @@ export const styles = StyleSheet.create({
   },
   subjectRow: {
     flexDirection: "row",
-    alignItems: "center",
+ 
     marginVertical: 6,
   },
   subjectButton: {

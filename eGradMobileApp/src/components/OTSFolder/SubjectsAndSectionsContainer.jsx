@@ -160,8 +160,23 @@ const saveUserResponse = async ({
     return { success: false, message: "Network error" };
   }
 };
+  const getAnsweredStatusFromButtonClass = (buttonClass) => {
+    switch (buttonClass) {
+      case styles.AnswerdBtnCls:
+        return "1"; // Answered
+      case styles.AnsMarkedForReview:
+        return "2"; // Marked and Answered
+      case styles.NotAnsweredBtnCls:
+        return "3"; // Not Answered
+      case styles.MarkedForReview:
+        return "4"; // Marked Only
+      default:
+        return "3"; // Default to Not Answered
+    }
+  };
  const handleSubjectBtnClick = async (subjectName) => {
     // this is to save current question progress.
+    console.log("hii")
     await saveCurrentQuestionProgress({
       testData,
       activeSubject,
@@ -178,17 +193,20 @@ const saveUserResponse = async ({
       autoSaveNATIfNeeded
     });
     console.log(subjectName, "this is the subject name");
-
+    console.log("hi2");
     // 2. Proceed with subject change after time is saved
     setActiveSubject(subjectName);
+    console.log("hi3");
     const subject = testData?.subjects?.find((subj) => subj.SubjectName === subjectName);
     console.log(subject, "this is the subject, ", subject?.subjectId);
     const subject_id = subject?.subjectId;
+
     // if the subject contains sections then we are setting the active index to 0
     // even if the subject do not contains sec, the below will be true
     if (subject?.sections?.length > 0) {
       console.log(subject?.sections?.length, "subject?.sections?.length", subject?.sections)
       setActiveSection(subject.sections[0].SectionName);
+      console.log("giir")
       setActiveQuestionIndex(0);
       const firstSection = subject.sections[0];
       const firstQuestionId = firstSection.questions?.[0]?.question_id ?? null;
@@ -225,6 +243,7 @@ const saveUserResponse = async ({
 
   };
   const handleSubjectSelect = (subjectName) => {
+    console.log("hi1");
     const isSelected = selectedSubjects.includes(subjectName);
     if (isSelected) {
       setShowResetTable(false); // 🧹 Make sure reset table is hidden
@@ -232,6 +251,7 @@ const saveUserResponse = async ({
       setShowUnselectWarning(true);
       return;
     }
+        console.log("hi2");
     autoSaveNATIfNeeded();
     const optionalSelected = selectedSubjects.filter((s) =>
       isOptionalSubject(s)
@@ -246,7 +266,9 @@ const saveUserResponse = async ({
     }
     const updated = [...selectedSubjects, subjectName];
     setSelectedSubjects(updated);
+    console.log("hi3");
     setActiveSubject(subjectName);
+            console.log("hi4");
     const subjectSections = getSections(subjectName);
     setActiveSection(subjectSections[0]?.SectionName || null);
     setActiveQuestionIndex(0);
@@ -326,8 +348,8 @@ const saveUserResponse = async ({
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Subjects</Text>
+    <ScrollView horizontal style={styles.questionNumberRow}>
+      {/* <Text style={styles.title}>Subjects</Text> */}
 
       {subjects.map((subject, index) => {
         const subjectName = subject.SubjectName;
@@ -336,7 +358,7 @@ const saveUserResponse = async ({
         const displayName = getDisplaySubjectName(subject);
 
         return (
-          <View key={index} style={styles.subjectRow}>
+          <View key={index} >
             {isOptional && (
               <CheckBox
                 value={isChecked}
@@ -356,9 +378,8 @@ const saveUserResponse = async ({
         );
       })}
 
-      <Text style={styles.title}>Sections</Text>
-
-      {getSections(activeSubject).map((section, idx) => (
+      {/* <Text style={styles.title}>Sections</Text> */}
+ {activeSection && getSections(activeSubject).map((section, idx) => (
         <TouchableOpacity
           key={idx}
           style={[

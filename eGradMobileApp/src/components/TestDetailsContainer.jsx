@@ -183,7 +183,7 @@ const handleStartTestClick = async (test) => {
 
       if (isTestCompleted) {
         console.log("Navigating to TestResultScreen");
-        navigation.navigate('TestResultScreen', {
+        navigation.navigate('TestScreen', {
           testId: encryptedTestId,
           studentId: encryptedStudentId,
           courseId: encryptedCourseId
