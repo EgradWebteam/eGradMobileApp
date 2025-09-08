@@ -7,6 +7,7 @@ import { QBScreen } from './src/screen/QBScreen';
 import { LoginScreen } from './src/screen/LoginScreen';
 import { RegisterationPage } from './src/screen/RegisterationPage';
 import { StudentDashboard } from './src/screen/StudentDashboardScreens/StudentDashboard';
+import StudentReportMain from './src/components/StudentReportMain';
 import StudentProvider from './src/hooks/StudentContext';
 import TestScreen  from "./src/screen/TestScreen";
 import ExamInstructionsScreen  from "./src/screen/ExamInstructionsScreen";
@@ -31,6 +32,7 @@ const App = () => {
           <Stack.Screen name="register" component={RegisterationPage} />
           <Stack.Screen name="QBScreen" component={QBScreen} />
           <Stack.Screen name="studentDashboard" component={StudentDashboard} />
+          <Stack.Screen name="StudentReport" component={StudentReportMain} />
         </Stack.Navigator>
       </NavigationContainer>
       <Toast />
