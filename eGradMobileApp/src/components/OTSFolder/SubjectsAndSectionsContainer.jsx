@@ -162,13 +162,13 @@ const saveUserResponse = async ({
 };
   const getAnsweredStatusFromButtonClass = (buttonClass) => {
     switch (buttonClass) {
-      case styles.AnswerdBtnCls:
+      case `AnswerdBtnCls`:
         return "1"; // Answered
-      case styles.AnsMarkedForReview:
+      case `AnsMarkedForReview`:
         return "2"; // Marked and Answered
-      case styles.NotAnsweredBtnCls:
+      case `NotAnsweredBtnCls`:
         return "3"; // Not Answered
-      case styles.MarkedForReview:
+      case `MarkedForReview`:
         return "4"; // Marked Only
       default:
         return "3"; // Default to Not Answered
@@ -213,6 +213,7 @@ const saveUserResponse = async ({
       const firstQuestion = firstSection.questions?.[0];
       const firstQuestionTypeId = firstQuestion?.questionType?.quesionTypeId ?? null;
       const existingAnswer = userAnswers?.[firstQuestionId];
+      console.log(existingAnswer)
       const timeSpent = getElapsedTimeForCurrentQuestion() + (existingAnswer?.TimeSpentOnQuestion ?? 0);
      if(!existingAnswer){
       await saveUserResponse({
@@ -345,6 +346,34 @@ const saveUserResponse = async ({
 
     setActiveSection(section.SectionName);
     setActiveQuestionIndex(0);
+      const subject = testData?.subjects?.find(
+    (subj) => subj.SubjectName === activeSubject
+  );
+
+  const subject_id = subject?.subjectId;
+          const firstQuestionId = section.questions?.[0]?.question_id ?? null;
+      const firstQuestion = section.questions?.[0];
+      const firstQuestionTypeId = firstQuestion?.questionType?.quesionTypeId ?? null;
+      const existingAnswer = userAnswers?.[firstQuestionId];
+      console.log(existingAnswer)
+      const timeSpent = getElapsedTimeForCurrentQuestion() + (existingAnswer?.TimeSpentOnQuestion ?? 0);
+     if(!existingAnswer){
+      await saveUserResponse({
+        realStudentId,
+        realTestId,
+        realCourseId,
+        subject_id,
+        section_id: section?.sectionId ?? null,
+        question_id: firstQuestionId,
+        TimeSpentOnQuestion: timeSpent,
+        question_type_id: firstQuestionTypeId,
+        optionIndexes1:  [],
+        optionIndexes1CharCodes: [],
+        calculatorInputValue:  "",
+        answered: "3",
+      }
+    
+      );}
   };
 
   return (
@@ -433,11 +462,11 @@ const saveUserResponse = async ({
             const savedAnswer = userAnswers?.[q.QuestionID || q.question_id];
             const cls = savedAnswer?.buttonClass;
 
-            if (cls === styles.AnswerdBtnCls) {
+            if (cls === AnswerdBtnCls) {
               answeredCount++;
-            } else if (cls === styles.MarkedForReview) {
+            } else if (cls === MarkedForReview) {
               markedForReviewCount++;
-            } else if (cls === styles.AnsMarkedForReview) {
+            } else if (cls === AnsMarkedForReview) {
               answeredAndMarkedForReviewCount++;
             } else {
               notAnsweredCount++;

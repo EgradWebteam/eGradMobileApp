@@ -113,14 +113,14 @@ useEffect(() => {
   }, []);
 
   // Back button handling
-  useEffect(() => {
-    const onBackPress = () => {
-      Alert.alert("Warning", "Going back is not allowed during the test.");
-      return true;
-    };
-    BackHandler.addEventListener("hardwareBackPress", onBackPress);
-    return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-  }, []);
+  // useEffect(() => {
+  //   const onBackPress = () => {
+  //     Alert.alert("Warning", "Going back is not allowed during the test.");
+  //     return true;
+  //   };
+  //   BackHandler.addEventListener("hardwareBackPress", onBackPress);
+  //   return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+  // }, []);
 
   if (isLoading) {
     return (

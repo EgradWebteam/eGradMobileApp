@@ -8,6 +8,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
+  ImageBackground,
 } from 'react-native';
 // import { useSession } from '../../StudentDashboard/hooks/SessionContext'; // Assume it's RN-compatible
 import { styles } from '../../styles/OTSStyles';
@@ -46,6 +47,12 @@ const QuestionsMainContainer = ({
 }) => {
   const questionScrollRefMobile = useRef(null);
   const questionScrollRefDesktop = useRef(null);
+const backgroundImages = {
+  AnswerdBtnCls: require('../../images/Answered.png'),
+  NotAnsweredBtnCls: require('../../images/NotAnswered.png'),
+  MarkedForReview: require('../../images/MarkedForReview.png'),
+  AnsMarkedForReview: require('../../images/AnsMarkedForReview.png'),
+};
 
   const [isMobile, setIsMobile] = useState(
     Dimensions.get('window').width <= 768 || Dimensions.get('window').height <= 768
@@ -232,7 +239,7 @@ const QuestionsMainContainer = ({
         {question.questionImgName ? (
           <Image
            source={{ uri: question.questionImgName }}
-  style={{ width: 300, height: 300, backgroundColor: '#eee' }}
+  style={{ width: 320, height: 150, backgroundColor: '#eee' }}
   resizeMode="contain"
   onError={(e) => {
     console.log('Image load error:', e.nativeEvent.error);
@@ -244,6 +251,7 @@ const QuestionsMainContainer = ({
       </View>
     );
   }; 
+  
    return (
     <View style={styles.mainContainerforquestion}>
       
@@ -259,19 +267,25 @@ const QuestionsMainContainer = ({
               isFromCurrentSection && savedAnswer?.buttonClass
                 ? savedAnswer.buttonClass
                 : styles.NotVisitedBehaviourBtns;
-
+console.log(answerClass);
           return (
             <View key={q.question_id} style={styles.questionNumberRow}>
               <TouchableOpacity
                 style={[
-                  styles.questionBtn,
-                  index === activeQuestionIndex && styles.activeBtn,
+                  styles.questionBtnSNMR,
+                
                   answerClass,
                 ]}
                 onPress={() => handleQuestionClick(index)}
                 disabled={isDisabled}
               >
-                <Text style={styles.questionBtnText}>{index + 1}</Text>
+                   <ImageBackground
+      source={backgroundImages[answerClass]} // Use the dynamic key
+      style={{ width: 45, height: 45}}
+      
+      imageStyle={{ resizeMode: 'contain' }}
+    >
+                <Text style={styles.questionBtnText}>{index + 1}</Text></ImageBackground>
               </TouchableOpacity>
             </View>
           );
@@ -311,7 +325,8 @@ const QuestionsMainContainer = ({
               {paragraph?.paragraphImgName ? (
                 <Image
                   source={{ uri: paragraph.paragraphImgName }}
-                  style={styles.paragraphImage}
+              
+                    style={{ width: 320, height: 150, backgroundColor: '#eee' }}
                 />
               ) : (
                 <Text>Loading...</Text> // Replace with Skeleton if needed

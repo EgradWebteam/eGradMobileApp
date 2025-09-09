@@ -233,7 +233,7 @@ const prepareSavedData = ({
   timeSpent,
   buttonClassOverride,
 }) => {
-  let buttonClass = buttonClassOverride || styles.NotAnsweredBtnCls;
+  let buttonClass = buttonClassOverride || `NotAnsweredBtnCls`;
 
   let savedData = {
     subjectId: question.subjectId,
@@ -334,7 +334,7 @@ const addNextQuestionToState = ({
         subjectId,
         sectionId,
         questionId: nextQid,
-        buttonClass: styles.NotAnsweredBtnCls,
+        buttonClass: `NotAnsweredBtnCls`,
         type: "",
       };
 
@@ -389,7 +389,7 @@ const handleSaveAndNext = async () => {
       natValue,
       styles,
       timeSpent,
-      buttonClassOverride: styles.AnswerdBtnCls,
+      buttonClassOverride: `AnswerdBtnCls`,
     });
 
     // Update user answers and add next question if needed
@@ -491,8 +491,8 @@ const handleMarkedForReview = async () => {
       timeSpent,
       buttonClassOverride:
         [1, 2, 8].includes(qTypeId) && selectedOption?.option_index
-          ? styles.AnsMarkedForReview
-          : styles.MarkedForReview,
+          ? `AnsMarkedForReview`
+          : `MarkedForReview`,
     });
 
     setUserAnswers((prev) => ({ ...prev, [qid]: savedData }));
@@ -607,7 +607,7 @@ const handleClearResponse = async () => {
     const existingAnswer = userAnswers?.[qid];
 
     // If already not answered, skip API call and state update
-    if (existingAnswer?.buttonClass === styles.NotAnsweredBtnCls) {
+    if (existingAnswer?.buttonClass === `NotAnsweredBtnCls`) {
       console.warn("No response to clear, skipping API call.");
       return;
     }
@@ -626,7 +626,7 @@ const handleClearResponse = async () => {
         questionId: qid,
         TimeSpentOnQuestion: existingAnswer?.TimeSpentOnQuestion ?? 0,
         type: "",
-        buttonClass: styles.NotAnsweredBtnCls,
+        buttonClass: `NotAnsweredBtnCls`,
       },
     }));
 

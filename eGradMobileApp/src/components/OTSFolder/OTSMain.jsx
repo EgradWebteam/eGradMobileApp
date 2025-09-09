@@ -86,15 +86,25 @@ const OTSMain = ({
 
   // ✅ Set first active subject/section on mount
   useEffect(() => {
-    if (testData && !activeSubject) {
-      const normalSubjects = testData.subjects.filter(s => s.subjectType === "0");
+    if (testData && !activeSubject && Array.isArray(testData.subjects)) {
+
+      const normalSubjects = testData.subjects.filter(
+        (s) => s.subjectType === "0" // ✅ fixed key
+      );
+
+
       if (normalSubjects.length > 0) {
-        setActiveSubject(normalSubjects[0].SubjectName);
-        setActiveSection(normalSubjects[0].sections?.[0]?.SectionName || null);
-        setActiveQuestionIndex(0);
+        const firstSubject = normalSubjects[0];
+        setActiveSubject(firstSubject.SubjectName);
+
+        const firstSection = firstSubject.sections?.[0];
+        if (firstSection) {
+          setActiveSection(firstSection.SectionName);
+          setActiveQuestionIndex(0);
+        }
       }
     }
-  }, [testData]);
+  }, [testData, activeSubject]);
 
   // ✅ Update section when activeSubject changes
   useEffect(() => {
@@ -185,14 +195,14 @@ const OTSMain = ({
     if ([5, 6].includes(currentQuestion.questionType?.quesionTypeId)) {
       const answer = natValue.trim();
       const prevAnswer = userAnswers?.[qid];
-      const buttonClass = prevAnswer?.buttonClass === styles.AnsMarkedForReview ? styles.AnsMarkedForReview : styles.AnswerdBtnCls;
+      const buttonClass = prevAnswer?.buttonClass === `AnsMarkedForReview` ? `AnsMarkedForReview` : `AnswerdBtnCls`;
 
       if (answer) {
         const entry = { subjectId, sectionId, questionId: qid, type: "NAT", TimeSpentOnQuestion: timeSpent, natAnswer: answer, buttonClass };
         setUserAnswers(prev => ({ ...prev, [qid]: entry }));
         await saveUserResponse({ realStudentId, realTestId, realCourseId, subject_id: subjectId, section_id: sectionId, question_id: qid, question_type_id: currentQuestion.questionType?.quesionTypeId, calculatorInputValue: answer, TimeSpentOnQuestion: timeSpent });
       } else if (prevAnswer?.natAnswer) {
-        setUserAnswers(prev => ({ ...prev, [qid]: { ...prev[qid], type: "", buttonClass: styles.NotAnsweredBtnCls } }));
+        setUserAnswers(prev => ({ ...prev, [qid]: { ...prev[qid], type: "", buttonClass: NotAnsweredBtnCls } }));
         await saveUserResponse({ realStudentId, realTestId, realCourseId, subject_id: subjectId, section_id: sectionId, question_id: qid, question_type_id: currentQuestion.questionType?.quesionTypeId, calculatorInputValue: answer, TimeSpentOnQuestion: timeSpent, answered: "3" });
       }
     }
@@ -218,6 +228,44 @@ const OTSMain = ({
 
     return () => clearInterval(intervalId);
   }, [qid, userAnswers]);
+// ✅ Helper functions
+ const getButtonClass = (status) =>{
+  switch (status) {
+    case 1: return `AnswerdBtnCls`;
+    case 2: return `AnsMarkedForReview`;
+    case 3: return `NotAnsweredBtnCls`;
+    case 4: return `MarkedForReview`;
+    default: return `NotAnsweredBtnCls`;
+  }
+}
+
+ const  mapQuestionType = (typeId)=>{
+  switch (typeId) {
+    case 1:
+    case 2:
+      return "MCQ";
+    case 3:
+    case 4:
+      return "MSQ";
+    case 5:
+    case 6:
+      return "NAT";
+    case 8:
+      return "CTQ";
+    default:
+      return "";
+  }
+}
+
+const  saveUserResponse = async(payload) => {
+  try {
+    const res = await axios.post(`${backEndUrl}/OTSTestPaper/SaveResponse`, payload);
+    return res.data;
+  } catch (err) {
+    console.error("Error saving user response:", err);
+    return { success: false, message: "Network error" };
+  }
+}
 
   if (isLoading) return <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />;
 
@@ -361,42 +409,4 @@ const OTSMain = ({
   );
 }
 export default OTSMain;
-// ✅ Helper functions
-function getButtonClass(status) {
-  switch (status) {
-    case 1: return styles.AnswerdBtnCls;
-    case 2: return styles.AnsMarkedForReview;
-    case 3: return styles.NotAnsweredBtnCls;
-    case 4: return styles.MarkedForReview;
-    default: return styles.NotAnsweredBtnCls;
-  }
-}
-
-function mapQuestionType(typeId) {
-  switch (typeId) {
-    case 1:
-    case 2:
-      return "MCQ";
-    case 3:
-    case 4:
-      return "MSQ";
-    case 5:
-    case 6:
-      return "NAT";
-    case 8:
-      return "CTQ";
-    default:
-      return "";
-  }
-}
-
-async function saveUserResponse(payload) {
-  try {
-    const res = await axios.post(`${backEndUrl}/OTSTestPaper/SaveResponse`, payload);
-    return res.data;
-  } catch (err) {
-    console.error("Error saving user response:", err);
-    return { success: false, message: "Network error" };
-  }
-}
 

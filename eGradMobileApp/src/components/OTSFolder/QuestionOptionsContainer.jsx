@@ -70,30 +70,39 @@ const QuestionOptionsContainer = ({
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* MCQ - Single Selection */}
-      {[1, 2, 8].includes(questionTypeId) && (
-        <RadioButton.Group
-          onValueChange={(val) => {
-            onSelectOption({ option_index: val });
-          }}
-          value={
-            selectedOption?.option_index ||
-            savedAnswer?.optionIndex ||
-            ''
-          }
-        >
-          {options.map((option, index) => (
-            <RadioButton.Item
-              key={option.option_id}
-              label={getLabel(index, option.option_index)}
-              value={option.option_index}
-              disabled={isDisabled}
-              style={styles.radioItem}
-              labelStyle={styles.optionLabel}
-              uncheckedColor={isDisabled ? '#ccc' : '#000'}
-            />
-          ))}
-        </RadioButton.Group>
-      )}
+{[1, 2, 8].includes(questionTypeId) && (
+  <RadioButton.Group
+    onValueChange={(val) => {
+      onSelectOption({ option_index: val });
+    }}
+    value={
+      selectedOption?.option_index ??
+      savedAnswer?.optionIndex ??
+      ''
+    }
+  >
+    {options.map((option, index) => (
+      <View key={option.option_id} style={styles.optionRow}>
+        <RadioButton.Item
+          label={getLabel(index, option.option_index)}
+          value={option.option_index}
+          disabled={isDisabled}
+          style={styles.radioItem}
+          labelStyle={styles.optionLabel}
+          uncheckedColor={isDisabled ? '#ccc' : '#000'}
+        />
+        {option.optionImgName ? (
+          <Image
+            source={{ uri: option.optionImgName }}
+            style={{ width: 300,height:90,  backgroundColor: '#eee' }}
+            resizeMode="contain"
+          />
+        ) : null}
+      </View>
+    ))}
+  </RadioButton.Group>
+)}
+
 
       {/* MSQ - Multiple Selection */}
       {[3, 4].includes(questionTypeId) && options.map((option, index) => {
@@ -116,7 +125,8 @@ const QuestionOptionsContainer = ({
             </Text>
             <Image
               source={{ uri: option.optionImgName }}
-              style={styles.optionImage}
+          
+                style={{ width: 300, height:90, backgroundColor: '#eee' }}
               resizeMode="contain"
             />
           </View>

@@ -34,11 +34,22 @@ export const styles = StyleSheet.create({
   mainContainerforquestion: {
     flex: 1,
     padding: 16,
+    minHeight:400
    
+  },
+  
+  optionLabel:{
+    width:40
   },
   mainContainer: {
     flex: 1,
     padding: 16,
+  },
+  questionBtnSNMR:{
+height: 45,
+    width: 45,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   heading: {
     fontSize: 22,

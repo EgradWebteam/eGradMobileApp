@@ -89,7 +89,7 @@ const OTSRightSideBar = ({
           subjectId: subject.subjectId,
           sectionId: section.sectionId,
           questionId: question.question_id,
-          buttonClass: styles.NotAnsweredBtnCls,
+          buttonClass: NotAnsweredBtnCls,
           type: "", // no answer yet
         },
       }));
@@ -323,7 +323,7 @@ const OTSRightSideBar = ({
         <View style={styles.sidebar}>
           <View style={styles.behaviourCounts}>
             <View style={styles.behaviourItem}>
-              <View style={[styles.behaviourCircle, styles.answered]}>
+              <View style={[styles.behaviourCircle, styles.Answered]}>
                 <Text style={styles.behaviourCount}>{answeredCount}</Text>
               </View>
               <Text style={styles.behaviourText}>Answered</Text>
