@@ -6,6 +6,9 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
     flexGrow: 1,
   },
+  testcontainer:{  backgroundColor: '#fff',
+    flexGrow: 1,
+ padding: 5,},
   navbarcontainer: {
     backgroundColor: '#f8f8f8',
     padding: 10,
@@ -23,10 +26,12 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   footerContainer: {
-    padding: 12,
-
+    padding: 8,
+flexWrap:'wrap',
+gap:'10',
     borderTopWidth: 1,
-    borderTopColor: '#eee',
+    borderTopColor: '#eee'
+   
   },
   questionImageContainer: {
    padding:5
@@ -34,7 +39,7 @@ export const styles = StyleSheet.create({
   mainContainerforquestion: {
     flex: 1,
     padding: 16,
-    minHeight:400
+    minHeight:500
    
   },
   
@@ -43,7 +48,7 @@ export const styles = StyleSheet.create({
   },
   mainContainer: {
     flex: 1,
-    padding: 16,
+    padding: 0,
   },
   questionBtnSNMR:{
 height: 45,
@@ -136,10 +141,10 @@ height: 45,
   },
   functionimageCls: { fontWeight: "bold", fontSize: 14, color: "#000" },
   NotVisitedBehaviourBtns: { color: "#000" },
-  NotAnsweredBtnCls: { color: "#f00" },
-  AnswerdBtnCls: { color: "#0a0" },
-  MarkedForReview: { color: "#ff8800" },
-  AnsMarkedForReview: { color: "#00f" },
+  NotAnsweredBtnCls: { color: "#fff" },
+  AnswerdBtnCls: { color: "#fff" },
+  MarkedForReview: { color: "#fff" },
+  AnsMarkedForReview: { color: "#fff" },
   forTotalWidth: { flex: 1 },
   userImageDivInst: {
     marginTop: 20,
@@ -447,7 +452,12 @@ height: 45,
     backgroundColor: '#6c5ce7',
   },
   questionBtnText: {
-    color: '#000',
+  
+textAlign: 'center'
+  },
+  subjectContainer: {
+flexDirection:'column',
+gap:'10'
   },
   questionContainer: {
     flex: 1,
@@ -478,6 +488,7 @@ height: 45,
   subjectButton: {
     padding: 10,
     backgroundColor: "#eee",
+    color:'#000',
     borderRadius: 6,
     marginLeft: 8,
   },
@@ -493,8 +504,18 @@ height: 45,
   sectionText: {
     fontSize: 15,
   },
+  activeSubjectText:{
+color:'#fff',
+  },
   activeButton: {
-    backgroundColor: "#6c5ce7",
+    backgroundColor: "#0d057cff",
+    color:'#fff',
+  },
+  natInput:{
+    borderColor:'#ccc',
+    borderWidth:1,
+    width:'90%',
+    height:40,
   },
 //   warningBox: {
 //     backgroundColor: "#fff3cd",
@@ -518,13 +539,21 @@ height: 45,
     btnsSubContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 12,
+ 
   },
   navigationBtnHolderSubContainer: {
-    flexDirection: 'row',
+
+     flexDirection: 'row',
+     gap:'10'
+  },
+
+   buttonText: {
+    color: '#fff',
+    fontSize: 16,
   },
   navigationBtnHolderSubContainerForSubmit: {
     flexDirection: 'row',
+      gap:'10'
   },
 //   button: {
 //     backgroundColor: '#007bff',
@@ -545,16 +574,11 @@ height: 45,
     color: '#ddd',
   },
   submitBtnCls: {
-    marginTop: 16,
-    flexDirection: 'row',
-    justifyContent: 'center',
+   flexDirection: 'row',
+     gap:'10',
+     justifyContent:'space-evenly'
   },
-  submitButton: {
-    backgroundColor: '#28a745',
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    borderRadius: 4,
-  },
+
   popupOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0,0,0,0.6)',
@@ -593,11 +617,50 @@ height: 45,
     fontWeight: '600',
   },
   examSummaryMainDiv: {
-    marginTop: 20,
+           // Similarly for full height
+    backgroundColor: 'white',
+    justifyContent: 'center',
+      flex: 1,
+    alignItems: 'center',
+  
   },
   examSummarySubDiv: {
-    // your styles here
+    width: '90%',
   },
+ NavigationButton: {
+
+  paddingVertical: 6,
+  paddingHorizontal: 6,
+  borderRadius: 6,
+
+  alignItems: 'center' ,
+   borderWidth: 1,
+  borderColor: '#000',
+  color:'#000',
+},
+saveandnext:{
+  paddingVertical: 6,
+  paddingHorizontal: 6,
+  borderRadius: 6,
+minWidth:100,
+maxWidth:200,
+justifyContent:'center',
+  alignItems: 'center',
+    backgroundColor: '#040e46ff',
+    color:'#fff'
+},
+  submitButton: {
+    backgroundColor: '#28a745',
+      color:'#fff',
+    paddingVertical: 6,
+  paddingHorizontal: 6,
+  borderRadius: 6,
+minWidth:100,
+maxWidth:200,
+justifyContent:'center',
+  alignItems: 'center',
+  },
+
   //examsummmary
   scrollView: {
     paddingBottom: 40,
@@ -699,11 +762,125 @@ height: 45,
     backgroundColor: "#fff",
   },
   logoHolder: {
-    width: 200,
+    width: 250,
     height: 40,
   },
   logo: {
     width: "100%",
     height: "100%",
+  },  NATInputHolder: {
+    width: 180,
+    backgroundColor: '#fff',
+    borderRadius: 15,
+    display: 'flex', // optional in RN, flexDirection is sufficient
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: 16, // 1rem ≈ 16px
+    gap: 4, // Note: `gap` support is limited in RN; needs manual spacing
+    borderWidth: 2,
+    borderColor: '#c5c0c0',
+    shadowColor: '#000',
+    shadowOffset: { width: 1.95, height: 1.95 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2.6,
+    elevation: 3, // Required for shadow to appear on Android
+  },
+
+  NATLabel: {
+    width: 150,
+    fontWeight: 'bold',
+    display: 'flex', // optional
+    marginBottom: 10,
+  },
+
+  backSpaceBtn: {
+    display: 'flex',
+    justifyContent: 'center',
+    width: '85%',
+    marginHorizontal: 'auto', // React Native doesn’t support 'auto' – may need to adjust manually
+    margin: 10,
+  },
+  backSpaceButton: {
+    width: '100%',
+    padding: 5,
+    fontSize: 16, // 'larger' in web ≈ 18px
+    backgroundColor: '#d9d9d9',
+    borderRadius: 10,
+    fontWeight: 'bold',
+    borderWidth: 1,
+    borderColor: 'darkgray',
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3, // Required for Android shadow
+    textTransform: 'uppercase', // This works only in <Text />
+    color: 'black', // Also for <Text />, not <View />
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  backSpaceButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    color: 'black',
+  },
+  CalculatorBox: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10, // not fully supported — use margins between children
+    justifyContent: 'center',
+    padding: 10,
+  },
+
+  calcButton: {
+    width: 30,
+    height: 30,
+    borderWidth: 2,
+    borderColor: '#aaa',
+    borderRadius: 8,
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    backgroundColor: '#e4e4e4',
+    color: 'black',
+    shadowColor: '#000',
+    shadowOffset: { width: 1.95, height: 1.95 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2.6,
+    elevation: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  arrowBtns: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+    gap: 16, // Not fully supported; manage via spacing on children
+  },
+
+  arrowButton: {
+    width: 45,
+    height: 30,
+    borderWidth: 1,
+    borderColor: '#aaa',
+    borderRadius: 4,
+    backgroundColor: '#e0e0e0',
+    fontSize: 20,
+    fontWeight: 'bold',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+    color: 'black',
   },
 });

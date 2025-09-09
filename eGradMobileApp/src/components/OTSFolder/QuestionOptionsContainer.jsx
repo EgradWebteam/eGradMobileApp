@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef,useState } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
 import { RadioButton } from 'react-native-paper';
 import CheckBox from '@react-native-community/checkbox';
 import { styles } from '../../styles/OTSStyles';
+import ResponsiveImage from './ResponsiveImage';
 const QuestionOptionsContainer = ({
   options,
   optPatternId,
@@ -26,7 +27,7 @@ const QuestionOptionsContainer = ({
   isDisabled,
 }) => {
   const inputRef = useRef(null);
-
+  const [cursorPosition, setCursorPosition] = useState(0);
   useEffect(() => {
     if ([5, 6].includes(questionTypeId) && savedAnswer?.natAnswer) {
       setNatValue(savedAnswer.natAnswer);
@@ -41,7 +42,19 @@ const QuestionOptionsContainer = ({
   };
 
   const calculatorButtons = ['7','8','9','4','5','6','3','2','1','0','.','-'];
+const handleArrowInput = (direction) => {
+  if (!inputRef.current) return;
+  let newPosition = cursorPosition;
 
+  if (direction === 'left' && cursorPosition > 0) {
+    newPosition -= 1;
+  } else if (direction === 'right' && cursorPosition < natValue.length) {
+    newPosition += 1;
+  }
+
+  setCursorPosition(newPosition);
+  inputRef.current.focus();
+};
   const handleCalculatorInput = (val) => {
     let currentValue = natValue || '';
     if (val === 'ClearAll') {
@@ -92,11 +105,8 @@ const QuestionOptionsContainer = ({
           uncheckedColor={isDisabled ? '#ccc' : '#000'}
         />
         {option.optionImgName ? (
-          <Image
-            source={{ uri: option.optionImgName }}
-            style={{ width: 300,height:90,  backgroundColor: '#eee' }}
-            resizeMode="contain"
-          />
+
+            <ResponsiveImage uri={option.optionImgName} />
         ) : null}
       </View>
     ))}
@@ -123,35 +133,40 @@ const QuestionOptionsContainer = ({
             <Text style={styles.optionLabel}>
               {getLabel(index, option.option_index)}
             </Text>
-            <Image
-              source={{ uri: option.optionImgName }}
-          
-                style={{ width: 300, height:90, backgroundColor: '#eee' }}
-              resizeMode="contain"
-            />
+         
+              <ResponsiveImage uri={option.optionImgName} />
           </View>
         );
       })}
 
       {/* NAT Input with Calculator UI */}
       {[5, 6].includes(questionTypeId) && (
-        <View style={styles.natContainer}>
+        <View style={styles.NATInputHolder}>
+           <View style={styles.NATLabel}>
           <TextInput
             ref={inputRef}
             style={styles.natInput}
             value={natValue}
+              onChangeText={(text) => {
+    setNatValue(text);
+    setCursorPosition(text.length); // or wherever needed
+  }}
+  selection={{ start: cursorPosition, end: cursorPosition }}
+    onSelectionChange={({ nativeEvent: { selection } }) => {
+    setCursorPosition(selection.start);
+  }}
             editable={false}
-          />
-          <View style={styles.calcRow}>
+          /></View>
+          <View style={styles.backSpaceBtn}>
             <TouchableOpacity
               disabled={isDisabled}
-              style={styles.specialButton}
+              style={styles.backSpaceButton}
               onPress={() => handleCalculatorInput('BackSpace')}
             >
               <Text>Backspace</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.calculatorBox}>
+          <View style={styles.CalculatorBox}>
             {calculatorButtons.map((btn, idx) => (
               <TouchableOpacity
                 key={idx}
@@ -163,10 +178,26 @@ const QuestionOptionsContainer = ({
               </TouchableOpacity>
             ))}
           </View>
-          <View style={styles.calcRow}>
+<View style={styles.arrowBtns}>
+  <TouchableOpacity
+    style={styles.arrowButton}
+    onPress={() => handleArrowInput('left')}
+    disabled={cursorPosition === 0}
+  >
+    <Text style={styles.arrowText}>←</Text>
+  </TouchableOpacity>
+  <TouchableOpacity
+    style={styles.arrowButton}
+    onPress={() => handleArrowInput('right')}
+    disabled={cursorPosition === natValue.length}
+  >
+    <Text style={styles.arrowText}>→</Text>
+  </TouchableOpacity>
+</View>
+          <View style={styles.backSpaceBtn}>
             <TouchableOpacity
               disabled={isDisabled}
-              style={styles.specialButton}
+                style={styles.backSpaceButton}
               onPress={() => handleCalculatorInput('ClearAll')}
             >
               <Text>Clear All</Text>

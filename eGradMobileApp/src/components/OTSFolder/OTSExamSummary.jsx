@@ -6,12 +6,15 @@ import {
   ScrollView,
   Alert,
   StyleSheet,
+  Modal,
   BackHandler,
 } from "react-native";
 import { useQuestionStatus } from "../../hooks/CountsContext";
 // import { useAlert } from "../../hooks/AlertContext.jsx";
 import { styles } from '../../styles/OTSStyles';
 import axios from 'axios';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from '@react-navigation/native';
 import { backEndUrl, frontEndUrl,backEndPort } from "../../apiConfig";
 // import { useSession } from "../../StudentDashboard/hooks/SessionContext";
 
@@ -23,7 +26,7 @@ const OTSExamSummary = ({
   isSubmitClicked,
   isAutoSubmitted,
   setShowExamSummary,
-  navigation, // React Navigation prop
+ // React Navigation prop
 }) => {
   const {
     answeredCount,
@@ -34,12 +37,18 @@ const OTSExamSummary = ({
     visitedCount,
     totalQuestionsInTest,
   } = useQuestionStatus();
-
+console.log(   answeredCount,
+    answeredAndMarkedForReviewCount,
+    markedForReviewCount,
+    notAnsweredCount,
+    notVisitedCount,
+    visitedCount,
+    totalQuestionsInTest)
 //   const { validateSessionWithoutNavigation } = useSession();
   // const { alert } = useAlert();
 
   const [showSubmittedPopup, setShowSubmittedPopup] = useState(false);
-
+  const navigation = useNavigation();
   const isSubmittingRef = useRef(false);
 
   // Handle Android hardware back button to show exam summary if needed
@@ -64,8 +73,9 @@ const OTSExamSummary = ({
   const handleConfirmSubmit = async () => {
     if (isSubmittingRef.current) return;
     isSubmittingRef.current = true;
-
+const token = await AsyncStorage.getItem('accessToken');
     try {
+
       if (!realTestId || !realStudentId || !realCourseId) {
         console.warn("Missing test/student ID, skipping submission process.");
         setShowSubmittedPopup(true);
@@ -115,8 +125,6 @@ const OTSExamSummary = ({
         return;
       }
 
-      // Fetch summary + marks in parallel
-      const token = ""; // Fetch token from secure storage/context
 
       const [summaryRes, marksRes] = await Promise.allSettled([
         fetch(
@@ -156,16 +164,31 @@ const OTSExamSummary = ({
     }
   };
 
-  const handleViewReport = () => {
-    // Clear stored flags or data here
-    // Navigation to reports or dashboard - adjust to your app's navigation structure
+const handleViewReport = async () => {
+  try {
 
-    // Example:
-    setShowExamSummary(false);
-    if (navigation) {
-      navigation.navigate("StudentDashboard", { userId: realStudentId });
+    const userId = await AsyncStorage.getItem('userId');
+ 
+            await AsyncStorage.removeItem('examSubmitted');
+      await AsyncStorage.removeItem('autoSubmitted');
+      await AsyncStorage.removeItem('examSummaryEntered');
+   setShowExamSummary(false);
+    if (userId) {
+     
+    navigation.reset({
+  index: 0,
+  routes: [{ name: 'studentDashboard', params: { userId } }],
+});
+
+    } else {
+      console.warn("User ID not found in AsyncStorage.");
+      // Optionally navigate to login or show error
     }
-  };
+  } catch (error) {
+    console.error("Error retrieving user ID or navigating:", error);
+  }
+};
+
 
   // Render table-like summary using flexbox
   const SummaryRow = ({ label, value }) => (
@@ -235,13 +258,13 @@ const OTSExamSummary = ({
           )}
         </ScrollView>
       ) : (
-        <View style={styles.submissionPopup}>
+        <Modal>
           <Text style={styles.submissionTitle}>Your Test has been Submitted!</Text>
           <Text style={styles.submissionText}>You can now view your report.</Text>
           <TouchableOpacity style={styles.button} onPress={handleViewReport}>
             <Text style={styles.buttonText}>View Report</Text>
           </TouchableOpacity>
-        </View>
+        </Modal>
       )}
     </View>
   );

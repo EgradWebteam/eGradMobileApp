@@ -231,16 +231,16 @@ const prepareSavedData = ({
   natValue,
   styles,
   timeSpent,
-  buttonClassOverride,
+  buttonClass,
 }) => {
-  let buttonClass = buttonClassOverride || `NotAnsweredBtnCls`;
+  let buttonClassvalue = buttonClass || `NotAnsweredBtnCls`;
 
   let savedData = {
     subjectId: question.subjectId,
     sectionId: question.sectionId,
     questionId: question.question_id,
     type: "",
-    buttonClass,
+    buttonClass:buttonClassvalue,
   };
 
   let optionIndexesStr = "";
@@ -389,8 +389,14 @@ const handleSaveAndNext = async () => {
       natValue,
       styles,
       timeSpent,
-      buttonClassOverride: `AnswerdBtnCls`,
-    });
+      buttonClass:(
+    ([1, 2, 8].includes(qTypeId) && selectedOption?.option_index) ||
+    ([3, 4, 7].includes(qTypeId) && Array.isArray(selectedOptionsArray) && selectedOptionsArray.length > 0) ||
+    ([5, 6].includes(qTypeId) && typeof natValue === 'string' && natValue.trim() !== '')
+      ? 'AnswerdBtnCls'
+      : 'NotAnsweredBtnCls'
+  )
+});
 
     // Update user answers and add next question if needed
     setUserAnswers((prev) => ({ ...prev, [qid]: savedData }));
@@ -489,11 +495,14 @@ const handleMarkedForReview = async () => {
       natValue,
       styles,
       timeSpent,
-      buttonClassOverride:
-        [1, 2, 8].includes(qTypeId) && selectedOption?.option_index
-          ? `AnsMarkedForReview`
-          : `MarkedForReview`,
-    });
+      buttonClass: (
+    ([1, 2, 8].includes(qTypeId) && selectedOption?.option_index) ||
+    ([3, 4, 7].includes(qTypeId) && Array.isArray(selectedOptionsArray) && selectedOptionsArray.length > 0) ||
+    ([5, 6].includes(qTypeId) && typeof natValue === 'string' && natValue.trim() !== '')
+      ? 'AnsMarkedForReview'
+      : 'MarkedForReview'
+  )
+});
 
     setUserAnswers((prev) => ({ ...prev, [qid]: savedData }));
 
@@ -597,7 +606,7 @@ const handleClearResponse = async () => {
 //   if (!isValid) return window.close();
 
   setIsSaving(true);
-  try {
+
     const subject = testData?.subjects?.find(sub => sub.SubjectName === activeSubject);
     const section = subject?.sections?.find(sec => sec.SectionName === activeSection);
     const question = section?.questions?.[activeQuestionIndex];
@@ -606,12 +615,7 @@ const handleClearResponse = async () => {
     const qid = question.question_id;
     const existingAnswer = userAnswers?.[qid];
 
-    // If already not answered, skip API call and state update
-    if (existingAnswer?.buttonClass === `NotAnsweredBtnCls`) {
-      console.warn("No response to clear, skipping API call.");
-      return;
-    }
-
+   let isClear = existingAnswer?.buttonClass !== `NotAnsweredBtnCls`;
     // Reset selections locally
     setSelectedOption(null);
     setSelectedOptionsArray([]);
@@ -629,12 +633,16 @@ const handleClearResponse = async () => {
         buttonClass: `NotAnsweredBtnCls`,
       },
     }));
-
+ 
     if (!realStudentId || !realTestId || !realCourseId) {
       console.warn("Missing required IDs, skipping ClearResponse API call.");
       return;
     }
-
+     try {
+      if (!isClear) {
+            console.warn("No response to clear, skipping API call.");
+            return;
+          }
     const response = await fetch(
       `${backEndUrl}/OTSTestPaper/ClearResponse/${realStudentId}/${realTestId}/${realCourseId}/${qid}`,
       {
@@ -948,20 +956,25 @@ const onCancelSubmit = async () => {
 };
 
   return (
+  
     <ScrollView contentContainerStyle={styles.footerContainer} keyboardShouldPersistTaps="handled">
       <View style={styles.btnsSubContainer}>
         <View style={styles.navigationBtnHolderSubContainer}>
+
           <TouchableOpacity
             // style={getButtonStyle(isDisabled)}
             onPress={handleMarkedForReview}
             disabled={isDisabled || isSaving}
+             style= {styles.NavigationButton}
           >
             <Text
+           
             //  style={getButtonTextStyle(isDisabled)}
              >Marked For Review & Next</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
+            style= {styles.NavigationButton}
             // style={getButtonStyle(isDisabled)}
             onPress={handleClearResponse}
             disabled={isDisabled || isSaving}
@@ -975,6 +988,7 @@ const onCancelSubmit = async () => {
         <View style={styles.navigationBtnHolderSubContainerForSubmit}>
           {activeQuestionIndex > 0 && (
             <TouchableOpacity
+              style= {styles.NavigationButton}
               // style={getButtonStyle(isDisabled)}
               onPress={handlePrevious}
               disabled={isDisabled || isSaving}
@@ -985,15 +999,7 @@ const onCancelSubmit = async () => {
             </TouchableOpacity>
           )}
 
-          <TouchableOpacity
-            // style={getButtonStyle(isDisabled)}
-            onPress={handleSaveAndNext}
-            disabled={isDisabled || isSaving}
-          >
-            <Text 
-            // style={getButtonTextStyle(isDisabled)}
-            >Save & Next</Text>
-          </TouchableOpacity>
+       
         </View>
       </View>
 
@@ -1007,13 +1013,28 @@ const onCancelSubmit = async () => {
           // style={getButtonTextStyle(isSaving)}
           >Submit</Text>
         </TouchableOpacity>
-
+   <TouchableOpacity
+            style= {styles.saveandnext}
+            // style={getButtonStyle(isDisabled)}
+            onPress={handleSaveAndNext}
+            disabled={isDisabled || isSaving}
+          >
+            <Text 
+           style={styles.buttonText}
+            >Save & Next</Text>
+          </TouchableOpacity>
         {/* Hidden Save & Next button equivalent, if needed, you can toggle with conditional rendering */}
       </View>
 
       {showBonusConfirmPopup && (
-        <View style={styles.popupOverlay}>
-          <View style={styles.confirmationPopup}>
+                  <Modal
+      animationType="fade"
+      transparent={false}
+      visible={showBonusConfirmPopup}
+      onRequestClose={!showBonusConfirmPopup}
+    >
+        <View style={styles.examSummaryMainDiv}>
+          <View style={styles.examSummarySubDiv}>
             <Text style={styles.popupTitle}>Do you want to attempt extra questions?</Text>
             <View style={styles.popupButtons}>
               <TouchableOpacity
@@ -1032,15 +1053,19 @@ const onCancelSubmit = async () => {
             </View>
           </View>
         </View>
+    </Modal>
       )}
 
       {showExamSummary && (
+            <Modal
+      animationType="fade"
+      transparent={false}
+      visible={showExamSummary}
+      onRequestClose={!showExamSummary}
+    >
         <View style={styles.examSummaryMainDiv}>
           <View style={styles.examSummarySubDiv}>
-            {/* 
-              QuestionStatusProvider & OTSExamSummary would also need React Native adaptation.
-              For now, assuming those components exist and work in React Native. 
-            */}
+          
             <QuestionStatusProvider
               testData={isBonusLoaded ? fullTestData : testData}
               activeSubject={activeSubject}
@@ -1048,20 +1073,21 @@ const onCancelSubmit = async () => {
               userAnswers={userAnswers}
             >
               <OTSExamSummary
-                testData={isBonusLoaded ? fullTestData : testData}
-                userAnswers={userAnswers}
-                onCancelSubmit={onCancelSubmit}
-                isSubmitClicked={isSubmitClicked}
-                isAutoSubmitted={isAutoSubmitted}
-                setUserAnswers={setUserAnswers}
-                realTestId={realTestId}
-                realCourseId={realCourseId}
-                realStudentId={realStudentId}
-                setShowExamSummary={() => {}}
+                testData={isBonusLoaded ? fullTestData : testData} // ✅ pass merged only after bonus
+                  userAnswers={userAnswers}
+                  onCancelSubmit={onCancelSubmit}
+                  isSubmitClicked={isSubmitClicked}
+                  isAutoSubmitted={isAutoSubmitted}
+                  setUserAnswers={setUserAnswers}
+                  realTestId={realTestId}
+                  realCourseId={realCourseId}
+                  realStudentId={realStudentId}
+                  setShowExamSummary={setShowExamSummary}
               />
             </QuestionStatusProvider>
           </View>
         </View>
+          </Modal>
       )}
     </ScrollView>
   );

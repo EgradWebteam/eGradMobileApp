@@ -1,11 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-// Instead of CSS classes, define status constants here or import them from a constants file
-const ANSWERED = "answered";
-const MARKED_FOR_REVIEW = "markedForReview";
-const ANSWERED_AND_MARKED_FOR_REVIEW = "answeredAndMarkedForReview";
-const NOT_ANSWERED = "notAnswered";
-
 const QuestionStatusContext = createContext();
 
 export const useQuestionStatus = () => useContext(QuestionStatusContext);
@@ -44,18 +38,18 @@ const QuestionStatusProvider = ({
           const answer = userAnswers[qid];
 
           if (answer) {
-            const status = answer.status; // Assuming userAnswers[qid] contains a 'status' string instead of CSS class
+            const status = answer.buttonClass; // Assuming userAnswers[qid] contains a 'status' string instead of CSS class
 
-            if (status === ANSWERED) {
+            if (status === `AnswerdBtnCls`) {
               answered++;
               visited++;
-            } else if (status === MARKED_FOR_REVIEW) {
+            } else if (status === `MarkedForReview`) {
               markedForReview++;
               visited++;
-            } else if (status === ANSWERED_AND_MARKED_FOR_REVIEW) {
+            } else if (status === `AnsMarkedForReview`) {
               answeredAndMarkedForReview++;
               visited++;
-            } else if (status === NOT_ANSWERED) {
+            } else if (status === `NotAnsweredBtnCls`) {
               notAnswered++;
               visited++;
             }

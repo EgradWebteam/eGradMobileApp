@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { AppState } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const TimerContext = createContext();
 export const useTimer = () => useContext(TimerContext);
@@ -11,6 +10,7 @@ const TimerProvider = ({ testData, resumeTime, children }) => {
   const startTimeRef = useRef(null);
   const appState = useRef(AppState.currentState);
 
+  // Converts duration in minutes or string format to seconds
   const parseTimeToSeconds = (time) => {
     if (typeof time === 'number') return time;
     if (typeof time === 'string') {
@@ -20,53 +20,36 @@ const TimerProvider = ({ testData, resumeTime, children }) => {
     return 0;
   };
 
-  const totalDurationInSeconds = parseTimeToSeconds((testData?.TestDuration || 0) * 60);
+  const totalDurationInSeconds = parseTimeToSeconds(testData?.TestDuration || 0) * 60;
   const resumeTimeInSeconds = parseTimeToSeconds(resumeTime);
 
   useEffect(() => {
     if (!testData || !testData.TestDuration) return;
 
-    const setupTimer = async () => {
-      const now = Date.now();
-      let storedStartTime = await AsyncStorage.getItem('examStartTime');
+    const now = Date.now();
+    const durationToUse = resumeTime != null ? resumeTimeInSeconds : totalDurationInSeconds;
 
-      if (resumeTime != null) {
-        // Force new start
-        storedStartTime = now.toString();
-        await AsyncStorage.setItem('examStartTime', storedStartTime);
-      } else {
-        if (!storedStartTime) {
-          storedStartTime = now.toString();
-          await AsyncStorage.setItem('examStartTime', storedStartTime);
-        }
+    startTimeRef.current = now;
+    
+    const updateTime = () => {
+      const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
+      const remaining = Math.max(durationToUse - elapsed, 0);
+      setTimeLeft(remaining);
+
+      if (remaining === 0) {
+        clearInterval(intervalRef.current);
       }
-
-      startTimeRef.current = parseInt(storedStartTime, 10);
-      const startingTimeLeft = resumeTime != null ? resumeTimeInSeconds : totalDurationInSeconds;
-
-      const updateTime = () => {
-        const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
-        const remaining = Math.max(startingTimeLeft - elapsed, 0);
-        setTimeLeft(remaining);
-      };
-
-      updateTime();
-      intervalRef.current = setInterval(updateTime, 1000);
     };
 
-    setupTimer();
+    updateTime();
+    intervalRef.current = setInterval(updateTime, 1000);
 
-    // Handle app state changes (foreground/background)
     const handleAppStateChange = (nextAppState) => {
       if (
         appState.current.match(/inactive|background/) &&
         nextAppState === 'active'
       ) {
-        // App comes to foreground, update timer immediately
-        const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
-        const startingTimeLeft = resumeTime != null ? resumeTimeInSeconds : totalDurationInSeconds;
-        const remaining = Math.max(startingTimeLeft - elapsed, 0);
-        setTimeLeft(remaining);
+        updateTime();
       }
       appState.current = nextAppState;
     };

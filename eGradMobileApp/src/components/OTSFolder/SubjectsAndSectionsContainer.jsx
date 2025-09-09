@@ -377,6 +377,8 @@ const saveUserResponse = async ({
   };
 
   return (
+    <View >
+   <View style={styles.subjectContainer}>
     <ScrollView horizontal style={styles.questionNumberRow}>
       {/* <Text style={styles.title}>Subjects</Text> */}
 
@@ -401,13 +403,19 @@ const saveUserResponse = async ({
               ]}
               onPress={() => handleSubjectBtnClick(subjectName)}
             >
-              <Text style={styles.subjectText}>{displayName}</Text>
+              <Text 
+               style={[
+                styles.subjectText,
+                activeSubject === subjectName && styles.activeSubjectText,
+              ]}
+           >{displayName}</Text>
             </TouchableOpacity>
           </View>
         );
       })}
-
+</ScrollView>
       {/* <Text style={styles.title}>Sections</Text> */}
+       { activeSection &&(<ScrollView horizontal style={styles.questionNumberRow}>
  {activeSection && getSections(activeSubject).map((section, idx) => (
         <TouchableOpacity
           key={idx}
@@ -420,6 +428,8 @@ const saveUserResponse = async ({
           <Text style={styles.sectionText}>{section.SectionName}</Text>
         </TouchableOpacity>
       ))}
+      </ScrollView>)}
+      </View>
 {showResetTable && pendingSubjectToAdd && (
   <View style={styles.ResetableinOptionalSub}>
     <Text style={styles.warningTitle}>WARNING:</Text>
@@ -528,7 +538,8 @@ const saveUserResponse = async ({
           </View>
         </View>
       )}
-    </ScrollView>
+    
+    </View>
   );
 };
 

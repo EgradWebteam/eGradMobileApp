@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useCallback, useRef, useState } from "react";
+import { useFocusEffect } from '@react-navigation/native';
 import { View, Text, Button, StyleSheet, Alert, BackHandler, AppState } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
@@ -35,6 +36,14 @@ const TestScreen = () => {
 
   const appState = useRef(AppState.currentState);
   const summaryData = useRef({});
+  useEffect(() => {
+  return async () => {
+            await AsyncStorage.removeItem('examSubmitted');
+     await AsyncStorage.removeItem('autoSubmitted');
+     await  AsyncStorage.removeItem('examSummaryEntered');
+  };
+}, []);
+
 useEffect(() => {
   const fetchTestData = async () => {
     setIsLoading(true);
@@ -98,7 +107,8 @@ useEffect(() => {
 }, []);
 
   // App State (background/foreground)
-  useEffect(() => {
+useFocusEffect(
+  useCallback(() => {
     const handleAppStateChange = (nextAppState) => {
       if (appState.current.match(/active/) && nextAppState === "background") {
         setWarningMessage(true);
@@ -109,8 +119,12 @@ useEffect(() => {
     };
 
     const subscription = AppState.addEventListener("change", handleAppStateChange);
-    return () => subscription.remove();
-  }, []);
+
+    return () => {
+      subscription.remove(); // cleanup
+    };
+  }, [])
+);
 
   // Back button handling
   // useEffect(() => {
@@ -135,7 +149,7 @@ useEffect(() => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.testcontainer}>
       <OTSHeader />
       <OTSNavbar
         realTestId={realTestId.current}

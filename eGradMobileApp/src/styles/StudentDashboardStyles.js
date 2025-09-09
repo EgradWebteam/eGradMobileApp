@@ -21,7 +21,8 @@ export const styles = StyleSheet.create({
     backgroundColor: "#cce4ff", // light blue shade
     alignItems: "center",
   },
-  activeButton: { backgroundColor: "#3399ff" }, // darker blue
+  activeButton: {    backgroundColor: "#6c5ce7",
+    color:'#fff',}, // darker blue
   buttonText: { color: "#fff", fontWeight: "bold" },
   detailsContainer: {
     width: "100%",
@@ -247,8 +248,8 @@ export const styles = StyleSheet.create({
     borderRadius: 5,
   },
   activeButton: {
-    backgroundColor: '#007bff',
-    color: 'white',
+   backgroundColor: "#6c5ce7",
+    color:'#fff',
   },
   noCourses: {
     textAlign: 'center',

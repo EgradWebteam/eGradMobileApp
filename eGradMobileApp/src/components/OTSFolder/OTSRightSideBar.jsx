@@ -32,6 +32,7 @@ const OTSRightSideBar = ({
   realTestId,
   realCourseId,
   isDisabled,
+  isMobile,
   getElapsedTimeForCurrentQuestion,
 }) => {
   const { studentData } = useStudent();
@@ -89,7 +90,7 @@ const OTSRightSideBar = ({
           subjectId: subject.subjectId,
           sectionId: section.sectionId,
           questionId: question.question_id,
-          buttonClass: NotAnsweredBtnCls,
+          buttonClass: `NotAnsweredBtnCls`,
           type: "", // no answer yet
         },
       }));
@@ -174,7 +175,7 @@ const OTSRightSideBar = ({
           subjectId: subject.subjectId,
           sectionId: section.sectionId,
           questionId: firstQuestion.question_id,
-          buttonClass: "NotAnswered",
+          buttonClass: "NotAnsweredBtnCls",
           type: "",
         },
       }));
@@ -292,6 +293,7 @@ const OTSRightSideBar = ({
   };
 
   return (
+    <View> {!isMobile && ( 
     <View style={styles.container}>
       <View style={styles.profileHolder}>
         <Image
@@ -321,6 +323,36 @@ const OTSRightSideBar = ({
 
       {showSidebar && (
         <View style={styles.sidebar}>
+            <ScrollView
+            style={styles.questionsContainer}
+           
+            keyboardShouldPersistTaps="handled"
+          >
+            {section?.questions?.map((q, index) => {
+              const savedAnswer = userAnswers?.[q.question_id];
+              const currentSectionId = Number(
+                section?.sectionId ?? section?.section_id ?? 0
+              );
+              const savedSectionId = Number(savedAnswer?.sectionId ?? 0);
+              const isFromCurrentSection = savedSectionId === currentSectionId;
+
+              let answerStatus = "NotVisited";
+              if (isFromCurrentSection && savedAnswer?.buttonClass) {
+                answerStatus = savedAnswer.buttonClass;
+              }
+           const isActive = index === activeQuestionIndex;
+              return (
+                <TouchableOpacity
+                  key={q.question_id}
+                  style={q.buttonClass}
+                  disabled={isDisabled}
+                  onPress={() => handleQuestionClick(index)}
+                >
+                  <Text style={styles.questionBtnText}>{index + 1}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
           <View style={styles.behaviourCounts}>
             <View style={styles.behaviourItem}>
               <View style={[styles.behaviourCircle, styles.Answered]}>
@@ -359,57 +391,10 @@ const OTSRightSideBar = ({
             <Text style={styles.sectionText}>{section?.SectionName || ""}</Text>
           </View>
 
-          <ScrollView
-            style={styles.questionsContainer}
-           
-            keyboardShouldPersistTaps="handled"
-          >
-            {section?.questions?.map((q, index) => {
-              const savedAnswer = userAnswers?.[q.question_id];
-              const currentSectionId = Number(
-                section?.sectionId ?? section?.section_id ?? 0
-              );
-              const savedSectionId = Number(savedAnswer?.sectionId ?? 0);
-              const isFromCurrentSection = savedSectionId === currentSectionId;
-
-              let answerStatus = "NotVisited";
-              if (isFromCurrentSection && savedAnswer?.buttonClass) {
-                answerStatus = savedAnswer.buttonClass;
-              }
-
-              // Map answerStatus to colors or styles
-              const buttonStyle =
-                answerStatus === "Answered"
-                  ? styles.answeredBtn
-                  : answerStatus === "NotAnswered"
-                  ? styles.notAnsweredBtn
-                  : answerStatus === "MarkedForReview"
-                  ? styles.markedForReviewBtn
-                  : answerStatus === "AnswerMarkedForReview"
-                  ? styles.answeredMarkedForReviewBtn
-                  : styles.notVisitedBtn;
-
-              const isActive = index === activeQuestionIndex;
-
-              return (
-                <TouchableOpacity
-                  key={q.question_id}
-                  style={[
-                    styles.questionBtn,
-                    buttonStyle,
-                    isActive && styles.activeQuestionBtn,
-                  ]}
-                  disabled={isDisabled}
-                  onPress={() => handleQuestionClick(index)}
-                >
-                  <Text style={styles.questionBtnText}>{index + 1}</Text>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
+          
         </View>
       )}
-    </View>
+    </View>)}</View>
   );
 };
 export default OTSRightSideBar;

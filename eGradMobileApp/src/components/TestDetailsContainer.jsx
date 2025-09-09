@@ -160,11 +160,8 @@ const handleStartTestClick = async (test) => {
     console.log("API response status:", response.status);
 
     if (response.status === 200) {
-      await AsyncStorage.setItem('navigationToken', 'valid');
-
       setRefreshTrigger(prev => !prev);
       if (setRefreshTriggerBundle) setRefreshTriggerBundle(prev => !prev);
-
       const convertToHHMMSS = (minutes) => {
         const totalSeconds = Math.floor(minutes * 60);
         const hrs = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');

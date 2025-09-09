@@ -17,7 +17,7 @@ import QuestionOptionsContainer from './QuestionOptionsContainer';
 import { backEndUrl, frontEndUrl,backEndPort } from "../../apiConfig";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
-
+import ResponsiveImage from './ResponsiveImage';
 
 
 
@@ -52,6 +52,7 @@ const backgroundImages = {
   NotAnsweredBtnCls: require('../../images/NotAnswered.png'),
   MarkedForReview: require('../../images/MarkedForReview.png'),
   AnsMarkedForReview: require('../../images/AnsMarkedForReview.png'),
+  NotVisitedBehaviourBtns: require('../../images/Visited.png'),
 };
 
   const [isMobile, setIsMobile] = useState(
@@ -237,14 +238,7 @@ const backgroundImages = {
     return (
       <View style={styles.questionImageContainer}>
         {question.questionImgName ? (
-          <Image
-           source={{ uri: question.questionImgName }}
-  style={{ width: 320, height: 150, backgroundColor: '#eee' }}
-  resizeMode="contain"
-  onError={(e) => {
-    console.log('Image load error:', e.nativeEvent.error);
-  }}
-          />
+   <ResponsiveImage uri={question.questionImgName} />
         ) : (
           <Text>No image available.</Text>
         )}
@@ -266,7 +260,7 @@ const backgroundImages = {
             const answerClass =
               isFromCurrentSection && savedAnswer?.buttonClass
                 ? savedAnswer.buttonClass
-                : styles.NotVisitedBehaviourBtns;
+                : `NotVisitedBehaviourBtns`;
 console.log(answerClass);
           return (
             <View key={q.question_id} style={styles.questionNumberRow}>
@@ -281,11 +275,12 @@ console.log(answerClass);
               >
                    <ImageBackground
       source={backgroundImages[answerClass]} // Use the dynamic key
-      style={{ width: 45, height: 45}}
+      style={{ width: 45, height: 45 ,justifyContent:'center',alignContent:'center'}}
       
-      imageStyle={{ resizeMode: 'contain' }}
+      imageStyle={{ resizeMode: 'contain' ,justifyContent: 'center',
+    alignItems: 'center'}}
     >
-                <Text style={styles.questionBtnText}>{index + 1}</Text></ImageBackground>
+                <Text style={[styles.questionBtnText, styles[answerClass]]}>{index + 1}</Text></ImageBackground>
               </TouchableOpacity>
             </View>
           );
@@ -323,11 +318,7 @@ console.log(answerClass);
           {isParagraphPresent && (
             <View style={styles.paragraphContainer}>
               {paragraph?.paragraphImgName ? (
-                <Image
-                  source={{ uri: paragraph.paragraphImgName }}
-              
-                    style={{ width: 320, height: 150, backgroundColor: '#eee' }}
-                />
+               <ResponsiveImage uri={paragraph.paragraphImgName} />
               ) : (
                 <Text>Loading...</Text> // Replace with Skeleton if needed
               )}

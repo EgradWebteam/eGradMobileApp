@@ -17,7 +17,7 @@ import SubjectsAndSectionsContainer from './SubjectsAndSectionsContainer';
 import OTSRightSideBar from './OTSRightSideBar'; // or omit if not needed
 import QuestionNavigationButtons from './QuestionNavigationButtons';
 import ExamSummaryCollector from './ExamSummaryCollector';
-import TimerProvider, { useTimer } from '../../hooks/TimerContext';
+import TimerProvider from '../../hooks/TimerContext';
 import  QuestionStatusProvider  from '../../hooks/CountsContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // import { useSession } from '../../StudentDashboard/hooks/SessionContext';
@@ -336,7 +336,7 @@ const  saveUserResponse = async(payload) => {
           getElapsedTimeForCurrentQuestion={getElapsedTimeForCurrentQuestion}
         />
       )}
-      {!isMobile && (
+    
       <OTSRightSideBar
         saveUserResponse={saveUserResponse}
         testData={testData}
@@ -353,11 +353,12 @@ const  saveUserResponse = async(payload) => {
         realTestId={realTestId}
         realCourseId={realCourseId}
         isDisabled={isDisabled}
+        isMobile = {isMobile}
         selectedSubjects={selectedSubjects}
         getElapsedTimeForCurrentQuestion={getElapsedTimeForCurrentQuestion}
         setSelectedSubjects={setSelectedSubjects}
       />
-)}
+
       <QuestionStatusProvider testData={isBonusLoaded ? fullTestData : testData} activeSubject={activeSubject} activeSection={activeSection} userAnswers={userAnswers}>
         <TimerProvider testData={testData} resumeTime={resumeTime}>
           <QuestionNavigationButtons
