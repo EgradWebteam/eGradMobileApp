@@ -118,7 +118,7 @@ export const StudentDashboard = () => {
       case 'buyCourses':
         return <StudentDashboardBuyCourses studentId={studentData?.userDetails?.student_registration_id} />;
       case 'results':
-        return <StudentDashboardMyResults studentId={studentData?.userDetails?.student_registration_id} />;
+        return <StudentDashboardMyResults studentId={studentData?.userDetails?.student_registration_id} userData={studentData?.userDetails}/>;
       case 'bookmarks':
         return <StudentDashboardBookMarks studentId={studentData?.userDetails?.student_registration_id} />;
       case 'account':

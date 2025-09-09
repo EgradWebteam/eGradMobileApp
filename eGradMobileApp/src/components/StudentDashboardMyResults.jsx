@@ -21,7 +21,7 @@ const StudentDashboardMyResults = ({ studentId, userData }) => {
   const [selectedPortalId, setSelectedPortalId] = useState(null);
   const [selectedExamId, setSelectedExamId] = useState(null);
   const [loading, setLoading] = useState(true);
-
+console.log("user dataaaa",userData);
   // DisableKeysAndMouseInteractions(null);
 
   const navigation = useNavigation();
@@ -109,6 +109,7 @@ const StudentDashboardMyResults = ({ studentId, userData }) => {
     }
 
     navigation.navigate("StudentReport", {
+      testId,
       studentId,
       course_portal_id,
       test_name: test.test_name,
