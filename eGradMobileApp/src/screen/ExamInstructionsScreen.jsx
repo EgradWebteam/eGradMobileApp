@@ -105,7 +105,7 @@ const ExamInstructionsScreen = () => {
     // const isValid = await validateSessionWithoutNavigation();
     // if (isValid) {
       setIsSaving(true);
-      await AsyncStorage.setItem('navigationToken', 'valid');
+      // await AsyncStorage.setItem('navigationToken', 'valid');
       try {
         const encrypted = studentId
           ? await encryptBatch([realTestId, realStudentId, realCourseId])

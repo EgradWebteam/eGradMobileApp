@@ -12,6 +12,7 @@ import {
 
 import { styles } from '../../styles/OTSStyles';
 import axios from 'axios';
+import ResponsiveImage from './ResponsiveImage';
 import { backEndUrl, frontEndUrl,backEndPort } from "../../apiConfig";
 const { height } = Dimensions.get("window");
 
@@ -46,10 +47,23 @@ const OTSQuestionPaper = ({ testName, realTestId, closeQuestionPaper, questionDa
   };
 
   return (
-    <View style={styles.container}>
-      <ScrollView ref={scrollRef} contentContainerStyle={styles.scrollContent}>
+    <ScrollView contentContainerStyle={styles.container} ref={scrollRef}>
+         <View style={styles.subContainer}>
+          <View style={styles.logoHolder}> {logoSrc && <Image source={logoSrc}    style={styles.logo}
+       resizeMode="contain" />}</View>
+                  <View style={styles.closeBtnContainer}>
+                   
+        {!forView && (    <Text style={styles.noteText}>
+                      Note that the timer is ticking while you read the instructions.
+                      Close this page to return to answering the questions.
+                    </Text>        )}
+                    <TouchableOpacity onPress={closeQuestionPaper} style={styles.closeButton}>
+                      <Text style={styles.closeButtonText}>Close</Text>
+                    </TouchableOpacity>
+                  </View>
+      <ScrollView  contentContainerStyle={styles.scrollContent}>
         {/* Header */}
-        <View style={styles.header}>
+        {/* <View style={styles.header}>
           {logoSrc && <Image source={logoSrc} style={styles.logo} resizeMode="contain" />}
           <View style={styles.headerRight}>
             <Text style={styles.testName}>{testName}</Text>
@@ -57,13 +71,8 @@ const OTSQuestionPaper = ({ testName, realTestId, closeQuestionPaper, questionDa
               <Text style={styles.closeBtnText}>Close</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </View> */}
 
-        {!forView && (
-          <Text style={styles.alertText}>
-            Note that the timer is ticking while you read the Questions. Close this page to return to answering the questions.
-          </Text>
-        )}
 
         {/* Questions */}
         {questionData.subjects?.map((subject) => {
@@ -89,21 +98,17 @@ const OTSQuestionPaper = ({ testName, realTestId, closeQuestionPaper, questionDa
                           <Text style={styles.questionNumber}>Question No: {currentQuestionNumber}</Text>
 
                           {paragraph?.paragraphImgName && (
-                            <Image
-                              source={{ uri: paragraph.paragraphImgName }}
-                              style={styles.image}
+                            <ResponsiveImage uri={paragraph.paragraphImgName }
+                             
                             />
                           )}
 
-                          <Image source={{ uri: question.questionImgName }} style={styles.image} />
+                          <ResponsiveImage uri={question.questionImgName} />
 
                           {question.options.map((option) => (
                             <View key={option.option_id} style={styles.optionRow}>
                               <Text style={styles.optionIndex}>({option.option_index})</Text>
-                              <Image
-                                source={{ uri: option.optionImgName }}
-                                style={styles.optionImage}
-                              />
+                              <ResponsiveImage uri={ option.optionImgName }  />
                             </View>
                           ))}
                         </View>
@@ -119,13 +124,11 @@ const OTSQuestionPaper = ({ testName, realTestId, closeQuestionPaper, questionDa
                     return (
                       <View key={question.question_id} style={styles.questionContainer}>
                         <Text style={styles.questionNumber}>Question No: {currentQuestionNumber}</Text>
-                        <Image source={{ uri: question.questionImgName }} style={styles.image} />
+                        <ResponsiveImage uri= { question.questionImgName }/>
                         {question.options.map((option) => (
                           <View key={option.option_id} style={styles.optionRow}>
                             <Text style={styles.optionIndex}>({option.option_index})</Text>
-                            <Image
-                              source={{ uri: option.optionImgName }}
-                              style={styles.optionImage}
+                            <ResponsiveImage uri= { option.optionImgName }
                             />
                           </View>
                         ))}
@@ -142,8 +145,8 @@ const OTSQuestionPaper = ({ testName, realTestId, closeQuestionPaper, questionDa
         <TouchableOpacity style={styles.scrollButton} onPress={scrollToTop}>
           <Text style={styles.scrollButtonText}>Scroll to Top</Text>
         </TouchableOpacity>
-      </ScrollView>
-    </View>
+      </ScrollView></View>
+    </ScrollView>
   );
 };
 

@@ -52,7 +52,6 @@ const StudentDashboardHeader = ({
           'sessionId',
           'userId',
           'studentData',
-          'navigationToken',
         ]);
         // closeTestWindowIfOpen();
         navigation.navigate('LoginPage');

@@ -1,10 +1,16 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet ,ImageBackground} from 'react-native';
 import { Intstruction_content } from './Intstruction_content.js'
 import { styles } from '../../styles/OTSStyles.js';
 const OTSInstructions = ({ closeInstructions }) => {
   const data = Intstruction_content[0];
-
+const backgroundImages = {
+  AnswerdBtnCls: require('../../images/Answered.png'),
+  NotAnsweredBtnCls: require('../../images/NotAnswered.png'),
+  MarkedForReview: require('../../images/MarkedForReview.png'),
+  AnsMarkedForReview: require('../../images/AnsMarkedForReview.png'),
+  NotVisitedBehaviourBtns: require('../../images/Visited.png'),
+};
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.subContainer}>
@@ -34,12 +40,52 @@ const OTSInstructions = ({ closeInstructions }) => {
 
           {/* Buttons Table Simulation */}
           <View style={styles.statusBox}>
-            <StatusRow number="1" description={data.Intstruction_content_points_p1} color="#ccc" />
-            <StatusRow number="3" description={data.Intstruction_content_points_p2} color="#f99" />
-            <StatusRow number="5" description={data.Intstruction_content_points_p3} color="#9f9" />
-            <StatusRow number="7" description={data.Intstruction_content_points_p4} color="#ff9" />
-            <StatusRow number="9" description={data.Intstruction_content_points_p5} color="#c9f" />
-          </View>
+
+ {[
+    {
+      number: 1,
+      text: data.Intstruction_content_points_p1,
+      image: backgroundImages.NotVisitedBehaviourBtns,
+      textStyle: styles.questionBtnText,
+    },
+    {
+      number: 3,
+      text: data.Intstruction_content_points_p2,
+      image: backgroundImages.NotAnsweredBtnCls,
+      textStyle: [styles.questionBtnText, styles.whiteText],
+    },
+    {
+      number: 5,
+      text: data.Intstruction_content_points_p3,
+      image: backgroundImages.AnswerdBtnCls,
+      textStyle: [styles.questionBtnText, styles.whiteText],
+    },
+    {
+      number: 7,
+      text: data.Intstruction_content_points_p4,
+      image: backgroundImages.MarkedForReview,
+      textStyle: [styles.questionBtnText, styles.whiteText],
+    },
+    {
+      number: 9,
+      text: data.Intstruction_content_points_p5,
+      image: backgroundImages.AnsMarkedForReview,
+      textStyle: [styles.questionBtnText, styles.whiteText],
+    },
+  ].map((item, index) => (
+    <View key={index} style={styles.row}>
+      <ImageBackground
+        source={item.image}
+        style={{ width: 45, height: 45, justifyContent: 'center', alignItems: 'center' }}
+        imageStyle={{ resizeMode: 'contain' }}
+      >
+        <Text style={item.textStyle}>{item.number}</Text>
+      </ImageBackground>
+      <Text style={styles.statusText}>{item.text}</Text>
+    </View>
+  ))}
+
+ </View>
 
           <Text style={styles.listItem}>• {data.Intstruction_content_points_p}</Text>
         </View>
@@ -97,14 +143,7 @@ const OTSInstructions = ({ closeInstructions }) => {
   );
 };
 
-const StatusRow = ({ number, description, color }) => (
-  <View style={styles.statusRow}>
-    <View style={[styles.statusCircle, { backgroundColor: color }]}>
-      <Text style={styles.statusNumber}>{number}</Text>
-    </View>
-    <Text style={styles.statusDescription}>{description}</Text>
-  </View>
-);
+
 
 
 

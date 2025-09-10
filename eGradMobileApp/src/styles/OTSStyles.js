@@ -10,10 +10,10 @@ export const styles = StyleSheet.create({
     flexGrow: 1,
  padding: 5,},
   navbarcontainer: {
-    backgroundColor: '#f8f8f8',
+   backgroundColor:'#000',
     padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+
+ 
   },
    timersection: {
     paddingVertical: 4,         // very small vertical padding
@@ -25,6 +25,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 8,
     backgroundColor: '#fff',
   },
+
   footerContainer: {
     padding: 8,
 flexWrap:'wrap',
@@ -243,11 +244,12 @@ height: 45,
   testName: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#333",
+    color: "#dddd64",
   },
   buttonHolder: {
     flexDirection: "row",
     justifyContent: "space-around",
+   
   },
   button: {
     flexDirection: "row",
@@ -273,10 +275,10 @@ height: 45,
     borderColor: "#ccc",
     paddingBottom: 10,
   },
-  logo: {
-    width: 80,
-    // height: 40,
-  },
+  // logo: {
+  //   width: 80,
+  //   // height: 40,
+  // },
   headerRight: {
     flex: 1,
     marginLeft: 10,
@@ -303,6 +305,7 @@ height: 45,
     fontSize: 16,
     fontWeight: "bold",
     marginTop: 15,
+    color:'#055893',
     marginBottom: 5,
   },
 //   questionContainer: {
@@ -437,8 +440,9 @@ height: 45,
     flex: 1,
     fontSize: 14,
   },
-    questionNumberRow: { marginVertical: 10,
+    questionNumberRow: {
          flexDirection: 'row',
+         gap:'10',
          maxHeight: 60,
          minHeight:50
          },
@@ -454,6 +458,9 @@ height: 45,
   questionBtnText: {
   
 textAlign: 'center'
+  },
+  whiteText:{
+    color:'#fff',
   },
   subjectContainer: {
 flexDirection:'column',
@@ -500,15 +507,21 @@ gap:'10'
     backgroundColor: "#ddd",
     marginVertical: 4,
     borderRadius: 4,
+    marginLeft:8
   },
   sectionText: {
     fontSize: 15,
+
   },
   activeSubjectText:{
 color:'#fff',
   },
   activeButton: {
     backgroundColor: "#0d057cff",
+    color:'#fff',
+  },
+    activeButtontest: {
+    backgroundColor: "#587dbd",
     color:'#fff',
   },
   natInput:{

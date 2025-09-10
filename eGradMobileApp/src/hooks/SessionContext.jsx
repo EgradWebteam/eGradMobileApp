@@ -107,8 +107,7 @@ export const SessionProvider = ({ children }) => {
       'userId',
       'studentData',
       'OTS_FormattedTime',
-      'studentDashboardState',
-      'navigationToken',
+      'studentDashboardState'
     ]);
   };
 

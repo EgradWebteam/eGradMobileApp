@@ -399,7 +399,7 @@ const saveUserResponse = async ({
             <TouchableOpacity
               style={[
                 styles.subjectButton,
-                activeSubject === subjectName && styles.activeButton,
+                activeSubject === subjectName && styles.activeButtontest,
               ]}
               onPress={() => handleSubjectBtnClick(subjectName)}
             >
@@ -415,18 +415,20 @@ const saveUserResponse = async ({
       })}
 </ScrollView>
       {/* <Text style={styles.title}>Sections</Text> */}
-       { activeSection &&(<ScrollView horizontal style={styles.questionNumberRow}>
+       { activeSection &&( <ScrollView horizontal style={styles.questionNumberRow}>
  {activeSection && getSections(activeSubject).map((section, idx) => (
+     <View key={idx} >
         <TouchableOpacity
           key={idx}
           style={[
             styles.sectionButton,
-            activeSection === section.SectionName && styles.activeButton,
+            activeSection === section.SectionName && styles.activeButtontest,
           ]}
           onPress={() => handleSectionChange(section)}
         >
-          <Text style={styles.sectionText}>{section.SectionName}</Text>
+          <Text style={[styles.sectionText, activeSection === section.SectionName && styles.activeSubjectText]}>{section.SectionName}</Text>
         </TouchableOpacity>
+        </View>
       ))}
       </ScrollView>)}
       </View>

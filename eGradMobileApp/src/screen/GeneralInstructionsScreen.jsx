@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
+  ImageBackground,
   Alert,
 } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
@@ -43,7 +44,13 @@ const GeneralInstructions = () => {
 
   const adminRole = AsyncStorage.getItem("adminRole"); // AsyncStorage returns Promise, will handle below
   const [isAdmin, setIsAdmin] = useState(false);
-
+const backgroundImages = {
+  AnswerdBtnCls: require('../images/Answered.png'),
+  NotAnsweredBtnCls: require('../images/NotAnswered.png'),
+  MarkedForReview: require('../images/MarkedForReview.png'),
+  AnsMarkedForReview: require('../images/AnsMarkedForReview.png'),
+  NotVisitedBehaviourBtns: require('../images/Visited.png'),
+};
   // Load adminRole from AsyncStorage
   useEffect(() => {
     AsyncStorage.getItem("adminRole").then((role) => {
@@ -55,11 +62,11 @@ const GeneralInstructions = () => {
   useEffect(() => {
     const decryptParams = async () => {
       try {
-        const token = await AsyncStorage.getItem("navigationToken");
-        if (!token) {
-          navigation.navigate("Error");
-          return;
-        }
+        // const token = await AsyncStorage.getItem("navigationToken");
+        // if (!token) {
+        //   navigation.navigate("Error");
+        //   return;
+        // }
 
         const encryptedParams = [decodeURIComponent(testId)];
         if (studentId) {
@@ -95,7 +102,7 @@ const GeneralInstructions = () => {
     // if (isValid) {
       setIsSaving(true);
       try {
-        await AsyncStorage.setItem("navigationToken", "valid");
+        // await AsyncStorage.setItem("navigationToken", "valid");
 
         const payload = studentId
           ? [realTestId, realStudentId, realCourseId]
@@ -181,35 +188,50 @@ const GeneralInstructions = () => {
 
             {/* The "table of buttons" */}
             <View style={styles.tableOfButtons}>
-              {[1, 3, 5, 7, 9].map((num, idx) => {
-                const points = [
-                  Intstruction_content[0].Intstruction_content_points_p1,
-                  Intstruction_content[0].Intstruction_content_points_p2,
-                  Intstruction_content[0].Intstruction_content_points_p3,
-                  Intstruction_content[0].Intstruction_content_points_p4,
-                  Intstruction_content[0].Intstruction_content_points_p5,
-                ];
-                const styleMap = [
-                  styles.NotVisitedBehaviourBtns,
-                  styles.NotAnsweredBtnCls,
-                  styles.AnswerdBtnCls,
-                  styles.MarkedForReview,
-                  styles.AnsMarkedForReview,
-                ];
-
-                return (
-                  <View key={num} style={styles.rowTableClass}>
-                    <View style={styles.displayIcon}>
-                      <Text style={[styles.functionimageCls, styleMap[idx]]}>
-                        {num}
-                      </Text>
-                    </View>
-                    <View style={styles.forTotalWidth}>
-                      <Text>{points[idx]}</Text>
-                    </View>
-                  </View>
-                );
-              })}
+              {[
+                 {
+                   number: 1,
+                   text: Intstruction_content[0].Intstruction_content_points_p1,
+                   image: backgroundImages.NotVisitedBehaviourBtns,
+                   textStyle: styles.questionBtnText,
+                 },
+                 {
+                   number: 3,
+                   text: Intstruction_content[0].Intstruction_content_points_p2,
+                   image: backgroundImages.NotAnsweredBtnCls,
+                   textStyle: [styles.questionBtnText, styles.whiteText],
+                 },
+                 {
+                   number: 5,
+                   text: Intstruction_content[0].Intstruction_content_points_p3,
+                   image: backgroundImages.AnswerdBtnCls,
+                   textStyle: [styles.questionBtnText, styles.whiteText],
+                 },
+                 {
+                   number: 7,
+                   text: Intstruction_content[0].Intstruction_content_points_p4,
+                   image: backgroundImages.MarkedForReview,
+                   textStyle: [styles.questionBtnText, styles.whiteText],
+                 },
+                 {
+                   number: 9,
+                   text: Intstruction_content[0].Intstruction_content_points_p5,
+                   image: backgroundImages.AnsMarkedForReview,
+                   textStyle: [styles.questionBtnText, styles.whiteText],
+                 },
+               ].map((item, index) => (
+                 <View key={index} style={styles.row}>
+                   <ImageBackground
+                     source={item.image}
+                     style={{ width: 45, height: 45, justifyContent: 'center', alignItems: 'center' }}
+                     imageStyle={{ resizeMode: 'contain' }}
+                   >
+                     <Text style={item.textStyle}>{item.number}</Text>
+                   </ImageBackground>
+                   <Text style={styles.statusText}>{item.text}</Text>
+                 </View>
+               ))}
+             
             </View>
 
             <View style={styles.listItem}>
