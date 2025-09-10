@@ -39,7 +39,7 @@ gap:'10',
   mainContainerforquestion: {
     flex: 1,
     padding: 16,
-    minHeight:500
+    minHeight:450
    
   },
   
@@ -830,7 +830,7 @@ justifyContent:'center',
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10, // not fully supported — use margins between children
+    gap: 10, 
     justifyContent: 'center',
     padding: 10,
   },
