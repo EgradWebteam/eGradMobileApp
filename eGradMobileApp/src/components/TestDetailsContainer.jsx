@@ -206,6 +206,7 @@ const handleStartTestClick = async (test) => {
 
   const handleViewReport = (test) => {
     navigation.navigate("StudentReport", {
+      testId: test.test_id,
       studentId,
       test_name: test.test_name,
       course_portal_id: selectedPortalId,
