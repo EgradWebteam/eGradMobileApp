@@ -414,7 +414,10 @@ height: 45,
     marginVertical: 1,
   },
   boldText: {
-    fontWeight: 'bold',
+    fontWeight: '900',
+  },
+  Textbold:{
+     fontWeight: 'bold',
   },
   statusBox: {
     marginVertical: 10,
@@ -659,11 +662,11 @@ minWidth:100,
 maxWidth:200,
 justifyContent:'center',
   alignItems: 'center',
-    backgroundColor: '#040e46ff',
+    backgroundColor: '#587dbd',
     color:'#fff'
 },
   submitButton: {
-    backgroundColor: '#28a745',
+    backgroundColor: '#587dbd',
       color:'#fff',
     paddingVertical: 6,
   paddingHorizontal: 6,
@@ -673,7 +676,15 @@ maxWidth:200,
 justifyContent:'center',
   alignItems: 'center',
   },
+marksContainer:{
 
+    flexDirection: 'row',
+  
+},
+correctMarks:{
+color:'green',
+fontWeight:'bold'
+},
   //examsummmary
   scrollView: {
     paddingBottom: 40,

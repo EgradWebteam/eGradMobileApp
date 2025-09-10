@@ -1010,6 +1010,7 @@ const onCancelSubmit = async () => {
           disabled={isSaving}
         >
           <Text 
+  style={{ color: '#fff', fontSize: 16 }}
           // style={getButtonTextStyle(isSaving)}
           >Submit</Text>
         </TouchableOpacity>
