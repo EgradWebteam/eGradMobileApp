@@ -385,6 +385,8 @@ const  saveUserResponse = async(payload) => {
             normalTestData={normalTestData}
             setNormalTestData={setNormalTestData}
             fullTestData={fullTestData}
+             setActiveSubject={setActiveSubject}
+             setActiveSection={setActiveSection}
             setFullTestData={setFullTestData}
             isDisabled={isDisabled}
             isBonusLoaded={isBonusLoaded}
