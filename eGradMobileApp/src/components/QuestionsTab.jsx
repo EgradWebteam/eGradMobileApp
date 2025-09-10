@@ -139,28 +139,57 @@ const QuestionsTab = ({ testId, studentId, userData, course_id, questionData }) 
       {selectedSubject && <View style={styles.buttonRow}>{renderSectionButtons()}</View>}
 
       {/* Questions List */}
-      {selectedSection?.questions?.length ? (
-        <View>
-          {/* Table Header */}
-          <View style={[styles.row, styles.headerRow]}>
-            <Text style={[styles.cell, styles.headerText]}>Q. No</Text>
-            <Text style={[styles.cell, styles.headerText]}>Status</Text>
-            <Text style={[styles.cell, styles.headerText]}>User Time</Text>
-            <Text style={[styles.cell, styles.headerText]}>Fastest</Text>
-            <Text style={[styles.cell, styles.headerText]}>Corrected By</Text>
-            <Text style={[styles.cell, styles.headerText]}>Incorrected By</Text>
-            <Text style={[styles.cell, styles.headerText]}>Unattempted By</Text>
-          </View>
+     {/* Questions List */}
+{selectedSection?.questions?.length ? (
+  <ScrollView horizontal showsHorizontalScrollIndicator>
+    <View>
+      {/* Table Header */}
+      <View style={[styles.row, styles.headerRow]}>
+        <Text style={[styles.cell, styles.cellSmall, styles.headerText]}>Q. No</Text>
+        <Text style={[styles.cell, styles.cellMedium, styles.headerText]}>Status</Text>
+        <Text style={[styles.cell, styles.cellMedium, styles.headerText]}>User Time</Text>
+        <Text style={[styles.cell, styles.cellMedium, styles.headerText]}>Fastest</Text>
+        <Text style={[styles.cell, styles.cellLarge, styles.headerText]}>Corrected By</Text>
+        <Text style={[styles.cell, styles.cellLarge, styles.headerText]}>Incorrected By</Text>
+        <Text style={[styles.cell, styles.cellLarge, styles.headerText]}>Unattempted By</Text>
+      </View>
 
-          <FlatList
-            data={selectedSection.questions}
-            renderItem={renderQuestionItem}
-            keyExtractor={(item) => String(item.question_id)}
-          />
-        </View>
-      ) : (
-        <Text>No questions available in this section.</Text>
-      )}
+      <FlatList
+        data={selectedSection.questions}
+        renderItem={({ item }) => (
+          <View style={styles.row}>
+            <Text style={[styles.cell, styles.cellSmall]}>
+              {item.question_sort_id}
+              {item.subject_type === "1" ? "-Extra" : ""}
+            </Text>
+            <Text style={[styles.cell, styles.cellMedium]}>
+              {item.student_answer_status === 1
+                ? "Correct"
+                : item.student_answer_status === 0
+                ? "Wrong"
+                : item.student_answer_status === 2
+                ? "Partially Correct"
+                : "Not Attempted"}
+            </Text>
+            <Text style={[styles.cell, styles.cellMedium]}>
+              {formatTime(item.time_spent_on_question)}
+            </Text>
+            <Text style={[styles.cell, styles.cellMedium]}>
+              {formatTime(item.fastest_correct_time)}
+            </Text>
+            <Text style={[styles.cell, styles.cellLarge]}>{item.corrected_by}</Text>
+            <Text style={[styles.cell, styles.cellLarge]}>{item.incorrected_by}</Text>
+            <Text style={[styles.cell, styles.cellLarge]}>{item.unattempted_by}</Text>
+          </View>
+        )}
+        keyExtractor={(item) => String(item.question_id)}
+      />
+    </View>
+  </ScrollView>
+) : (
+  <Text>No questions available in this section.</Text>
+)}
+
     </ScrollView>
   );
 };
@@ -196,7 +225,16 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     paddingVertical: 6,
   },
-  cell: { flex: 1, fontSize: 12, textAlign: "center" },
+ cell: {
+  fontSize: 12,
+  textAlign: "center",
+  paddingHorizontal: 6,
+},
+
+cellSmall: { minWidth: 60 },   
+cellMedium: { minWidth: 100 }, 
+cellLarge: { minWidth: 120 }, 
+
   headerRow: { backgroundColor: "#f0f0f0" },
   headerText: { fontWeight: "bold" },
 });

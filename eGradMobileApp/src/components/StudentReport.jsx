@@ -6,7 +6,7 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from "react-native";
-import { PieChart } from "react-native-gifted-charts"; // RN-friendly charts
+import { PieChart } from "react-native-gifted-charts"; 
 
 const StudentReport = ({
   testId,
@@ -17,6 +17,7 @@ const StudentReport = ({
   course_id,
 }) => {
   const [loading, setLoading] = useState(false);
+   const [selectedSlice, setSelectedSlice] = useState(null);
 console.log("dataa",data);
 console.log("subjectMarkssssss",subjectMarks);
   // Parse HH:MM:SS → seconds
@@ -73,11 +74,29 @@ console.log("subjectMarkssssss",subjectMarks);
     : 0;
   percentage = Math.max(0, Number(percentage.toFixed(2)));
 
-  const pieData1 = [
-    { value: totalCorrect ?? 0, color: "#308752", text: "Correct" },
-    { value: totalWrong ?? 0, color: "#dc3545", text: "Wrong" },
-    { value: notAttempted, color: "rgba(119,135,138,0.7)", text: "Not Attempted" },
-  ];
+
+const pieData1 = [
+  {
+    value: totalCorrect ?? 0,
+    color: "#308752",
+    label: "Correct",
+    onPress: () => setSelectedSlice({ label: "Correct", value: totalCorrect }),
+  },
+  {
+    value: totalWrong ?? 0,
+    color: "#dc3545",
+    label: "Wrong",
+    onPress: () => setSelectedSlice({ label: "Wrong", value: totalWrong }),
+  },
+  {
+    value: notAttempted,
+    color: "rgba(119,135,138,0.7)",
+    label: "Not Attempted",
+    onPress: () =>
+      setSelectedSlice({ label: "Not Attempted", value: notAttempted }),
+  },
+];
+
 
   const pieData2 = [
     { value: percentage, color: "#3e98c7", text: "Score" },
@@ -87,120 +106,238 @@ console.log("pieData1", pieData1);
 console.log("pieData2", pieData2);
 
   return (
-    <ScrollView style={styles.container}>
-      {/* AIR */}
-      {course_portal_id === 1 && (
-        <Text style={styles.rank}>
-          AIR: {rank_position ?? 0}/{totalAttemptedStudents ?? 0}
-        </Text>
-      )}
+  <ScrollView
+   style={styles.container}
+>
+  {/* AIR / Rank */}
+  {course_portal_id === 1 && (
+    <Text style={styles.rank}>
+      AIR: {rank_position ?? 0}/{totalAttemptedStudents ?? 0}
+    </Text>
+  )}
 
-      {/* Time progress */}
-      <View style={styles.timeRow}>
-        <View style={styles.timeBox}>
-          <Text style={styles.timeValue}>{formatToHHMMSS(timeSpentSec)}</Text>
-          <Text style={styles.timeLabel}>Time Spent</Text>
-        </View>
-        <View style={styles.timeBox}>
-          <Text style={styles.timeValue}>{formatToHHMMSS(timeLeftSec)}</Text>
-          <Text style={styles.timeLabel}>Time Left</Text>
-        </View>
-      </View>
+  {/* Time Progress */}
+  <View style={styles.timeRow}>
+    <View style={styles.timeBox}>
+      <Text style={styles.timeValue}>{formatToHHMMSS(timeSpentSec)}</Text>
+      <Text style={styles.timeLabel}>Time Left</Text>
+    </View>
+    <View style={styles.timeBox}>
+      <Text style={styles.timeValue}>{formatToHHMMSS(timeLeftSec)}</Text>
+      <Text style={styles.timeLabel}>Time Spent</Text>
+    </View>
+  </View>
 
-      {/* Subject Wise Report */}
-      <Text style={styles.sectionHeading}>Subject Wise Report</Text>
-      <View style={styles.table}>
-        <View style={styles.tableHeader}>
-          <Text style={styles.th}>Subject</Text>
-          <Text style={styles.th}>Total Qs</Text>
-          <Text style={styles.th}>Correct</Text>
-          <Text style={styles.th}>Wrong</Text>
-          <Text style={styles.th}>+ve</Text>
-          <Text style={styles.th}>-ve</Text>
-          <Text style={styles.th}>Marks</Text>
-        </View>
-        {(subjectMarks || []).map((s) => (
-          <View key={s.subject_id} style={styles.tr}>
-            <Text style={styles.td}>{s.subject_name}</Text>
-            <Text style={styles.td}>{s.total_questions}</Text>
-            <Text style={styles.td}>{s.total_correct}</Text>
-            <Text style={styles.td}>{s.total_incorrect}</Text>
-            <Text style={styles.td}>{s.positive_marks}</Text>
-            <Text style={styles.td}>{s.negative_marks}</Text>
-            <Text style={styles.td}>{s.total_marks}</Text>
-          </View>
-        ))}
-      </View>
+  {/* Subject Wise Table */}
+<Text style={styles.sectionHeading}>Subject Wise Report</Text>
 
-      {/* Charts */}
-     <View style={{ alignItems: "center", marginVertical: 20 }}>
-  <PieChart
-    data={[
-      { value: Number(totalCorrect) || 0, color: "#308752", text: "Correct" },
-      { value: Number(totalWrong) || 0, color: "#dc3545", text: "Wrong" },
-      { value: Number(notAttempted) || 0, color: "rgba(119,135,138,0.7)", text: "Not Attempted" },
+<ScrollView horizontal showsHorizontalScrollIndicator={true}>
+  <View style={styles.table}>
+    {/* Table Header */}
+   <View style={styles.tableHeader}>
+  <Text style={styles.thSubject}>Subject</Text>
+  <Text style={styles.thNumber}>Total Qs</Text>
+  <Text style={styles.thNumber}>Correct</Text>
+  <Text style={styles.thNumber}>Wrong</Text>
+  <Text style={styles.thNumber}>+ve</Text>
+  <Text style={styles.thNumber}>-ve</Text>
+  <Text style={styles.thNumber}>Marks</Text>
+</View>
+
+{(subjectMarks || []).map((s, index) => (
+  <View
+    key={s.subject_id}
+    style={[
+      styles.tr,
+      index % 2 === 0 ? styles.rowEven : styles.rowOdd,
     ]}
+  >
+    <Text style={styles.tdSubject}>{s.subject_name}</Text>
+    <Text style={styles.tdNumber}>{s.total_questions}</Text>
+    <Text style={styles.tdNumber}>{s.total_correct}</Text>
+    <Text style={styles.tdNumber}>{s.total_incorrect}</Text>
+    <Text style={styles.tdNumber}>{s.positive_marks}</Text>
+    <Text style={styles.tdNumber}>{s.negative_marks}</Text>
+    <Text style={styles.tdNumber}>{s.total_marks}</Text>
+  </View>
+))}
+
+  </View>
+</ScrollView>
+
+
+  {/* Charts */}
+<View style={styles.chartContainer}>
+  <PieChart
+    data={pieData1}
     donut
-    showText
     radius={80}
     innerRadius={50}
-    textSize={12}
-    textColor="#000"
-    textBackgroundColor="#fff"
+    showText={false} 
   />
+
+  {selectedSlice && (
+    <Text style={styles.tooltip}>
+      {selectedSlice.label}: {selectedSlice.value}
+    </Text>
+  )}
 </View>
 
-<View style={{ alignItems: "center", marginVertical: 20 }}>
-  <PieChart
-    data={[
-      { value: Number(percentage) || 0, color: "#3e98c7", text: "Score" },
-      { value: 100 - (Number(percentage) || 0), color: "#ffe9e9", text: "Remaining" },
-    ]}
-    donut
-    showText
-    radius={90}
-    innerRadius={60}
-    textSize={16}
-    textColor="#000"
-    centerLabelComponent={() => (
-      <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-        {Number(percentage).toFixed(2)}%
-      </Text>
-    )}
-  />
-</View>
+  <View style={styles.chartContainer}>
+    <PieChart
+      data={pieData2}
+      donut
+       showText={false} 
+      radius={90}
+      innerRadius={60}
+      centerLabelComponent={() => (
+        <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+          {Number(percentage).toFixed(2)}%
+        </Text>
+      )}
+    />
+  </View>
+</ScrollView>
 
-    </ScrollView>
   );
 };
 
 export default StudentReport;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 12, backgroundColor: "#fff" },
-  center: { flex: 1, justifyContent: "center", alignItems: "center" },
-  rank: { fontSize: 16, fontWeight: "bold", marginVertical: 8 },
-  timeRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginVertical: 12,
+  container: {
+  backgroundColor: "#fff",
+},
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  timeBox: { alignItems: "center" },
-  timeValue: { fontSize: 18, fontWeight: "bold" },
-  timeLabel: { fontSize: 14, color: "gray" },
-  sectionHeading: {
+  rank: {
     fontSize: 18,
     fontWeight: "bold",
-    marginTop: 20,
-    marginBottom: 10,
+    color: "#007bff",
+    marginVertical: 10,
+    textAlign: "center",
   },
-  table: { borderWidth: 1, borderColor: "#ddd" },
-  tableHeader: {
+  timeRow: {
     flexDirection: "row",
-    backgroundColor: "#f1f1f1",
-    padding: 6,
+    justifyContent: "space-between",
+    marginVertical: 15,
+    paddingHorizontal: 10,
   },
-  th: { flex: 1, fontWeight: "bold", fontSize: 12 },
-  tr: { flexDirection: "row", padding: 6, borderBottomWidth: 1, borderColor: "#eee" },
-  td: { flex: 1, fontSize: 12 },
+  timeBox: {
+    alignItems: "center",
+    backgroundColor: "#f8f9fa",
+    padding: 12,
+    borderRadius: 10,
+    flex: 1,
+    marginHorizontal: 5,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  timeValue: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  timeLabel: {
+    fontSize: 14,
+    color: "gray",
+    marginTop: 4,
+  },
+  sectionHeading: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 20,
+    marginBottom: 12,
+    color: "#333",
+  },
+ table: {
+  borderWidth: 1,
+  borderColor: "#ddd",
+  borderRadius: 8,
+  overflow: "hidden",
+  marginBottom: 20,
+  minWidth: 700, // force horizontal scroll if screen is smaller
+},
+
+tableHeader: {
+  flexDirection: "row",
+  backgroundColor: "#007bff",
+  paddingVertical: 10,
+  paddingHorizontal: 6,
+},
+
+th: {
+  flex: 1,
+  fontWeight: "bold",
+  fontSize: 14,
+  textAlign: "center",
+  color: "#fff", // white text for header
+},
+
+tr: {
+  flexDirection: "row",
+  paddingVertical: 10,
+  paddingHorizontal: 6,
+  borderBottomWidth: 1,
+  borderColor: "#eee",
+},
+
+td: {
+  flex: 1,
+  fontSize: 13,
+  textAlign: "center",
+  color: "#333",
+},
+
+rowEven: {
+  backgroundColor: "#f9f9f9", // light gray
+},
+
+rowOdd: {
+  backgroundColor: "#fff",
+},
+thSubject: {
+  minWidth: 200, // wide enough for long subject names
+  fontWeight: "bold",
+  fontSize: 14,
+  textAlign: "left",
+  color: "#fff",
+  paddingLeft: 8,
+},
+
+thNumber: {
+  minWidth: 80, // fixed width for numbers
+  fontWeight: "bold",
+  fontSize: 14,
+  textAlign: "right",
+  color: "#fff",
+  paddingRight: 8,
+},
+
+tdSubject: {
+  minWidth: 170,
+  fontSize: 13,
+  color: "#333",
+  textAlign: "left",
+  paddingLeft: 8,
+},
+
+tdNumber: {
+  minWidth: 80,
+  fontSize: 13,
+  color: "#333",
+  textAlign: "right",
+  paddingRight: 8,
+},
+
+
+  chartContainer: {
+    alignItems: "center",
+    marginVertical: 20,
+  },
 });

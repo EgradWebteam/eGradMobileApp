@@ -102,6 +102,7 @@ console.log("dataaa",route.params)
         );
         const summaryData = await summaryRes.json();
         setData(summaryData);
+        console.log("✅ summaryData fetched", summaryData);
 
         const subjectRes = await fetch(
           `${backEndUrl}/MyResults/TestSubjectWiseStudentMarks/${studentId}/${testId}/${course_id}`,
@@ -109,6 +110,7 @@ console.log("dataaa",route.params)
         );
         const subjectJson = await subjectRes.json();
         setSubjectMarks(subjectJson.subjects || []);
+        console.log("✅ subjectMarks fetched", subjectJson.subjects);
       } catch (err) {
         setError("Error fetching data. Please try again later.");
         console.error("Error fetching data:", err);
@@ -128,8 +130,7 @@ console.log("dataaa",route.params)
     }
   }, [activeTab, studentId, testId, course_id, course_portal_id]);
 
-console.log("set dataaaaaaa",data);
-console.log("subject marksss",subjectMarks)
+
   // ✅ Fetch Solutions
   useEffect(() => {
     const fetchTestPaper = async () => {
@@ -306,7 +307,7 @@ const styles = StyleSheet.create({
   },
   activeTab: { backgroundColor: "#007bff" },
   tabText: { color: "#000", fontWeight: "bold" },
-  tabContent: { marginTop: 10 },
+  tabContent: { flex: 1, marginTop: 10 },
   centered: { flex: 1, justifyContent: "center", alignItems: "center" },
   errorText: { color: "red" },
 });
