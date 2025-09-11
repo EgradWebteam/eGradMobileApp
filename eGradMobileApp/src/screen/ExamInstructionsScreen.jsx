@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  BackHandler,
   ActivityIndicator,
  
 } from 'react-native';
@@ -51,7 +52,36 @@ const ExamInstructionsScreen = () => {
     };
     getAdminRole();
   }, []);
-
+useEffect(() => {
+  const onBackPress = async() => {
+     const userId = await AsyncStorage.getItem('userId');
+    Alert.alert(
+      "Exit Exam Instructions",
+      "Are you sure you want to exit the Exam Instructions?",
+      [
+        {
+          text: "No",
+          onPress: () => {},
+          style: "cancel"
+        },
+        {
+          text: "Yes",
+          onPress: async() => {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'studentDashboard', params: { userId } }],
+            });
+          }
+        }
+      ]
+    );
+    return true; // Block the default behavior
+  };
+  BackHandler.addEventListener("hardwareBackPress", onBackPress);
+  return () => {
+    BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+  };
+}, []);
   useEffect(() => {
     const fetchInstructions = async () => {
       try {

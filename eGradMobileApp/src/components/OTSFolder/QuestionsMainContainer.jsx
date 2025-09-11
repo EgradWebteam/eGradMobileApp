@@ -289,15 +289,15 @@ console.log(answerClass);
 
       <View style={showSidebar ? styles.mainContainer : styles.fullWidth}>
         <View style={styles.typeHolder}>
-          <Text>
+          <Text  style={styles.Textbold}>
             Question Type: <Text style={styles.boldText}>{questionType}</Text>
           </Text>
           <View style={styles.marksContainer}>
-            <Text>
+            <Text style={styles.Textbold}>
               Marks for Correct Answer: <Text style={styles.correctMarks}>{marks}</Text>
-            </Text>
-            <Text style={styles.separator}> | </Text>
-            <Text>
+            </Text >
+            <Text style={styles.Textbold}> | </Text>
+            <Text style={styles.Textbold}>
               Negative Marks: <Text style={styles.negativeMarks}>{negativeMarks}</Text>
             </Text>
           </View>
@@ -345,10 +345,12 @@ console.log(answerClass);
           </View>
         </ScrollView>
 
-        {showSidebar && (
+        {showSidebar && !isMobile && (
+           
           <View style={styles.chevronButton}>
             <TouchableOpacity onPress={handleLeftClickMain}>
-              {/* <FaChevronLeft /> Use VectorIcon here in real RN app */}erwr
+              
+             <Icon name="chevron-left" size={20} color="#000" />
             </TouchableOpacity>
           </View>
         )}

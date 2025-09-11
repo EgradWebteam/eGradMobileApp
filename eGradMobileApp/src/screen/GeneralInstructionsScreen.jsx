@@ -8,6 +8,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   ImageBackground,
+  BackHandler,
   Alert,
 } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
@@ -57,7 +58,36 @@ const backgroundImages = {
       setIsAdmin(role === "admin");
     });
   }, []);
-
+useEffect(() => {
+  const onBackPress = async() => {
+     const userId = await AsyncStorage.getItem('userId');
+    Alert.alert(
+      "Exit General Instructions",
+      "Are you sure you want to exit the General Instructions?",
+      [
+        {
+          text: "No",
+          onPress: () => {},
+          style: "cancel"
+        },
+        {
+          text: "Yes",
+          onPress: async() => {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'studentDashboard', params: { userId } }],
+            });
+          }
+        }
+      ]
+    );
+    return true; // Block the default behavior
+  };
+  BackHandler.addEventListener("hardwareBackPress", onBackPress);
+  return () => {
+    BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+  };
+}, []);
   // Decrypt params on mount
   useEffect(() => {
     const decryptParams = async () => {

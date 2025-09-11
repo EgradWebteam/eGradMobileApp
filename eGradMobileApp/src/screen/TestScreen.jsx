@@ -12,7 +12,6 @@ import OTSHeader from "../components/OTSFolder/OTSHeader";
 import OTSNavbar from "../components/OTSFolder/OTSNavbar";
 import OTSMain from "../components/OTSFolder/OTSMain";
 import TimerProvider from "../hooks/TimerContext";
-
 const TestScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
@@ -126,15 +125,41 @@ useFocusEffect(
   }, [])
 );
 
-  // Back button handling
-  // useEffect(() => {
-  //   const onBackPress = () => {
-  //     Alert.alert("Warning", "Going back is not allowed during the test.");
-  //     return true;
-  //   };
-  //   BackHandler.addEventListener("hardwareBackPress", onBackPress);
-  //   return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-  // }, []);
+useEffect(() => {
+  const onBackPress = async() => {
+     const userId = await AsyncStorage.getItem('userId');
+    Alert.alert(
+      "Exit Test",
+      "Are you sure you want to exit the test?",
+      [
+        {
+          text: "No",
+          onPress: () => {},
+          style: "cancel"
+        },
+        {
+          text: "Yes",
+          onPress: async() => {
+            
+            await AsyncStorage.removeItem('examSubmitted');
+      await AsyncStorage.removeItem('autoSubmitted');
+      await AsyncStorage.removeItem('examSummaryEntered');
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'studentDashboard', params: { userId } }],
+            });
+          }
+        }
+      ]
+    );
+    return true; // Block the default behavior
+  };
+  BackHandler.addEventListener("hardwareBackPress", onBackPress);
+  return () => {
+    BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+  };
+}, []);
+
 
   if (isLoading) {
     return (
