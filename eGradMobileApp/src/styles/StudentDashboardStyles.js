@@ -151,12 +151,14 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContent: {
-    width: "90%",
-    backgroundColor: "#000",
-    borderRadius: 10,
-    overflow: "hidden",
-  },
-  closeBtn: { position: "absolute", top: 10, right: 10, zIndex: 2 },
+   flex: 1,
+  backgroundColor: "#000",     // black background for video
+  justifyContent: "flex-start", // allow close button on top
+  alignItems: "center",
+},
+
+  closeBtn: {   alignSelf: "flex-end",
+    marginBottom: 10, },
   emptyMsg: { textAlign: "center", marginTop: 20, color: "gray" },
 
   // mycourses

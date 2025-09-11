@@ -15,6 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { backEndUrl } from "../apiConfig";
 import { styles } from "../styles/StudentDashboardStyles";
 import AutoSizedImage from "./AutoSizedImage";
+import renderVideo from "./renderVideo";
 const StudentDashboardBookMarks = ({ studentId }) => {
   const [testPaperData, setTestPaperData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -52,6 +53,64 @@ const StudentDashboardBookMarks = ({ studentId }) => {
     fetchTestPaper();
   }, [studentId]);
 
+  const handleDelete = async (
+    studentId,
+    questionId,
+    bookMarkTid,
+    courseId,
+    portalId
+  ) => {
+    try {
+      const response = await fetch(
+        `${backEndUrl}/studentBookMarks/DeleteBookmark/${studentId}/${questionId}/${bookMarkTid}/${courseId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to delete bookmark");
+
+      // Update local state
+      setTestPaperData((prevData) =>
+        prevData
+          .map((portal) => {
+            if (portal.portalId !== portalId) return portal;
+
+            const updatedTests = portal.tests
+              .map((test) => {
+                if (test.BookMarkTid !== bookMarkTid) return test;
+
+                const updatedSubjects = test.subjects
+                  .map((subject) => {
+                    const updatedSections = subject.sections
+                      .map((section) => ({
+                        ...section,
+                        questions: section.questions.filter(
+                          (q) => q.question_id !== questionId
+                        ),
+                      }))
+                      .filter((section) => section.questions.length > 0);
+
+                    return { ...subject, sections: updatedSections };
+                  })
+                  .filter((subject) => subject.sections.length > 0);
+
+                return { ...test, subjects: updatedSubjects };
+              })
+              .filter((test) => test.subjects.length > 0);
+
+            return { ...portal, tests: updatedTests };
+          })
+          .filter((portal) => portal.tests.length > 0)
+      );
+    } catch (err) {
+      console.error("Error deleting bookmark:", err);
+    }
+  };
+
   const toggleSolution = (questionId) => {
     setVisibleSolutions((prev) => ({
       ...prev,
@@ -59,56 +118,6 @@ const StudentDashboardBookMarks = ({ studentId }) => {
     }));
   };
 
-  const PlayVideoById = (url) => {
-    if (!url) return null;
-    const lowerUrl = url.toLowerCase();
-    let embedUrl = url;
-
-    // YouTube
-    if (lowerUrl.includes("youtube.com") || lowerUrl.includes("youtu.be")) {
-      let videoId = "";
-      if (url.includes("youtu.be")) {
-        videoId = url.split("youtu.be/")[1]?.split("?")[0];
-      } else if (url.includes("watch?v=")) {
-        videoId = url.split("watch?v=")[1]?.split("&")[0];
-      }
-      if (videoId) embedUrl = `https://www.youtube.com/embed/${videoId}`;
-    }
-
-    // Vimeo
-    else if (lowerUrl.includes("vimeo.com")) {
-      const videoId = url.split("/").pop();
-      embedUrl = `https://player.vimeo.com/video/${videoId}`;
-    }
-
-    // Google Drive
-    else if (lowerUrl.includes("drive.google.com/file/d/")) {
-      const fileId = url.split("/d/")[1]?.split("/")[0];
-      if (fileId) embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
-    }
-
-    // Direct video file (.mp4, .webm, .ogg)
-    else if (lowerUrl.match(/\.(mp4|webm|ogg)$/)) {
-      return (
-        <WebView
-          source={{ uri: url }}
-          style={{ width: "100%", height: 300 }}
-          mediaPlaybackRequiresUserAction={false}
-          allowsFullscreenVideo
-        />
-      );
-    }
-
-    // Default embed
-    return (
-      <WebView
-        source={{ uri: embedUrl }}
-        style={{ width: "100%", height: 300 }}
-        javaScriptEnabled
-        allowsFullscreenVideo
-      />
-    );
-  };
 
   const uniquePortals = testPaperData.map(({ portalId, portalName }) => ({
     portalId,
@@ -166,9 +175,20 @@ const StudentDashboardBookMarks = ({ studentId }) => {
                             {/* Question + Delete */}
                             <View style={styles.questionHeader}>
                               <Text>Question No: {currentQuestionNumber}</Text>
-                              <TouchableOpacity>
+                              <TouchableOpacity
+                                onPress={() =>
+                                  handleDelete(
+                                    studentId,
+                                    question.question_id,
+                                    test.BookMarkTid,
+                                    test.CourseId,
+                                    portal.portalId
+                                  )
+                                }
+                              >
                                 <Icon name="delete-forever" size={28} color="red" />
                               </TouchableOpacity>
+
                             </View>
 
                             {/* Paragraph */}
@@ -179,13 +199,13 @@ const StudentDashboardBookMarks = ({ studentId }) => {
                                   source={{ uri: question.paragraph.paragraphImgName }}
                                   style={styles.paragraphImage}
                                 /> */}
-                                 <AutoSizedImage uri={question.paragraph.paragraphImgName} style={styles.paragraphImage} />
+                                <AutoSizedImage uri={question.paragraph.paragraphImgName} style={styles.paragraphImage} />
                               </View>
                             )}
 
                             {/* Question Image */}
                             {question.questionImgName && (
-                               <AutoSizedImage uri={question.questionImgName} style={styles.image} />
+                              <AutoSizedImage uri={question.questionImgName} style={styles.image} />
                             )}
 
                             {/* Options */}
@@ -199,7 +219,7 @@ const StudentDashboardBookMarks = ({ studentId }) => {
                                   {/* <Image 
                                    source={{ uri: option.optionImgName } }
                                   style={styles.optionImage} /> */}
-                                   <AutoSizedImage uri={option.optionImgName} style={styles.optionImage} />
+                                  <AutoSizedImage uri={option.optionImgName} style={styles.optionImage} />
                                 </View>
                               ))}
 
@@ -231,11 +251,11 @@ const StudentDashboardBookMarks = ({ studentId }) => {
 
                             {/* Image Solution */}
                             {visibleSolutions[question.question_id] && (
-                           <AutoSizedImage uri={question.solution.solutionImgName} style={styles.solutionImage} />
+                              <AutoSizedImage uri={question.solution.solutionImgName} style={styles.solutionImage} />
                             )}
 
                             {/* Video Modal */}
-                            <Modal
+                            {/* <Modal
                               visible={videoPopup === question.question_id}
                               transparent
                               animationType="slide"
@@ -252,7 +272,18 @@ const StudentDashboardBookMarks = ({ studentId }) => {
                                   {PlayVideoById(question.solution.video_solution_link)}
                                 </View>
                               </View>
-                            </Modal>
+                            </Modal> */}
+
+                            {videoPopup === question.question_id && (
+                              <Modal visible transparent={false} onRequestClose={() => setVideoPopup(null)}>
+                                <View style={styles.modalContent}>
+                                  <TouchableOpacity style={styles.closeBtn} onPress={() => setVideoPopup(null)}>
+                                    <Text style={{ fontSize: 18 }}>✖ Close</Text>
+                                  </TouchableOpacity>
+                                  {renderVideo(question.solution.video_solution_link)}
+                                </View>
+                              </Modal>
+                            )}
                           </View>
                         );
                       })

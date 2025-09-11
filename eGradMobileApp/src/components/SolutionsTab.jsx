@@ -13,7 +13,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { WebView } from "react-native-webview";
 import { backEndUrl } from "../apiConfig";
 import AutoSizedImage from "./AutoSizedImage"; // ✅ shared component
-
+import renderVideo from "./renderVideo";
 const SolutionsTab = ({
   testId,
   userData,
@@ -74,46 +74,6 @@ const SolutionsTab = ({
     } catch (error) {
       console.error("Error:", error);
     }
-  };
-
-  const renderVideo = (url) => {
-    if (!url) return null;
-    const lowerUrl = url.toLowerCase();
-    let embedUrl = url;
-
-    if (lowerUrl.includes("youtube.com") || lowerUrl.includes("youtu.be")) {
-      let videoId = "";
-      if (url.includes("youtu.be")) {
-        videoId = url.split("youtu.be/")[1]?.split("?")[0];
-      } else if (url.includes("watch?v=")) {
-        videoId = url.split("watch?v=")[1]?.split("&")[0];
-      }
-      if (videoId) embedUrl = `https://www.youtube.com/embed/${videoId}`;
-    } else if (lowerUrl.includes("vimeo.com")) {
-      const videoId = url.split("/").pop();
-      embedUrl = `https://player.vimeo.com/video/${videoId}`;
-    } else if (lowerUrl.includes("drive.google.com/file/d/")) {
-      const fileId = url.split("/d/")[1]?.split("/")[0];
-      if (fileId) embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
-    } else if (lowerUrl.match(/\.(mp4|webm|ogg)$/)) {
-      return (
-        <WebView
-          source={{ uri: url }}
-          style={{ width: "100%", height: 300 }}
-          mediaPlaybackRequiresUserAction={false}
-          allowsFullscreenVideo
-        />
-      );
-    }
-
-    return (
-      <WebView
-        source={{ uri: embedUrl }}
-        style={{ width: "100%", height: 300 }}
-        javaScriptEnabled
-        allowsFullscreenVideo
-      />
-    );
   };
 
   const renderQuestion = ({ item, index }) => {
@@ -209,16 +169,16 @@ const SolutionsTab = ({
           </TouchableOpacity>
         )}
 
-        {videoPopup === item.question_id && (
-          <Modal visible transparent={false} onRequestClose={() => setVideoPopup(null)}>
-            <View style={styles.modalContent}>
-              <TouchableOpacity style={styles.closeBtn} onPress={() => setVideoPopup(null)}>
-                <Text style={{ fontSize: 18 }}>✖ Close</Text>
-              </TouchableOpacity>
-              {renderVideo(item.solution.video_solution_link)}
-            </View>
-          </Modal>
-        )}
+       {videoPopup === item.question_id && (
+  <Modal visible transparent={false} onRequestClose={() => setVideoPopup(null)}>
+    <View style={styles.modalContent}>
+      <TouchableOpacity style={styles.closeBtn} onPress={() => setVideoPopup(null)}>
+        <Text style={{ fontSize: 18 }}>✖ Close</Text>
+      </TouchableOpacity>
+      {renderVideo(item.solution.video_solution_link)}
+    </View>
+  </Modal>
+)}
       </View>
     );
   };
@@ -226,16 +186,51 @@ const SolutionsTab = ({
   return (
     <View style={{ flex: 1 }}>
       {/* Subject Picker */}
-      <Picker
-        selectedValue={
-          selectedSubjectSection?.SubjectName || testPaperData.subjects?.[0]
-        }
-        onValueChange={(itemValue, itemIndex) => handleDropdownChange(itemIndex, 0)}
-      >
-        {testPaperData.subjects?.map((subject, subjIndex) => (
-          <Picker.Item key={subjIndex} label={subject.SubjectName} value={subject.SubjectName} />
-        ))}
-      </Picker>
+     <Picker
+  selectedValue={
+    selectedSubjectSection
+      ? (() => {
+          const subjectIdx = testPaperData.subjects?.findIndex(
+            (s) => s.SubjectName === selectedSubjectSection.SubjectName
+          );
+          const sectionIdx =
+            testPaperData.subjects?.[subjectIdx]?.sections?.findIndex(
+              (sec) => sec?.SectionName === selectedSubjectSection.SectionName
+            ) ?? "null";
+
+          return `${subjectIdx}-${sectionIdx !== -1 ? sectionIdx : "null"}`;
+        })()
+      : ""
+  }
+  onValueChange={(itemValue) => {
+    const [subjectIdx, sectionIdx] = itemValue.split("-");
+    handleDropdownChange(
+      parseInt(subjectIdx, 10),
+      sectionIdx === "null" ? null : parseInt(sectionIdx, 10)
+    );
+  }}
+>
+  {testPaperData.subjects?.map((subject, subjIndex) =>
+    subject.sections && subject.sections.length > 0 ? (
+      subject.sections.map((section, secIndex) => (
+        <Picker.Item
+          key={`${subjIndex}-${secIndex}`}
+          label={`${subject.SubjectName}${
+            section.SectionName ? ` - ${section.SectionName}` : ""
+          }`}
+          value={`${subjIndex}-${secIndex}`}
+        />
+      ))
+    ) : (
+      <Picker.Item
+        key={`${subjIndex}-null`}
+        label={subject.SubjectName}
+        value={`${subjIndex}-null`}
+      />
+    )
+  )}
+</Picker>
+
 
       {/* Questions */}
       <FlatList
