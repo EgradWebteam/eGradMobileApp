@@ -15,6 +15,7 @@ import headerImage from '../images/EGTLogoExamHeaderCompressed.png';
 // import { closeTestWindowIfOpen } from '../hooks/windowManager';
 // import { useSession } from './hooks/SessionContext';
 import { styles } from '../styles/StudentDashboardStyles';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const StudentDashboardHeader = ({
   userData,
   setActiveSection,
@@ -28,15 +29,20 @@ const StudentDashboardHeader = ({
   const studentProfile = userData?.uploaded_photo;
 
   const handleLogout = async () => {
+console.log("Attempting logout...");
+
     const sessionId = await AsyncStorage.getItem('sessionId');
+    console.log("Session ID:", sessionId);
+
     if (!sessionId) {
-    //   closeTestWindowIfOpen();
+      await AsyncStorage.clear();
       Alert.alert('Session Error', 'No session found. Please log in again.');
-      navigation.navigate('LoginPage');
+      navigation.navigate('login');
       return;
     }
 
     try {
+      console.log("hhhh");
       const response = await fetch(`${ backEndUrl}/login/studentLogout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -44,17 +50,12 @@ const StudentDashboardHeader = ({
       });
 
       const data = await response.json();
-
+     console.log("hffhhh");
       if (response.ok) {
-        await AsyncStorage.multiRemove([
-          'decryptedId',
-          'accessToken',
-          'sessionId',
-          'userId',
-          'studentData',
-        ]);
+         console.log("hffhhh44");
+         await AsyncStorage.clear();
         // closeTestWindowIfOpen();
-        navigation.navigate('LoginPage');
+        navigation.navigate('login');
       } else {
         Alert.alert('Logout Failed', data.message || 'Logout failed');
       }

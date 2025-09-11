@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-
+import { useStudent } from '../../hooks/StudentContext';
  import { backEndUrl, frontEndUrl,backEndPort } from "../../apiConfig";
 // import LoadingSpinner from '../../ContextFolder/LoadingSpinner';
 // import { closeTestWindowIfOpen } from '../../ContextFolder/windowManager';
@@ -36,17 +36,11 @@ export const StudentDashboard = () => {
     logoText: 'eGRADTutor',
     logoImg: null,
   });
-
+const { studentData } = useStudent();
   const navigation = useNavigation();
   const logoutHandledRef = useRef(false);
 
-  const [studentData, setStudentData] = useState(null);
 
-  const loadStudentData = async () => {
-    const data = await AsyncStorage.getItem('studentData');
-    setStudentData(JSON.parse(data));
-  };
-  console.log(studentData);
 
 const handleSectionChange = useCallback(
   async (section, portalId = null) => {
@@ -83,7 +77,7 @@ useEffect(() => {
     }
   };
 
-  loadStudentData();
+
   fetchPortalData();
   restoreDashboardState();
   setIsLoading(false);
@@ -102,7 +96,7 @@ useEffect(() => {
       // closeTestWindowIfOpen();
       navigation.reset({
         index: 0,
-        routes: [{ name: 'LoginPage' }],
+        routes: [{ name: 'login' }],
       });
     } catch (err) {
       console.error('Logout error', err);
@@ -130,7 +124,7 @@ useEffect(() => {
   };
 
   useEffect(() => {
-    loadStudentData();
+
     fetchPortalData();
     setIsLoading(false);
   }, []);

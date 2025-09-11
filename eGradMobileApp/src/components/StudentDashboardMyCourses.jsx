@@ -34,8 +34,26 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
   const [chapterdetails, setChapterdetails] = useState(null);
 
 //   const { validateSession } = useSession();
+console.log(userData)
+  useEffect(() => {
+    const fetchStorageData = async () => {
+      try {
+        const allKeys = await AsyncStorage.getAllKeys();
+        const allItems = await AsyncStorage.multiGet(allKeys);
 
+        const storageObject = {};
+        allItems.forEach(([key, value]) => {
+          storageObject[key] = value;
+        });
 
+        console.log("📦 AsyncStorage Contents:", storageObject);
+      } catch (error) {
+        console.error('Error fetching AsyncStorage data:', error);
+      }
+    };
+
+    fetchStorageData();
+  }, []);
 useEffect(() => {
   const fetchPurchasedCourses = async () => {
     setLoading(true);

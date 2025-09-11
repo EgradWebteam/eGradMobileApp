@@ -95,7 +95,7 @@ export const SessionProvider = ({ children }) => {
     // closeTestWindowIfOpen();
     navigation.reset({
       index: 0,
-      routes: [{ name: 'LoginPage' }],
+      routes: [{ name: 'login' }],
     });
   };
 

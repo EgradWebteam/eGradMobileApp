@@ -52,6 +52,8 @@ console.log("url",frontEndUrl,backEndPort)
 
         await AsyncStorage.setItem('sessionId', String(data.sessionId || ''));
         await AsyncStorage.setItem('userId', String(data.user_Id || ''));
+        await AsyncStorage.setItem("studentData", JSON.stringify(data)); // ✅ Add this
+
         setStudentData(data);
       } catch (storageError) {
         console.error('AsyncStorage saving error:', storageError);
