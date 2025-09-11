@@ -237,7 +237,44 @@ useEffect(() => {
       saveResponse();
     }
   }, [testData, activeSubject, activeSection, userAnswers]);
-  // ✅ Auto-save NAT and time
+ useEffect(() => {
+    const saveIfNewQuestion = async () => {
+      const subject = testData?.subjects?.find(
+        (sub) => sub.SubjectName === activeSubject
+      );
+      const section = subject?.sections?.find(
+        (sec) => sec.SectionName === activeSection
+      );
+      const question = section?.questions?.[activeQuestionIndex];
+      if (!question) return;
+
+      const existing = userAnswers?.[question.question_id];
+      if (existing) return; // already answered, skip
+
+      const qTypeId = question?.questionType?.quesionTypeId;
+      setUserAnswers((prev) => ({
+        ...prev,
+        [question.question_id]: {
+          subjectId: subject.subjectId,
+          sectionId: section.sectionId,
+          questionId: question.question_id,
+          buttonClass: `NotAnsweredBtnCls`,
+          type: "", // no answer yet
+        },
+      }));
+      await saveUserResponse({
+        realStudentId,
+        realTestId,
+        realCourseId,
+        subject_id: subject.subjectId,
+        section_id: section.sectionId,
+        questionId: question.question_id,
+        questionTypeId: qTypeId,
+        answered: "3",
+      });
+    };
+    saveIfNewQuestion();
+  }, [activeQuestionIndex, userAnswers]);
 const autoSaveNATIfNeeded = async () => {
   try {
     const subject = testData?.subjects?.find(
