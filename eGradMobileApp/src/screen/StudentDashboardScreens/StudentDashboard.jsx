@@ -48,26 +48,48 @@ export const StudentDashboard = () => {
   };
   console.log(studentData);
 
-  // ✅ handleSectionChange with validation + persistence
-  const handleSectionChange = useCallback(
-    async (section, portalId = null) => {
-      setActiveSection(section);
+const handleSectionChange = useCallback(
+  async (section, portalId = null) => {
+    setActiveSection(section);
 
-      const state = { activeSection: section };
-      if (portalId) {
-        state.preselectedPortalId = portalId;
-        setPreselectedPortalId(portalId);
-      } else {
-        setPreselectedPortalId(null);
+    const state = { activeSection: section };
+
+    if (portalId) {
+      state.preselectedPortalId = portalId;
+    }
+
+    try {
+      await AsyncStorage.setItem("studentDashboardState", JSON.stringify(state));
+    } catch (err) {
+      console.error("Failed to save dashboard state:", err);
+    }
+  },
+  []
+);
+
+useEffect(() => {
+  const restoreDashboardState = async () => {
+    try {
+      const savedState = await AsyncStorage.getItem("studentDashboardState");
+      if (savedState) {
+        const { activeSection, preselectedPortalId } = JSON.parse(savedState);
+        if (activeSection) setActiveSection(activeSection);
+        if (preselectedPortalId) {
+          // setPreselectedPortalId(preselectedPortalId);
+        }
       }
+    } catch (err) {
+      console.error("Failed to restore dashboard state:", err);
+    }
+  };
 
-      await AsyncStorage.setItem(
-        "studentDashboardState",
-        JSON.stringify(state)
-      );
-    },
-    []
-  );
+  loadStudentData();
+  fetchPortalData();
+  restoreDashboardState();
+  setIsLoading(false);
+}, []);
+
+
   const handleLogout = async () => {
     try {
       await fetch(`${backEndUrl}/login/studentLogout`, {
