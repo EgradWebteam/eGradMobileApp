@@ -12,11 +12,11 @@ import {
 } from 'react-native';
 // import { useSession } from '../../StudentDashboard/hooks/SessionContext'; // Assume it's RN-compatible
 import { styles } from '../../styles/OTSStyles';
-import axios from 'axios';
+// import axios from 'axios';
 import QuestionOptionsContainer from './QuestionOptionsContainer';
 import { backEndUrl, frontEndUrl,backEndPort } from "../../apiConfig";
-import Icon from 'react-native-vector-icons/FontAwesome';
-import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+// import Icon from 'react-native-vector-icons/FontAwesome';
+// import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import ResponsiveImage from './ResponsiveImage';
 
 
@@ -55,22 +55,22 @@ const backgroundImages = {
   NotVisitedBehaviourBtns: require('../../images/Visited.png'),
 };
 
-  const [isMobile, setIsMobile] = useState(
-    Dimensions.get('window').width <= 768 || Dimensions.get('window').height <= 768
-  );
+  // const [isMobile, setIsMobile] = useState(
+  //   Dimensions.get('window').width <= 768 || Dimensions.get('window').height <= 768
+  // );
   const savedAnswer = userAnswers?.[String(question?.question_id)];
-  useEffect(() => {
-    const handleResize = ({ window }) => {
-      setIsMobile(window.width <= 768 || window.height <= 768);
-    };
+  // useEffect(() => {
+  //   const handleResize = ({ window }) => {
+  //     setIsMobile(window.width <= 768 || window.height <= 768);
+  //   };
 
-    const subscription = Dimensions.addEventListener('change', handleResize);
-    return () => subscription?.remove();
-  }, []);
+  //   const subscription = Dimensions.addEventListener('change', handleResize);
+  //   return () => subscription?.remove();
+  // }, []);
 
-  const getScrollTarget = () => {
-    return isMobile ? questionScrollRefMobile.current : questionScrollRefDesktop.current;
-  };
+  // const getScrollTarget = () => {
+  //   return isMobile ? questionScrollRefMobile.current : questionScrollRefDesktop.current;
+  // };
 
   const subject = testData?.subjects?.find(
     (sub) => sub.SubjectName === activeSubject
@@ -118,7 +118,7 @@ const backgroundImages = {
   const handleQuestionClick = async (index) => {
     // Commented session validation for now
     // const isValid = await validateSessionWithoutNavigation();
-
+await autoSaveNATIfNeeded();
     const question = section?.questions?.[index];
     if (!question) return;
 
@@ -218,9 +218,9 @@ const backgroundImages = {
     };
   };
 
-  const handleLeftClickMain = () => {
-    setShowSidebar((prev) => !prev);
-  };
+  // const handleLeftClickMain = () => {
+  //   setShowSidebar((prev) => !prev);
+  // };
 
   const { questionType, marks, negativeMarks } = getQuestionMeta();
 
@@ -345,7 +345,7 @@ console.log(answerClass);
           </View>
         </ScrollView>
 
-        {showSidebar && !isMobile && (
+        {/* {showSidebar && !isMobile && (
            
           <View style={styles.chevronButton}>
             <TouchableOpacity onPress={handleLeftClickMain}>
@@ -353,7 +353,7 @@ console.log(answerClass);
              <Icon name="chevron-left" size={20} color="#000" />
             </TouchableOpacity>
           </View>
-        )}
+        )} */}
       </View>
     </View>
   );
