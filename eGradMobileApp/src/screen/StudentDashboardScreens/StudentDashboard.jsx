@@ -47,6 +47,27 @@ export const StudentDashboard = () => {
     setStudentData(JSON.parse(data));
   };
   console.log(studentData);
+
+  // ✅ handleSectionChange with validation + persistence
+  const handleSectionChange = useCallback(
+    async (section, portalId = null) => {
+      setActiveSection(section);
+
+      const state = { activeSection: section };
+      if (portalId) {
+        state.preselectedPortalId = portalId;
+        setPreselectedPortalId(portalId);
+      } else {
+        setPreselectedPortalId(null);
+      }
+
+      await AsyncStorage.setItem(
+        "studentDashboardState",
+        JSON.stringify(state)
+      );
+    },
+    []
+  );
   const handleLogout = async () => {
     try {
       await fetch(`${backEndUrl}/login/studentLogout`, {
@@ -149,15 +170,13 @@ export const StudentDashboard = () => {
       <View style={styles.body}>
         <StudentDashboardLeftSidebar
           activeSection={activeSection}
-          handleSectionChange={setActiveSection}
+          handleSectionChange={handleSectionChange}
         />
         <ScrollView contentContainerStyle={styles.contentArea}>{renderSection()}</ScrollView>
       </View>
     </View>
   );
 };
-
-
 
 const styles = StyleSheet.create({
   container: {
