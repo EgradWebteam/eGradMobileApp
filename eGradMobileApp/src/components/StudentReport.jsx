@@ -167,21 +167,28 @@ console.log("pieData2", pieData2);
 
 
   {/* Charts */}
+{/* Correct/Wrong/Not Attempted Pie */}
 <View style={styles.chartContainer}>
   <PieChart
     data={pieData1}
-    donut
     radius={80}
-    innerRadius={50}
     showText={false} 
   />
 
-  {selectedSlice && (
-    <Text style={styles.tooltip}>
-      {selectedSlice.label}: {selectedSlice.value}
-    </Text>
-  )}
+  {/* Legend below */}
+  <View style={styles.legendContainer}>
+    {pieData1.map((slice, index) => (
+      <View key={index} style={styles.legendItem}>
+        <View style={[styles.legendDot, { backgroundColor: slice.color }]} />
+        <Text style={styles.legendLabel}>
+          {slice.label}: {slice.value}
+        </Text>
+      </View>
+    ))}
+  </View>
 </View>
+
+
 
   <View style={styles.chartContainer}>
     <PieChart
@@ -340,4 +347,31 @@ tdNumber: {
     alignItems: "center",
     marginVertical: 20,
   },
+  legendContainer: {
+  flexDirection: "row", 
+  justifyContent: "center",
+  flexWrap: "wrap", // allows wrapping to next line if too long
+  marginTop: 12,
+},
+
+legendItem: {
+  flexDirection: "row",
+  alignItems: "center",
+  marginHorizontal: 10, // spacing between items
+  marginBottom: 6,
+},
+
+legendDot: {
+  width: 14,
+  height: 14,
+  borderRadius: 3, // square box with rounded corners
+  marginRight: 6,
+},
+
+legendLabel: {
+  fontSize: 14,
+  color: "#333",
+  fontWeight: "500",
+},
+
 });

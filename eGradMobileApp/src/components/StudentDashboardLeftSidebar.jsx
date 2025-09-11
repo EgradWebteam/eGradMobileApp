@@ -7,7 +7,7 @@ const sidebarItems = [
   { id: 'myCourses', label: 'My Courses', icon: 'book' },
   { id: 'buyCourses', label: 'Buy Courses', icon: 'shopping-cart' },
   { id: 'results', label: 'My Results', icon: 'list-alt' },
-  { id: 'bokmarks', label: 'Bookmarks', icon: 'bookmark' },
+  { id: 'bookmarks', label: 'Bookmarks', icon: 'bookmark' },
   { id: 'account', label: 'My Account', icon: 'user' },
 ];
 
