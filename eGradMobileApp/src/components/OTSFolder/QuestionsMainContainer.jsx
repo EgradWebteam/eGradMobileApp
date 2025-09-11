@@ -345,10 +345,12 @@ console.log(answerClass);
           </View>
         </ScrollView>
 
-        {showSidebar && (
+        {showSidebar && !isMobile && (
+           
           <View style={styles.chevronButton}>
             <TouchableOpacity onPress={handleLeftClickMain}>
-              {/* <FaChevronLeft /> Use VectorIcon here in real RN app */}erwr
+              
+             <Icon name="chevron-left" size={20} color="#000" />
             </TouchableOpacity>
           </View>
         )}

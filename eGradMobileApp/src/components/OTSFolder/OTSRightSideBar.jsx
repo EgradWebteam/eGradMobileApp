@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   ActivityIndicator,
+  ImageBackground,
 } from "react-native";
 import { useStudent } from '../../hooks/StudentContext.jsx';
  import { backEndUrl, frontEndUrl,backEndPort } from "../../apiConfig.js";
@@ -54,6 +55,13 @@ const OTSRightSideBar = ({
   const userData = studentData?.userDetails;
   const studentProfile = userData?.uploaded_photo;
   const studentName = userData?.candidate_name;
+const backgroundImages = {
+  AnswerdBtnCls: require('../../images/Answered.png'),
+  NotAnsweredBtnCls: require('../../images/NotAnswered.png'),
+  MarkedForReview: require('../../images/MarkedForReview.png'),
+  AnsMarkedForReview: require('../../images/AnsMarkedForReview.png'),
+  NotVisitedBehaviourBtns: require('../../images/Visited.png'),
+};
 
   // Admin check (you might want to store this in context or state in RN)
   const [adminRole, setAdminRole] = useState(null);
@@ -293,7 +301,8 @@ const OTSRightSideBar = ({
   };
 
   return (
-    <View> {!isMobile && ( 
+    <View>
+       {!isMobile && ( 
     <View style={styles.container}>
       <View style={styles.profileHolder}>
         <Image
@@ -342,14 +351,26 @@ const OTSRightSideBar = ({
               }
            const isActive = index === activeQuestionIndex;
               return (
-                <TouchableOpacity
-                  key={q.question_id}
-                  style={q.buttonClass}
-                  disabled={isDisabled}
-                  onPress={() => handleQuestionClick(index)}
-                >
-                  <Text style={styles.questionBtnText}>{index + 1}</Text>
-                </TouchableOpacity>
+               <View key={q.question_id} style={styles.questionNumberRow}>
+                            <TouchableOpacity
+                              style={[
+                                styles.questionBtnSNMR,
+                              
+                                answerStatus,
+                              ]}
+                              onPress={() => handleQuestionClick(index)}
+                              disabled={isDisabled}
+                            >
+                                 <ImageBackground
+                    source={backgroundImages[answerStatus]} // Use the dynamic key
+                    style={{ width: 45, height: 45 ,justifyContent:'center',alignContent:'center'}}
+                    
+                    imageStyle={{ resizeMode: 'contain' ,justifyContent: 'center',
+                  alignItems: 'center'}}
+                  >
+                              <Text style={[styles.questionBtnText, styles[answerStatus]]}>{index + 1}</Text></ImageBackground>
+                            </TouchableOpacity>
+                          </View>
               );
             })}
           </ScrollView>
@@ -394,7 +415,8 @@ const OTSRightSideBar = ({
           
         </View>
       )}
-    </View>)}</View>
+    </View>)}
+    </View>
   );
 };
 export default OTSRightSideBar;

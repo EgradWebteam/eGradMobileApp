@@ -49,38 +49,32 @@ const OTSQuestionPaper = ({ testName, realTestId, closeQuestionPaper, questionDa
   return (
     <ScrollView contentContainerStyle={styles.container} ref={scrollRef}>
          <View style={styles.subContainer}>
-          <View style={styles.logoHolder}> {logoSrc && <Image source={logoSrc}    style={styles.logo}
-       resizeMode="contain" />}</View>
-                  <View style={styles.closeBtnContainer}>
+          <View style={styles.logoHolder}>
+             {logoSrc && 
+             <Image source={logoSrc}    style={styles.logo}
+       resizeMode="contain" />}
+       </View>
+              
                    
-        {!forView && (    <Text style={styles.noteText}>
+        {!forView && ( 
+             <Text style={styles.noteText}>
                       Note that the timer is ticking while you read the instructions.
                       Close this page to return to answering the questions.
-                    </Text>        )}
+                    </Text>     
+                     )}
+                        <View style={styles.closeBtnContainer}>
                     <TouchableOpacity onPress={closeQuestionPaper} style={styles.closeButton}>
                       <Text style={styles.closeButtonText}>Close</Text>
                     </TouchableOpacity>
                   </View>
       <ScrollView  contentContainerStyle={styles.scrollContent}>
-        {/* Header */}
-        {/* <View style={styles.header}>
-          {logoSrc && <Image source={logoSrc} style={styles.logo} resizeMode="contain" />}
-          <View style={styles.headerRight}>
-            <Text style={styles.testName}>{testName}</Text>
-            <TouchableOpacity onPress={closeQuestionPaper} style={styles.closeBtn}>
-              <Text style={styles.closeBtnText}>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </View> */}
 
-
-        {/* Questions */}
         {questionData.subjects?.map((subject) => {
           let questionCounter = 1;
 
           return (
             <View key={subject.subjectId}>
-              {subject.sections && subject.sections.length > 0 ? (
+              {subject.sections && subject.sections.length > 0 && (
                 subject.sections.map((section) => (
                   <View key={section.sectionId}>
                     <Text style={styles.sectionHeader}>
@@ -116,26 +110,6 @@ const OTSQuestionPaper = ({ testName, realTestId, closeQuestionPaper, questionDa
                     })}
                   </View>
                 ))
-              ) : (
-                <>
-                  <Text style={styles.sectionHeader}>{subject.SubjectName}</Text>
-                  {subject.questions?.map((question) => {
-                    const currentQuestionNumber = questionCounter++;
-                    return (
-                      <View key={question.question_id} style={styles.questionContainer}>
-                        <Text style={styles.questionNumber}>Question No: {currentQuestionNumber}</Text>
-                        <ResponsiveImage uri= { question.questionImgName }/>
-                        {question.options.map((option) => (
-                          <View key={option.option_id} style={styles.optionRow}>
-                            <Text style={styles.optionIndex}>({option.option_index})</Text>
-                            <ResponsiveImage uri= { option.optionImgName }
-                            />
-                          </View>
-                        ))}
-                      </View>
-                    );
-                  })}
-                </>
               )}
             </View>
           );
@@ -145,7 +119,8 @@ const OTSQuestionPaper = ({ testName, realTestId, closeQuestionPaper, questionDa
         <TouchableOpacity style={styles.scrollButton} onPress={scrollToTop}>
           <Text style={styles.scrollButtonText}>Scroll to Top</Text>
         </TouchableOpacity>
-      </ScrollView></View>
+      </ScrollView>
+      </View>
     </ScrollView>
   );
 };

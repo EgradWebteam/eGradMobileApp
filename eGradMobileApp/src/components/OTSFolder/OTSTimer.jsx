@@ -35,7 +35,7 @@ const OTSTimer = ({ realStudentId, realTestId, testData, realCourseId }) => {
 
       {showCalculator && (
         // <ScientificCalculator onClose={handleCalcClick} />
-        hh
+      <Text>hf</Text>
       )}
     </View>
   );
