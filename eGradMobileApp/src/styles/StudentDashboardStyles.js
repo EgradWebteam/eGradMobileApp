@@ -100,8 +100,8 @@ export const styles = StyleSheet.create({
   closePopup: { marginTop: 15, color: "#3399ff", fontWeight: "bold" },
 
   //Book mark css
-  containerBookMarks: { flex: 1, padding: 10, backgroundColor: "#fff" },
-  heading: { fontSize: 22, fontWeight: "bold", marginBottom: 10 },
+   containerBookMarks: { flex: 1, padding: 15, backgroundColor: "#fff" },
+  heading: { fontSize: 22, fontWeight: "bold", marginBottom: 10 ,textAlign: "center" },
   portalButtons: { marginBottom: 10 },
   portalButton: {
     padding: 10,
@@ -126,9 +126,14 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 5,
   },
-  image: { width: "100%", height: 200, resizeMode: "contain", marginBottom: 10 },
+  paragraphContainer: { marginBottom: 10 },
+  paragraphTag: { fontWeight: "bold", marginBottom: 5 },
+  paragraphImage: {  marginVertical: 6,
+  resizeMode: "contain",},
+  image: { marginVertical: 10,
+  resizeMode: "contain", },
   optionRow: { flexDirection: "row", alignItems: "center", marginVertical: 4 },
-  optionImage: { width: 120, height: 40, resizeMode: "contain", marginLeft: 5 },
+  optionImage: { width: "100%", height: 60, resizeMode: "contain", marginLeft: 5 },
   solutionButtons: { flexDirection: "row", marginTop: 10 },
   solutionBtn: {
     backgroundColor: "#2196F3",
@@ -137,7 +142,8 @@ export const styles = StyleSheet.create({
     marginRight: 10,
   },
   solutionBtnText: { color: "white" },
-  solutionImage: { width: "100%", height: 250, resizeMode: "contain", marginTop: 10 },
+  solutionImage: {  marginTop: 10,
+  resizeMode: "contain",},
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.7)",
@@ -153,53 +159,6 @@ export const styles = StyleSheet.create({
   closeBtn: { position: "absolute", top: 10, right: 10, zIndex: 2 },
   emptyMsg: { textAlign: "center", marginTop: 20, color: "gray" },
 
-  // buy courses
-  containerBuyCourses: { flex: 1, padding: 16 },
-  loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  heading: { fontSize: 24, fontWeight: 'bold', marginBottom: 16 },
-  buttonRow: { flexDirection: 'row', marginBottom: 12 },
-  portalButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 4,
-    backgroundColor: '#ddd',
-    marginRight: 8,
-  },
-  portalButtonActive: { backgroundColor: '#3399cc' },
-  portalButtonText: { color: '#333' },
-  portalButtonTextActive: { color: '#fff' },
-  examButton: {
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 4,
-    backgroundColor: '#eee',
-    marginRight: 6,
-  },
-  examButtonActive: { backgroundColor: '#3399cc' },
-  examButtonText: { color: '#333' },
-  examButtonTextActive: { color: '#fff' },
-  section: { marginBottom: 20 },
-  sectionTitle: { fontSize: 20, fontWeight: '600', marginBottom: 8 },
-  cardsContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
-  card: {
-    width: '48%',
-    backgroundColor: '#f9f9f9',
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 12,
-  },
-  cardImage: { width: '100%', height: 100, borderRadius: 4, marginBottom: 8 },
-  cardTitle: { fontSize: 16, fontWeight: '500', marginBottom: 4 },
-  price: { fontSize: 16, fontWeight: 'bold', marginVertical: 6 },
-  buyButton: {
-    backgroundColor: '#3399cc',
-    paddingVertical: 8,
-    borderRadius: 4,
-    alignItems: 'center',
-  },
-  buyButtonText: { color: '#fff', fontWeight: '600' },
-  noCourses: { alignItems: 'center', marginTop: 40 },
-
   // mycourses
    containerMyCourses: {
     padding: 15,
@@ -210,6 +169,7 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginVertical: 10,
+    textAlign: "center" ,
   },
   breadcrumb: {
     flexDirection: 'row',
@@ -265,6 +225,7 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 16,
+    textAlign: "center" ,
   },
   noResultsContainer: {
     alignItems: "center",

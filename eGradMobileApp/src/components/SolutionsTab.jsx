@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,13 +7,12 @@ import {
   FlatList,
   StyleSheet,
   Modal,
-  ScrollView,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { WebView } from "react-native-webview";
-import { backEndUrl, frontEndUrl } from "../apiConfig";
-import { Dimensions } from "react-native";
+import { backEndUrl } from "../apiConfig";
+import AutoSizedImage from "./AutoSizedImage"; // ✅ shared component
 
 const SolutionsTab = ({
   testId,
@@ -26,7 +25,6 @@ const SolutionsTab = ({
   selectedSubjectSection,
   setSelectedSubjectSection,
 }) => {
-  const studentContact = userData?.mobile_no;
   const [visibleSolutions, setVisibleSolutions] = useState({});
   const [videoPopup, setVideoPopup] = useState(null);
 
@@ -36,9 +34,9 @@ const SolutionsTab = ({
       sectionIdx !== null && subject?.sections
         ? subject.sections[sectionIdx]
         : {
-          SectionName: null,
-          questions: subject?.sections?.[0]?.questions || [],
-        };
+            SectionName: null,
+            questions: subject?.sections?.[0]?.questions || [],
+          };
 
     setSelectedSubjectSection({
       SubjectName: subject.SubjectName,
@@ -80,36 +78,41 @@ const SolutionsTab = ({
 
   const renderVideo = (url) => {
     if (!url) return null;
+    const lowerUrl = url.toLowerCase();
+    let embedUrl = url;
+
+    if (lowerUrl.includes("youtube.com") || lowerUrl.includes("youtu.be")) {
+      let videoId = "";
+      if (url.includes("youtu.be")) {
+        videoId = url.split("youtu.be/")[1]?.split("?")[0];
+      } else if (url.includes("watch?v=")) {
+        videoId = url.split("watch?v=")[1]?.split("&")[0];
+      }
+      if (videoId) embedUrl = `https://www.youtube.com/embed/${videoId}`;
+    } else if (lowerUrl.includes("vimeo.com")) {
+      const videoId = url.split("/").pop();
+      embedUrl = `https://player.vimeo.com/video/${videoId}`;
+    } else if (lowerUrl.includes("drive.google.com/file/d/")) {
+      const fileId = url.split("/d/")[1]?.split("/")[0];
+      if (fileId) embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+    } else if (lowerUrl.match(/\.(mp4|webm|ogg)$/)) {
+      return (
+        <WebView
+          source={{ uri: url }}
+          style={{ width: "100%", height: 300 }}
+          mediaPlaybackRequiresUserAction={false}
+          allowsFullscreenVideo
+        />
+      );
+    }
+
     return (
       <WebView
-        source={{ uri: url }}
+        source={{ uri: embedUrl }}
         style={{ width: "100%", height: 300 }}
         javaScriptEnabled
         allowsFullscreenVideo
       />
-    );
-  };
-
-  const AutoSizedImage = ({ uri, style }) => {
-    const [size, setSize] = useState(null);
-
-    useEffect(() => {
-      if (uri) {
-        Image.getSize(uri, (w, h) => {
-          const screenWidth = Dimensions.get("window").width - 40;
-          const scaleFactor = w / screenWidth;
-          const imageHeight = h / scaleFactor;
-          setSize({ width: screenWidth, height: imageHeight });
-        });
-      }
-    }, [uri]);
-
-    if (!size) return null;
-
-    return (
-      <ScrollView horizontal showsHorizontalScrollIndicator={true}>
-        <Image source={{ uri }} style={[style, size]} />
-      </ScrollView>
     );
   };
 
@@ -131,148 +134,75 @@ const SolutionsTab = ({
           </TouchableOpacity>
         </View>
 
-        {/* Paragraph (if available) */}
-        {/* {item.paragraph?.paragraphImgName && (
+        {/* Paragraph */}
+        {item.paragraph?.paragraphImgName && (
           <View style={{ marginBottom: 10 }}>
-            <Text style={{ fontWeight: "bold", marginBottom: 4 }}>Paragraph:</Text>
-            <Image
-              source={{ uri: item.paragraph.paragraphImgName }}
+            <Text style={{ fontWeight: "bold", marginBottom: 4 }}>
+              Paragraph:
+            </Text>
+            <AutoSizedImage
+              uri={item.paragraph.paragraphImgName}
               style={styles.paragraphImage}
             />
           </View>
-        )} */}
+        )}
 
-        {/* Question Image */}
-        {/* {item.questionImgName && (
-    <Image
-      source={{ uri: item.questionImgName }}
-      style={styles.questionImage}
-    />
-)} */}
-
-{item.paragraph?.paragraphImgName && (
-  <View style={{ marginBottom: 10 }}>
-    <Text style={{ fontWeight: "bold", marginBottom: 4 }}>Paragraph:</Text>
-    <AutoSizedImage uri={item.paragraph.paragraphImgName} style={styles.paragraphImage} />
-  </View>
-)}
-
+        {/* Question */}
         {item.questionImgName && (
           <AutoSizedImage uri={item.questionImgName} style={styles.questionImage} />
         )}
 
-        {/* Options based on qTypeId */}
+        {/* Options */}
         <View style={{ marginTop: 10 }}>
-          {(() => {
-            const qTypeId = item.questionType?.quesionTypeId;
+          {item.options?.map((option) => {
+            const isCorrect = item.answer?.split(",").includes(option.option_index);
+            const isUserAnswer = item.userAnswer?.user_answer
+              ?.split(",")
+              .includes(option.option_index);
 
-            // NAT: Just show text answers
-            if (qTypeId === 5 || qTypeId === 6) {
-              return (
-                <View>
-                  <Text>
-                    <Text style={{ fontWeight: "bold" }}>Your Answer: </Text>
-                    {item.userAnswer?.user_answer || "Not Attempted"}
-                  </Text>
-                  <Text>
-                    <Text style={{ fontWeight: "bold" }}>Correct Answer: </Text>
-                    {item.answer}
-                  </Text>
-                </View>
-              );
-            }
+            let icon = "⭕";
+            if (isCorrect && isUserAnswer) icon = "✅";
+            else if (!isCorrect && isUserAnswer) icon = "❌";
+            else if (isCorrect) icon = "✅";
 
-            // MSQ: Multiple correct
-            if (qTypeId === 3 || qTypeId === 4) {
-              const correctAnswers = item.answer?.split(",") || [];
-              const userAnswers = item.userAnswer?.user_answer?.split(",") || [];
-
-              return item.options?.map((option) => {
-                const isCorrect = correctAnswers.includes(option.option_index);
-                const isUserSelected = userAnswers.includes(option.option_index);
-
-                let icon = "⭕";
-                if (isCorrect && isUserSelected) icon = "✅";
-                else if (!isCorrect && isUserSelected) icon = "❌";
-                else if (isCorrect) icon = "✅";
-
-                return (
-                  <View key={option.option_id} style={styles.optionRow}>
-                    <Text>
-                      {icon} ({option.option_index})
-                    </Text>
-                    {option.optionImgName && (
-                      <Image
-                        source={{ uri: option.optionImgName }}
-                        style={styles.optionImage}
-                      />
-                    )}
-                  </View>
-                );
-              });
-            }
-
-            // Default: MCQ
-            return item.options?.map((option) => {
-              const isCorrect = option.option_index === item.answer;
-              const isUserAnswer =
-                option.option_index === item.userAnswer?.user_answer;
-
-              let icon = "⭕";
-              if (isCorrect && isUserAnswer) icon = "✅";
-              else if (isUserAnswer && !isCorrect) icon = "❌";
-              else if (isCorrect) icon = "✅";
-
-              return (
-                <View key={option.option_id} style={styles.optionRow}>
-                  <Text>
-                    {icon} ({option.option_index})
-                  </Text>
-                  {option.optionImgName && (
-                    <Image
-                      source={{ uri: option.optionImgName }}
-                      style={styles.optionImage}
-                    />
-                  )}
-              
-                </View>
-              );
-            });
-          })()}
+            return (
+              <View key={option.option_id} style={styles.optionRow}>
+                <Text>
+                  {icon} ({option.option_index})
+                </Text>
+                {option.optionImgName && (
+                  <AutoSizedImage uri={option.optionImgName} style={styles.optionImage} />
+                )}
+              </View>
+            );
+          })}
         </View>
 
-
-        {/* Solution & Video */}
+        {/* Solution */}
         {item.solution?.solutionImgName && (
           <TouchableOpacity
             style={styles.solutionButton}
             onPress={() => toggleSolutionVisibility(item.question_id)}
           >
             <Text style={styles.btnText}>
-              {visibleSolutions[item.question_id]
-                ? "Hide Solution"
-                : "View Solution"}
+              {visibleSolutions[item.question_id] ? "Hide Solution" : "View Solution"}
             </Text>
           </TouchableOpacity>
         )}
 
-        {/* {visibleSolutions[item.question_id] && (
-          <Image
-            source={{ uri: item.solution.solutionImgName }}
+        {visibleSolutions[item.question_id] && item.solution?.solutionImgName && (
+          <AutoSizedImage
+            uri={item.solution.solutionImgName}
             style={styles.solutionImage}
           />
-        )} */}
-{visibleSolutions[item.question_id] && item.solution?.solutionImgName && (
-  <AutoSizedImage uri={item.solution.solutionImgName} style={styles.solutionImage} />
-)}
+        )}
 
+        {/* Video Solution */}
         {item.solution?.video_solution_link && (
           <TouchableOpacity
             style={styles.solutionButton}
             onPress={() =>
-              setVideoPopup(
-                videoPopup === item.question_id ? null : item.question_id
-              )
+              setVideoPopup(videoPopup === item.question_id ? null : item.question_id)
             }
           >
             <Text style={styles.btnText}>View Video Solution</Text>
@@ -280,16 +210,9 @@ const SolutionsTab = ({
         )}
 
         {videoPopup === item.question_id && (
-          <Modal
-            visible={true}
-            transparent={false}
-            onRequestClose={() => setVideoPopup(null)}
-          >
+          <Modal visible transparent={false} onRequestClose={() => setVideoPopup(null)}>
             <View style={styles.modalContent}>
-              <TouchableOpacity
-                style={styles.closeBtn}
-                onPress={() => setVideoPopup(null)}
-              >
+              <TouchableOpacity style={styles.closeBtn} onPress={() => setVideoPopup(null)}>
                 <Text style={{ fontSize: 18 }}>✖ Close</Text>
               </TouchableOpacity>
               {renderVideo(item.solution.video_solution_link)}
@@ -307,20 +230,14 @@ const SolutionsTab = ({
         selectedValue={
           selectedSubjectSection?.SubjectName || testPaperData.subjects?.[0]
         }
-        onValueChange={(itemValue, itemIndex) =>
-          handleDropdownChange(itemIndex, 0)
-        }
+        onValueChange={(itemValue, itemIndex) => handleDropdownChange(itemIndex, 0)}
       >
         {testPaperData.subjects?.map((subject, subjIndex) => (
-          <Picker.Item
-            key={subjIndex}
-            label={subject.SubjectName}
-            value={subject.SubjectName}
-          />
+          <Picker.Item key={subjIndex} label={subject.SubjectName} value={subject.SubjectName} />
         ))}
       </Picker>
 
-      {/* Questions List */}
+      {/* Questions */}
       <FlatList
         data={selectedSubjectSection?.questions || []}
         keyExtractor={(item) => item.question_id.toString()}
@@ -345,24 +262,18 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 6,
   },
-  // questionImage: {
-  //   width: "100%",
-  //   height: 150,
-  //   resizeMode: "contain",
-  //   marginVertical: 10,
-  // },
- questionImage: {
-  marginVertical: 10,
-  resizeMode: "contain",
-},
-paragraphImage: {
-  marginVertical: 6,
-  resizeMode: "contain",
-},
-solutionImage: {
-  marginTop: 10,
-  resizeMode: "contain",
-},
+  questionImage: {
+    marginVertical: 10,
+    resizeMode: "contain",
+  },
+  paragraphImage: {
+    marginVertical: 6,
+    resizeMode: "contain",
+  },
+  solutionImage: {
+    marginTop: 10,
+    resizeMode: "contain",
+  },
   optionRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -382,12 +293,6 @@ solutionImage: {
     alignItems: "center",
   },
   btnText: { color: "#fff" },
-  // solutionImage: {
-  //   width: "100%",
-  //   height: 200,
-  //   resizeMode: "contain",
-  //   marginTop: 10,
-  // },
   modalContent: {
     flex: 1,
     padding: 16,

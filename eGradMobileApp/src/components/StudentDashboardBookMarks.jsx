@@ -11,9 +11,10 @@ import {
 } from "react-native";
 import { WebView } from "react-native-webview";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-// import AsyncStorage from "@react-native-async-storage/async-storage"; // ✅ use this in RN
-import { backEndUrl, frontEndUrl } from "../apiConfig";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { backEndUrl } from "../apiConfig";
 import { styles } from "../styles/StudentDashboardStyles";
+import AutoSizedImage from "./AutoSizedImage";
 const StudentDashboardBookMarks = ({ studentId }) => {
   const [testPaperData, setTestPaperData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,8 +25,7 @@ const StudentDashboardBookMarks = ({ studentId }) => {
   useEffect(() => {
     const fetchTestPaper = async () => {
       try {
-        // Replace sessionStorage with AsyncStorage in RN
-        const token = await sessionStorage.getItem("accessToken");
+        const token = await AsyncStorage.getItem("accessToken");
         setLoading(true);
 
         const response = await fetch(
@@ -52,58 +52,6 @@ const StudentDashboardBookMarks = ({ studentId }) => {
     fetchTestPaper();
   }, [studentId]);
 
-  const handleDelete = async (
-    studentId,
-    questionId,
-    bookMarkTid,
-    courseId,
-    portalId
-  ) => {
-    try {
-      const response = await fetch(
-        `${backEndUrl}/studentBookMarks/DeleteBookmark/${studentId}/${questionId}/${bookMarkTid}/${courseId}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (!response.ok) throw new Error("Failed to delete bookmark");
-
-      setTestPaperData((prevData) =>
-        prevData
-          .map((portal) => {
-            if (portal.portalId !== portalId) return portal;
-            const updatedTests = portal.tests
-              .map((test) => {
-                if (test.BookMarkTid !== bookMarkTid) return test;
-                const updatedSubjects = test.subjects
-                  .map((subject) => {
-                    const updatedSections = subject.sections
-                      .map((section) => ({
-                        ...section,
-                        questions: section.questions.filter(
-                          (q) => q.question_id !== questionId
-                        ),
-                      }))
-                      .filter((section) => section.questions.length > 0);
-                    return { ...subject, sections: updatedSections };
-                  })
-                  .filter((subject) => subject.sections.length > 0);
-                return { ...test, subjects: updatedSubjects };
-              })
-              .filter((test) => test.subjects.length > 0);
-            return { ...portal, tests: updatedTests };
-          })
-          .filter((portal) => portal.tests.length > 0)
-      );
-    } catch (err) {
-      console.error("Error deleting bookmark:", err);
-    }
-  };
-
   const toggleSolution = (questionId) => {
     setVisibleSolutions((prev) => ({
       ...prev,
@@ -113,9 +61,11 @@ const StudentDashboardBookMarks = ({ studentId }) => {
 
   const PlayVideoById = (url) => {
     if (!url) return null;
+    const lowerUrl = url.toLowerCase();
     let embedUrl = url;
 
-    if (url.includes("youtube.com") || url.includes("youtu.be")) {
+    // YouTube
+    if (lowerUrl.includes("youtube.com") || lowerUrl.includes("youtu.be")) {
       let videoId = "";
       if (url.includes("youtu.be")) {
         videoId = url.split("youtu.be/")[1]?.split("?")[0];
@@ -124,6 +74,32 @@ const StudentDashboardBookMarks = ({ studentId }) => {
       }
       if (videoId) embedUrl = `https://www.youtube.com/embed/${videoId}`;
     }
+
+    // Vimeo
+    else if (lowerUrl.includes("vimeo.com")) {
+      const videoId = url.split("/").pop();
+      embedUrl = `https://player.vimeo.com/video/${videoId}`;
+    }
+
+    // Google Drive
+    else if (lowerUrl.includes("drive.google.com/file/d/")) {
+      const fileId = url.split("/d/")[1]?.split("/")[0];
+      if (fileId) embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+    }
+
+    // Direct video file (.mp4, .webm, .ogg)
+    else if (lowerUrl.match(/\.(mp4|webm|ogg)$/)) {
+      return (
+        <WebView
+          source={{ uri: url }}
+          style={{ width: "100%", height: 300 }}
+          mediaPlaybackRequiresUserAction={false}
+          allowsFullscreenVideo
+        />
+      );
+    }
+
+    // Default embed
     return (
       <WebView
         source={{ uri: embedUrl }}
@@ -187,29 +163,29 @@ const StudentDashboardBookMarks = ({ studentId }) => {
                         const currentQuestionNumber = questionCounter++;
                         return (
                           <View key={question.question_id} style={styles.questionBlock}>
+                            {/* Question + Delete */}
                             <View style={styles.questionHeader}>
                               <Text>Question No: {currentQuestionNumber}</Text>
-                              <TouchableOpacity
-                                onPress={() =>
-                                  handleDelete(
-                                    studentId,
-                                    question.question_id,
-                                    test.BookMarkTid,
-                                    test.CourseId,
-                                    portal.portalId
-                                  )
-                                }
-                              >
+                              <TouchableOpacity>
                                 <Icon name="delete-forever" size={28} color="red" />
                               </TouchableOpacity>
                             </View>
 
+                            {/* Paragraph */}
+                            {question.paragraph?.paragraphImgName && (
+                              <View style={styles.paragraphContainer}>
+                                <Text style={styles.paragraphTag}>Paragraph:</Text>
+                                {/* <Image
+                                  source={{ uri: question.paragraph.paragraphImgName }}
+                                  style={styles.paragraphImage}
+                                /> */}
+                                 <AutoSizedImage uri={question.paragraph.paragraphImgName} style={styles.paragraphImage} />
+                              </View>
+                            )}
+
                             {/* Question Image */}
                             {question.questionImgName && (
-                              <Image
-                                source={{ uri: question.questionImgName }}
-                                style={styles.image}
-                              />
+                               <AutoSizedImage uri={question.questionImgName} style={styles.image} />
                             )}
 
                             {/* Options */}
@@ -220,10 +196,10 @@ const StudentDashboardBookMarks = ({ studentId }) => {
                               .map((option) => (
                                 <View key={option.option_id} style={styles.optionRow}>
                                   <Text>({option.option_index})</Text>
-                                  <Image
-                                    source={{ uri: option.optionImgName }}
-                                    style={styles.optionImage}
-                                  />
+                                  {/* <Image 
+                                   source={{ uri: option.optionImgName } }
+                                  style={styles.optionImage} /> */}
+                                   <AutoSizedImage uri={option.optionImgName} style={styles.optionImage} />
                                 </View>
                               ))}
 
@@ -232,9 +208,7 @@ const StudentDashboardBookMarks = ({ studentId }) => {
                               {question.solution?.solutionImgName && (
                                 <TouchableOpacity
                                   style={styles.solutionBtn}
-                                  onPress={() =>
-                                    toggleSolution(question.question_id)
-                                  }
+                                  onPress={() => toggleSolution(question.question_id)}
                                 >
                                   <Text style={styles.solutionBtnText}>
                                     {visibleSolutions[question.question_id]
@@ -257,10 +231,7 @@ const StudentDashboardBookMarks = ({ studentId }) => {
 
                             {/* Image Solution */}
                             {visibleSolutions[question.question_id] && (
-                              <Image
-                                source={{ uri: question.solution.solutionImgName }}
-                                style={styles.solutionImage}
-                              />
+                           <AutoSizedImage uri={question.solution.solutionImgName} style={styles.solutionImage} />
                             )}
 
                             {/* Video Modal */}
@@ -300,6 +271,3 @@ const StudentDashboardBookMarks = ({ studentId }) => {
 };
 
 export default StudentDashboardBookMarks;
-
-
-

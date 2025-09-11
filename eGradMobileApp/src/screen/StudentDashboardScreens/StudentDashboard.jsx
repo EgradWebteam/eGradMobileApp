@@ -102,6 +102,8 @@ export const StudentDashboard = () => {
     return () => subscription.remove();
   }, []);
 
+  console.log("Dashboard activeSection:", activeSection);
+
   const renderSection = () => {
     switch (activeSection) {
       case 'dashboard':
