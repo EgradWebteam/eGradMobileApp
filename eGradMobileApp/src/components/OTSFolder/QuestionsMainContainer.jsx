@@ -116,6 +116,7 @@ const backgroundImages = {
   }, [activeSubject, activeSection, activeQuestionIndex, userAnswers]);
 
   const handleQuestionClick = async (index) => {
+        if(activeQuestionIndex === index) return;
     // Commented session validation for now
     // const isValid = await validateSessionWithoutNavigation();
 await autoSaveNATIfNeeded();
