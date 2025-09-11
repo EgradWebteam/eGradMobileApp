@@ -176,7 +176,7 @@ const saveUserResponse = async ({
   };
  const handleSubjectBtnClick = async (subjectName) => {
     // this is to save current question progress.
-    console.log("hii")
+  if(activeSubject === subjectName) return;
     await saveCurrentQuestionProgress({
       testData,
       activeSubject,
@@ -328,6 +328,7 @@ const saveUserResponse = async ({
     setSubjectToUnselect(null);
   };
   const handleSectionChange = async (section) => {
+      if(activeSection === section.SectionName) return;
     await saveCurrentQuestionProgress({
       testData,
       activeSubject,

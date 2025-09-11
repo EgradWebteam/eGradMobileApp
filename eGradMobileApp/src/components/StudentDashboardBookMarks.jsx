@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Modal,
   StyleSheet,
+  Dimensions
 } from "react-native";
 import { WebView } from "react-native-webview";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -22,7 +23,7 @@ const StudentDashboardBookMarks = ({ studentId }) => {
   const [visibleSolutions, setVisibleSolutions] = useState({});
   const [videoPopup, setVideoPopup] = useState(null);
   const [selectedPortal, setSelectedPortal] = useState(null);
-
+const { width, height } = Dimensions.get('window');
   useEffect(() => {
     const fetchTestPaper = async () => {
       try {
@@ -253,34 +254,15 @@ const StudentDashboardBookMarks = ({ studentId }) => {
                             {visibleSolutions[question.question_id] && (
                               <AutoSizedImage uri={question.solution.solutionImgName} style={styles.solutionImage} />
                             )}
-
-                            {/* Video Modal */}
-                            {/* <Modal
-                              visible={videoPopup === question.question_id}
-                              transparent
-                              animationType="slide"
-                              onRequestClose={() => setVideoPopup(null)}
-                            >
-                              <View style={styles.modalOverlay}>
-                                <View style={styles.modalContent}>
-                                  <TouchableOpacity
-                                    style={styles.closeBtn}
-                                    onPress={() => setVideoPopup(null)}
-                                  >
-                                    <Text style={{ color: "white", fontSize: 18 }}>✖</Text>
-                                  </TouchableOpacity>
-                                  {PlayVideoById(question.solution.video_solution_link)}
-                                </View>
-                              </View>
-                            </Modal> */}
-
                             {videoPopup === question.question_id && (
                               <Modal visible transparent={false} onRequestClose={() => setVideoPopup(null)}>
                                 <View style={styles.modalContent}>
                                   <TouchableOpacity style={styles.closeBtn} onPress={() => setVideoPopup(null)}>
                                     <Text style={{ fontSize: 18 }}>✖ Close</Text>
                                   </TouchableOpacity>
+                                  <View style = {{backgroundColor:"#fff",height: height - 80 }} >
                                   {renderVideo(question.solution.video_solution_link)}
+                                  </View>
                                 </View>
                               </Modal>
                             )}
