@@ -74,6 +74,9 @@ console.log("subjectMarkssssss",subjectMarks);
     : 0;
   percentage = Math.max(0, Number(percentage.toFixed(2)));
 
+// Add this flag:
+const isAllZero =
+  (totalCorrect ?? 0) + (totalWrong ?? 0) + (notAttempted ?? 0) === 0;
 
 const pieData1 = [
   {
@@ -166,27 +169,35 @@ console.log("pieData2", pieData2);
 </ScrollView>
 
 
-  {/* Charts */}
 {/* Correct/Wrong/Not Attempted Pie */}
 <View style={styles.chartContainer}>
-  <PieChart
-    data={pieData1}
-    radius={80}
-    showText={false} 
-  />
-
-  {/* Legend below */}
-  <View style={styles.legendContainer}>
-    {pieData1.map((slice, index) => (
-      <View key={index} style={styles.legendItem}>
-        <View style={[styles.legendDot, { backgroundColor: slice.color }]} />
-        <Text style={styles.legendLabel}>
-          {slice.label}: {slice.value}
-        </Text>
+  {isAllZero ? (
+    <>
+      <PieChart
+        data={[{ value: 1, color: "#d3d3d3" }]} // full grey circle
+        radius={80}
+        showText={false}
+      />
+      <Text style={styles.noDataText}>No Answer Data</Text>
+    </>
+  ) : (
+    <>
+      <PieChart data={pieData1} radius={80} showText={false} />
+      {/* Legend below */}
+      <View style={styles.legendContainer}>
+        {pieData1.map((slice, index) => (
+          <View key={index} style={styles.legendItem}>
+            <View style={[styles.legendDot, { backgroundColor: slice.color }]} />
+            <Text style={styles.legendLabel}>
+              {slice.label}: {slice.value}
+            </Text>
+          </View>
+        ))}
       </View>
-    ))}
-  </View>
+    </>
+  )}
 </View>
+
 
 
 
