@@ -1,5 +1,6 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from 'react-native';
 
+const { width, height } = Dimensions.get('window');
 export const styles = StyleSheet.create({
     // account settings csss
   containerSettings: { flex: 1, padding: 16},
@@ -448,6 +449,14 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 15,
     borderRadius: 8,
+  },
+    modalContentdiv: {
+    width: width,           // full screen width
+    height: height,         // full screen height
+    backgroundColor: '#772e2eff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
   },
   modalItem: {
     fontSize: 16,
