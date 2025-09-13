@@ -92,12 +92,6 @@ useEffect(() => {
   useEffect(() => {
     const decryptParams = async () => {
       try {
-        // const token = await AsyncStorage.getItem("navigationToken");
-        // if (!token) {
-        //   navigation.navigate("Error");
-        //   return;
-        // }
-
         const encryptedParams = [decodeURIComponent(testId)];
         if (studentId) {
           encryptedParams.push(decodeURIComponent(studentId));
@@ -176,7 +170,7 @@ useEffect(() => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.containergi}>
       <OTSHeader />
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.instructionContainer}>
@@ -346,7 +340,7 @@ useEffect(() => {
           </View>
         </View>
 
-        <View style={styles.userImageDivInst}>
+        {/* <View style={styles.userImageDivInst}>
           <View style={styles.userDetailsHolder}>
             <View style={styles.userImageSubDiv}>
               <Image
@@ -367,15 +361,17 @@ useEffect(() => {
               <Text>{isAdmin ? "Admin" : studentName}</Text>
             </View>
           </View>
-        </View>
+        </View> */}
 
-        <View style={styles.nextBtnDiv}>
+    
+      </ScrollView>
+          <View style={styles.footerContainergi}>
           <TouchableOpacity
             onPress={handleNextClick}
             disabled={isSaving}
             style={[
               styles.nextBtn,
-              { backgroundColor: isSaving ? "#ccc" : "#007bff" },
+              { backgroundColor: isSaving ? "#ccc" : "rgb(64 173 242)" },
             ]}
           >
             <Text style={styles.nextBtnText}>
@@ -383,7 +379,6 @@ useEffect(() => {
             </Text>
           </TouchableOpacity>
         </View>
-      </ScrollView>
     </View>
   );
 };

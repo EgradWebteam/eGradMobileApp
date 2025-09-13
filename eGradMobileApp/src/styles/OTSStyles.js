@@ -1,10 +1,15 @@
-import { StyleSheet } from 'react-native';
-
+import { StyleSheet ,Dimensions} from 'react-native';
+const { height, width } = Dimensions.get('window');
 export const styles = StyleSheet.create({
   container: {
     padding: 20,
     backgroundColor: '#fff',
     flexGrow: 1,
+  },
+  containergi:{
+   padding: 20,
+    backgroundColor: '#fff',
+  flex: 1,
   },
   testcontainer:{  backgroundColor: '#fff',
     flexGrow: 1,
@@ -31,7 +36,8 @@ export const styles = StyleSheet.create({
 flexWrap:'wrap',
 gap:'10',
     borderTopWidth: 1,
-    borderTopColor: '#eee'
+    borderTopColor: '#eee',
+
    
   },
   questionImageContainer: {
@@ -95,14 +101,14 @@ height: 45,
     justifyContent: 'space-between',
   },
   buttonPrimary: {
-    backgroundColor: '#007AFF',
+    backgroundColor: 'rgb(64 173 242)',
     padding: 12,
     borderRadius: 8,
     flex: 1,
     marginLeft: 10,
   },
   buttonSecondary: {
-    backgroundColor: '#ccc',
+    backgroundColor: 'rgb(64 173 242)',
     padding: 12,
     borderRadius: 8,
     flex: 1,
@@ -121,7 +127,11 @@ height: 45,
     alignItems: 'center',
   },
 
-  scrollViewContent: { padding: 16 },
+  scrollViewContent: {
+    padding: 16,
+     flexGrow: 1,
+    // height: height - 150,
+  },
  
  
   subHeadingSecondary: { fontSize: 18, fontWeight: "600", marginTop: 16, marginBottom: 8 },
@@ -172,6 +182,7 @@ height: 45,
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 5,
+    width:120,
   },
   nextBtnText: {
     color: "#fff",
@@ -784,6 +795,13 @@ fontWeight:'bold'
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#fff",
+  },
+     footerContainergi: {
+   padding: 16,
+  borderTopWidth: 1,
+  borderTopColor: '#ddd',
+  backgroundColor: '#fff',
+  alignItems:'center'
   },
   logoHolder: {
     width: 250,
