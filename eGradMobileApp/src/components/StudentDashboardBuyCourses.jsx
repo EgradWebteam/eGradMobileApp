@@ -160,114 +160,130 @@ const StudentDashboardBuyCourses = ({ setActiveSection, studentId, preselectedPo
     setSelectedExam(examName);
   };
 
-  const studentpaymentcreation = async (courseId, price, isUpgrade) => {
-    // if (!(await validateSession())) return;
-    try {
-      setIsPaymentProcessing(true);
-      if (!courseId || !studentId) {
-        console.error('Invalid course or student ID.');
-        return;
-      }
 
-      const resp = await fetch(
-        `${backEndUrl}/studentbuycourses/studentpaymentcreation/${studentId}/${courseId}`
-      );
-      const data = await resp.json();
-      const { student, course } = data;
+const studentpaymentcreation = async (courseId, studentId, price, isUpgrade) => {
+  // const isValid = await validateSession();
+  // if (!isValid) return;
 
-      if (!student || !course) {
-        console.error('Invalid student or course data.');
-        return;
-      }
+  try {
+    setIsPaymentProcessing(true);
 
-      const {
-        student_registration_id,
-        candidate_name,
-        email_id,
-        mobile_no,
-      } = student;
-      const {
-        course_creation_id,
-        course_name,
-        course_start_date,
-        course_end_date,
-      } = course;
-
-      const orderRes = await fetch(`${backEndUrl}/razorpay/razorpay-create-order`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: price * 100,
-          currency: 'INR',
-          studentId: student_registration_id,
-          courseId: course_creation_id,
-        }),
-      });
-      const result = await orderRes.json();
-      if (!result.success) {
-        Alert.alert('Error', result.error || 'Something went wrong while creating order');
-        setIsPaymentProcessing(false);
-        await fetchCoursesInBuyCourses();
-        return;
-      }
-
-      const { orderData, razorpayKey } = result;
-
-      const options = {
-        key: razorpayKey,
-        amount: orderData.amount.toString(),
-        currency: orderData.currency,
-        name: 'eGRADTutor',
-        description: `Payment for ${course_name}`,
-        order_id: orderData.id,
-        prefill: { name: candidate_name, email: email_id, contact: mobile_no },
-        notes: { address: 'Corporate Office, eGRADTutor (eGATETutor Academy), Hyderabad' },
-        theme: { color: '#3399cc' },
-      };
-
-      RazorpayCheckout.open(options)
-        .then(async (response) => {
-          await fetch(`${backEndUrl}/razorpay/paymentsuccess`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_order_id: response.razorpay_order_id,
-              email: email_id,
-              name: candidate_name,
-              course_name,
-              course_start_date,
-              course_end_date,
-              studentId: student_registration_id,
-              courseId: course_creation_id,
-              amount: price,
-              isUpgrade,
-            }),
-          });
-          setActiveSection('myCourses');
-        })
-        .catch(async (error) => {
-          console.error('Payment failed:', error);
-          await fetch(`${backEndUrl}/razorpay/paymentfailure`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              email: email_id,
-              name: candidate_name,
-              course_name,
-              studentId: student_registration_id,
-              courseId: course_creation_id,
-            }),
-          });
-        })
-        .finally(() => {
-          setIsPaymentProcessing(false);
-        });
-    } catch (err) {
-      console.error('Error during payment flow:', err);
-      setIsPaymentProcessing(false);
+    if (!courseId || !studentId) {
+      console.error("Invalid course ID or student ID.");
+      return;
     }
-  };
+
+    const response = await fetch(`${backEndUrl}/studentbuycourses/studentpaymentcreation/${studentId}/${courseId}`);
+    const data = await response.json();
+    const { student, course } = data;
+
+    if (!student || !course) {
+      console.error("Invalid student or course data.");
+      return;
+    }
+
+    const {
+      student_registration_id,
+      candidate_name,
+      email_id,
+      mobile_no
+    } = student;
+
+    const {
+      course_creation_id,
+      course_name,
+      course_start_date,
+      course_end_date
+    } = course;
+
+    // Create Razorpay order
+    const orderRes = await fetch(`${backEndUrl}/razorpay/razorpay-create-order`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        amount: price * 100,
+        currency: "INR",
+        studentId: student_registration_id,
+        courseId: course_creation_id,
+      }),
+    });
+
+    const result = await orderRes.json();
+
+    if (!result.success) {
+      Alert.alert(result.error || "Something went wrong while creating the order");
+      setIsPaymentProcessing(false);
+      fetchCoursesInBuyCourses();
+      return;
+    }
+
+    const { orderData, razorpayKey } = result;
+
+    const options = {
+      key: razorpayKey,
+      amount: orderData.amount,
+      currency: orderData.currency,
+      name: "eGRADTutor",
+      description: `Payment for ${course_name}`,
+      order_id: orderData.id,
+      prefill: {
+        name: candidate_name,
+        email: email_id,
+        contact: mobile_no,
+      },
+      notes: {
+        address: "Corporate Office, eGRADTutor(eGATETutor Academy), Hyderabad",
+      },
+      theme: { color: "#3399cc" },
+    };
+
+    RazorpayCheckout.open(options)
+      .then(async (paymentResponse) => {
+        // On success
+        await fetch(`${backEndUrl}/razorpay/paymentsuccess`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            razorpay_payment_id: paymentResponse.razorpay_payment_id,
+            razorpay_order_id: paymentResponse.razorpay_order_id,
+            email: email_id,
+            name: candidate_name,
+            course_name,
+            course_start_date,
+            course_end_date,
+            studentId: student_registration_id,
+            courseId: course_creation_id,
+            amount: price,
+            isUpgrade,
+          }),
+        });
+
+        setActiveSection("myCourses");
+      })
+      .catch(async (error) => {
+        // On failure
+        console.error("Payment failed:", error);
+        await fetch(`${backEndUrl}/razorpay/paymentfailure`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: email_id,
+            name: candidate_name,
+            course_name: course_name,
+            studentId: student_registration_id,
+            courseId: course_creation_id,
+          }),
+        });
+      })
+      .finally(() => {
+        setIsPaymentProcessing(false);
+      });
+  } catch (error) {
+    console.error("Error creating payment session:", error);
+    setIsPaymentProcessing(false);
+  }
+};
+
 
   if (loading || isPaymentProcessing) {
     return (
