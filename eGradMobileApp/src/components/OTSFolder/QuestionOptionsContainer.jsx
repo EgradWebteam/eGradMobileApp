@@ -55,30 +55,54 @@ const handleArrowInput = (direction) => {
   setCursorPosition(newPosition);
   inputRef.current.focus();
 };
-  const handleCalculatorInput = (val) => {
-    let currentValue = natValue || '';
-    if (val === 'ClearAll') {
-      setNatValue('');
-      onSelectOption('');
-      return;
-    }
-    if (val === 'BackSpace') {
-      currentValue = currentValue.slice(0, -1);
-      setNatValue(currentValue);
-      onSelectOption(currentValue);
-      return;
-    }
-    if (val === '-' && !currentValue.includes('-')) {
-      currentValue = '-' + currentValue;
-      setNatValue(currentValue);
-      onSelectOption(currentValue);
-      return;
-    }
-    if (val === '.' && (currentValue.includes('.') || currentValue === '-')) return;
-    let updated = currentValue + val;
-    setNatValue(updated);
-    onSelectOption(updated);
-  };
+ const handleCalculatorInput = (val) => {
+  let currentValue = natValue || '';
+
+  if (val === 'ClearAll') {
+    setNatValue('');
+    onSelectOption('');
+    setCursorPosition(0);
+    return;
+  }
+
+  if (val === 'BackSpace') {
+    if (cursorPosition === 0) return;
+
+    const newValue =
+      currentValue.slice(0, cursorPosition - 1) +
+      currentValue.slice(cursorPosition);
+
+    const newCursor = cursorPosition - 1;
+
+    setNatValue(newValue);
+    onSelectOption(newValue);
+    setCursorPosition(newCursor);
+    return;
+  }
+
+  if (val === '-' && !currentValue.includes('-')) {
+    const newValue = '-' + currentValue;
+    setNatValue(newValue);
+    onSelectOption(newValue);
+    setCursorPosition(cursorPosition + 1);
+    return;
+  }
+
+  if (val === '.' && (currentValue.includes('.') || currentValue === '-')) return;
+
+  // ✅ Insert at cursor position
+  const newValue =
+    currentValue.slice(0, cursorPosition) +
+    val +
+    currentValue.slice(cursorPosition);
+
+  const newCursor = cursorPosition + val.length;
+
+  setNatValue(newValue);
+  onSelectOption(newValue);
+  setCursorPosition(newCursor);
+};
+
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -147,15 +171,14 @@ const handleArrowInput = (direction) => {
             ref={inputRef}
             style={styles.natInput}
             value={natValue}
-              onChangeText={(text) => {
-    setNatValue(text);
-    setCursorPosition(text.length); // or wherever needed
-  }}
+  
   selection={{ start: cursorPosition, end: cursorPosition }}
     onSelectionChange={({ nativeEvent: { selection } }) => {
     setCursorPosition(selection.start);
   }}
-            editable={false}
+   showSoftInputOnFocus={false}
+  onChangeText={() => {}}
+            editable={true}
           /></View>
           <View style={styles.backSpaceBtn}>
             <TouchableOpacity
