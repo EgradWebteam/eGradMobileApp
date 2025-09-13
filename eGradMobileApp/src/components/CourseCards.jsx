@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#000',
+    color: '#FFF',
   },
   imageContainer: {
     alignItems: 'center',
@@ -207,13 +207,13 @@ const styles = StyleSheet.create({
 
   // Background Colors
   fullTestBg: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#579b75',
   },
   subjectWiseBg: {
-    backgroundColor: '#28a745',
+    backgroundColor: '#ac9563',
   },
   topicWiseBg: {
-    backgroundColor: '#ffc107',
+    backgroundColor: '#5282ae',
   },
   chapterWiseBg: {
     backgroundColor: '#17a2b8',
@@ -221,13 +221,14 @@ const styles = StyleSheet.create({
 
   // Border Colors
   fullTestBorder: {
-    borderColor: '#007bff',
+    borderColor: '#579b75',
+   
   },
   subjectWiseBorder: {
-    borderColor: '#28a745',
+    borderColor: '#ac9563',
   },
   topicWiseBorder: {
-    borderColor: '#ffc107',
+    borderColor: '#5282ae',
   },
   chapterWiseBorder: {
     borderColor: '#17a2b8',

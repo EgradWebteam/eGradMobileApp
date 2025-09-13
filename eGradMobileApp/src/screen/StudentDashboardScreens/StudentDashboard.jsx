@@ -130,14 +130,14 @@ useEffect(() => {
   }, []);
 
   // Auto-logout on inactivity (AppState-based)
-  useEffect(() => {
-    const subscription = AppState.addEventListener('change', (nextState) => {
-      if (nextState === 'background') {
-        handleLogout();
-      }
-    });
-    return () => subscription.remove();
-  }, []);
+  // useEffect(() => {
+  //   const subscription = AppState.addEventListener('change', (nextState) => {
+  //     if (nextState === 'background') {
+  //       handleLogout();
+  //     }
+  //   });
+  //   return () => subscription.remove();
+  // }, []);
 
   console.log("Dashboard activeSection:", activeSection);
 

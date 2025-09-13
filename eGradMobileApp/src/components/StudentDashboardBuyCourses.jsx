@@ -252,9 +252,9 @@ console.log( orderData, razorpayKey)
             isUpgrade,
           }),
         });
-        Alert.alert(`Payment Success,${course_name} Course added to your My Courses`);
+        // Alert.alert(`Payment Success,${course_name} Course added to your My Courses`);
 
-        // setActiveSection("myCourses");
+        setActiveSection("myCourses");
       })
       .catch(async (error) => {
         console.error("❌ Razorpay payment failed:", error);
