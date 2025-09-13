@@ -696,6 +696,10 @@ correctMarks:{
 color:'green',
 fontWeight:'bold'
 },
+negativeMarks:{
+  color:'red',
+fontWeight:'bold'
+},
   //examsummmary
   scrollView: {
     paddingBottom: 40,

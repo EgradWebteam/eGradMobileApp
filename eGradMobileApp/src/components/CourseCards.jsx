@@ -58,7 +58,7 @@ const CourseCards = React.memo(({
 
   return (
     <View style={styles.cardContainer}>
-      {showBuySection ? (
+    
         <View style={[styles.card, getBorderColor(courseTypeId)]}>
           <View style={[styles.cardHeader, getBackgroundColor(courseTypeId)]}>
             <Text style={styles.cardTitle}>{title}</Text>
@@ -67,7 +67,7 @@ const CourseCards = React.memo(({
           <View style={styles.imageContainer}>
             <Image source={{ uri: cardImage }} style={styles.image} resizeMode="cover" />
           </View>
-
+  {showBuySection ? (
           <View style={styles.detailsContainer}>
             {portalId === 1 ? (
               <>
@@ -128,19 +128,14 @@ const CourseCards = React.memo(({
               </>
             )}
           </View>
-        </View>
-      ) : showGoToTestSection ? (
-        <View style={[styles.card, styles.fullTestBorder]}>
-          <View style={styles.cardHeader}>
-            <Text style={styles.cardTitle}>{title}</Text>
-          </View>
-          <Image source={{ uri: cardImage }} style={styles.image} resizeMode="cover" />
+  ):showGoToTestSection ? (
+
           <TouchableOpacity style={[styles.button, styles.fullTestBg]} onPress={onGoToTest}>
             <Text style={styles.buttonText}>{testButtonLabel}</Text>
           </TouchableOpacity>
-        </View>
+       
       ) : null}
-    </View>
+    </View></View>
   );
 });
 
@@ -170,11 +165,14 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     alignItems: 'center',
+  justifyContent:'center',
     marginVertical: 10,
   },
   image: {
     width: 200,
-    height: 120,
+    height: 200,
+      alignItems: 'center',
+  justifyContent:'center',
     borderRadius: 8,
   },
   detailsContainer: {

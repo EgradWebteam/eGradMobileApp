@@ -4,8 +4,7 @@ import {
   Text,
   ScrollView,
   Image,
-  Dimensions,
-  StyleSheet,
+
   TouchableOpacity,
   Alert,
   ImageBackground,
@@ -46,7 +45,6 @@ const QuestionsMainContainer = ({
   isDisabled,
 }) => {
   const questionScrollRefMobile = useRef(null);
-  const questionScrollRefDesktop = useRef(null);
 const backgroundImages = {
   AnswerdBtnCls: require('../../images/Answered.png'),
   NotAnsweredBtnCls: require('../../images/NotAnswered.png'),
@@ -54,24 +52,7 @@ const backgroundImages = {
   AnsMarkedForReview: require('../../images/AnsMarkedForReview.png'),
   NotVisitedBehaviourBtns: require('../../images/Visited.png'),
 };
-
-  // const [isMobile, setIsMobile] = useState(
-  //   Dimensions.get('window').width <= 768 || Dimensions.get('window').height <= 768
-  // );
   const savedAnswer = userAnswers?.[String(question?.question_id)];
-  // useEffect(() => {
-  //   const handleResize = ({ window }) => {
-  //     setIsMobile(window.width <= 768 || window.height <= 768);
-  //   };
-
-  //   const subscription = Dimensions.addEventListener('change', handleResize);
-  //   return () => subscription?.remove();
-  // }, []);
-
-  // const getScrollTarget = () => {
-  //   return isMobile ? questionScrollRefMobile.current : questionScrollRefDesktop.current;
-  // };
-
   const subject = testData?.subjects?.find(
     (sub) => sub.SubjectName === activeSubject
   );
@@ -82,14 +63,16 @@ const backgroundImages = {
 
   const question = section?.questions?.[activeQuestionIndex] || null;
 
-//   useEffect(() => {
-//     const scrollTarget = getScrollTarget();
-//     if (scrollTarget) {
-//       setTimeout(() => {
-//         scrollTarget.scrollTo({ y: 0, animated: true });
-//       }, 100);
-//     }
-//   }, [activeQuestionIndex, activeSection, activeSubject, isMobile]);
+useEffect(() => {
+ 
+   if (questionScrollRefMobile.current?.scrollTo) {
+  questionScrollRefMobile.current.scrollTo({ x: 0, y: 0, animated: false });
+
+
+  }
+}, [activeQuestionIndex, activeSection, activeSubject]);
+
+
 
   useEffect(() => {
     setSelectedOption(null);
@@ -309,7 +292,7 @@ console.log(answerClass);
         </View>
 
         <ScrollView
-          ref={questionScrollRefDesktop}
+         ref={questionScrollRefMobile}
           style={
             isParagraphPresent
               ? styles.questionSplitContainer
@@ -326,7 +309,7 @@ console.log(answerClass);
             </View>
           )}
 
-          <View ref={questionScrollRefMobile} style={styles.questionContainer}>
+          <View style={styles.questionContainer}>
             {renderQuestion(question)}
             <QuestionOptionsContainer
               options={question?.options || []}

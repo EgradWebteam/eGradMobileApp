@@ -237,8 +237,9 @@ useEffect(() => {
              filteredCourses.map((course) => (
              <CourseCards
                 key={course.course_id}
+                cardImage={course.course_img}
+
                 title={course.course_name}
-                image={course.course_img}
                 context="myCourses"
                 actionLabel="Go to Test"
                 onGoToTest={() => handleGoToTest(course)}
