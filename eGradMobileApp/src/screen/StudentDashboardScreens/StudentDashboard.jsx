@@ -155,7 +155,7 @@ useEffect(() => {
       case 'myCourses':
         return <StudentDashboardMyCourses studentId={studentData?.userDetails?.student_registration_id} />;
       case 'buyCourses':
-        return <StudentDashboardBuyCourses studentId={studentData?.userDetails?.student_registration_id} />;
+        return <StudentDashboardBuyCourses studentId={studentData?.userDetails?.student_registration_id} setActiveSection={setActiveSection} />;
       case 'results':
         return <StudentDashboardMyResults studentId={studentData?.userDetails?.student_registration_id} userData={studentData?.userDetails}/>;
       case 'bookmarks':
