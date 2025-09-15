@@ -297,8 +297,8 @@ return (
   <ScrollView style={styles.containerBuyCourses}>
     <Text style={styles.heading}>Buy Courses</Text>
 
-    {/* Portal Buttons */}
-    <ScrollView horizontal style={styles.buttonRow}>
+ 
+    <ScrollView horizontal style={styles.portalButtons}>
       {portalList.map(([pid, pname]) => (
         <TouchableOpacity
           key={pid}
@@ -321,7 +321,7 @@ return (
     </ScrollView>
 
     {/* Exam Buttons */}
-    <ScrollView horizontal style={styles.buttonRow}>
+    <ScrollView horizontal style={styles.examButtons}>
       {examNames.map((exam, idx) => (
         <TouchableOpacity
           key={idx}

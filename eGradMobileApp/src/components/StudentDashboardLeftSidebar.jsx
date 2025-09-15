@@ -58,7 +58,7 @@ const StudentDashboardLeftSidebar = ({ activeSection, handleSectionChange }) => 
                 name={item.icon}
                 size={20}
                 color={activeSection === item.id ? '#fff' : '#333'}
-                style={styles.icon}
+                style={styles.lefticon}
               />
               <Text
                 style={[

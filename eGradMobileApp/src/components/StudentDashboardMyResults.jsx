@@ -175,14 +175,17 @@ console.log("user dataaaa",userData);
                 key={portal.course_portal_id}
                 style={[
                   styles.portalButton,
-                  selectedPortalId === portal.course_portal_id && styles.portalButtonActive,
+                  selectedPortalId === portal.course_portal_id && styles.activeButton,
                 ]}
                 onPress={() => {
                   setSelectedPortalId(portal.course_portal_id);
                   setSelectedExamId(portal.exams[0]?.exam_id || null);
                 }}
               >
-                <Text style={styles.portalButtonText}>{portal.portal_name}</Text>
+                <Text style={[  
+                              styles.portalButtontext,
+                              selectedPortalId === portal.course_portal_id &&  styles.activeButtontext,
+                                            ]}>{portal.portal_name}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -194,11 +197,14 @@ console.log("user dataaaa",userData);
                 key={exam.exam_id}
                 style={[
                   styles.examButton,
-                  selectedExamId === exam.exam_id && styles.examButtonActive,
+                  selectedExamId === exam.exam_id && styles.activeButton,
                 ]}
                 onPress={() => setSelectedExamId(exam.exam_id)}
               >
-                <Text style={styles.examButtonText}>{exam.exam_name}</Text>
+                <Text style={[
+                                  styles.examButtontext,
+                                 selectedExamId === exam.exam_id &&styles.activeButtontext,
+                                ]}>{exam.exam_name}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -216,7 +222,10 @@ console.log("user dataaaa",userData);
                       { backgroundColor: getBackgroundColor(test.type_of_test_id), borderColor: getBorderColor(test.type_of_test_id) },
                     ]}
                   >
-                    <Text style={styles.testName}>
+                    <Text   style={[
+                      styles.testName,
+                      { backgroundColor: getBackgroundColor(test.type_of_test_id), borderColor: getBorderColor(test.type_of_test_id) },
+                    ]}>
                       {course.course_name} - {test.test_name}
                     </Text>
                     <View style={styles.resultRow}>

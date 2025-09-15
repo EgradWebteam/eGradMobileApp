@@ -95,11 +95,11 @@ const QuestionNavigationButtons = ({
         const data = await res.json();
         console.log("is_extra_started:", data.is_extra_started);
         setIsExtraStarted(data.is_extra_started);
-        if (data.is_extra_started) {
-          handleConfirmExtraQuestions();
-        } else {
-          console.log("this test do not have the extra status");
-        }
+        // if (data.is_extra_started) {
+        //   handleConfirmExtraQuestions();
+        // } else {
+        //   console.log("this test do not have the extra status");
+        // }
       } catch (error) {
         console.error("Failed to fetch extra status:", error);
       }
@@ -904,7 +904,7 @@ const handleConfirmExtraQuestions = async () => {
     // Update state
     setTestPaperData(bonusData);      // Show bonus only
     setFullTestData(full);             // Keep full merged for summary
-    setResumeTime(timeLeft);           // Resume from current time
+    // setResumeTime(timeLeft);           // Resume from current time
 
     // Setup first subject and section
     const firstSubject = bonusData.subjects?.[0];
