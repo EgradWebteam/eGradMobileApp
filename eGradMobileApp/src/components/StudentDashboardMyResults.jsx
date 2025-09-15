@@ -228,7 +228,7 @@ console.log("user dataaaa",userData);
                       <Text style={styles.resultRowText}>Solutions</Text>
                     </View>
                     <TouchableOpacity
-                      style={[styles.viewReportButton, { backgroundColor: getBackgroundColor(test.type_of_test_id) }]}
+                      style={[styles.viewReportButton, { backgroundColor: getBorderColor(test.type_of_test_id) }]}
                       onPress={() => handleViewReportClick(test.test_id, test, course.course_id)}
                     >
                       <Text style={styles.viewReportButtonText}>VIEW REPORT</Text>
