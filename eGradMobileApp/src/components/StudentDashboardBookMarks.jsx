@@ -23,7 +23,7 @@ const StudentDashboardBookMarks = ({ studentId }) => {
   const [visibleSolutions, setVisibleSolutions] = useState({});
   const [videoPopup, setVideoPopup] = useState(null);
   const [selectedPortal, setSelectedPortal] = useState(null);
-const { width, height } = Dimensions.get('window');
+  const { width, height } = Dimensions.get('window');
   useEffect(() => {
     const fetchTestPaper = async () => {
       try {
@@ -173,56 +173,63 @@ const { width, height } = Dimensions.get('window');
                         const currentQuestionNumber = questionCounter++;
                         return (
                           <View key={question.question_id} style={styles.questionBlock}>
-                            {/* Question + Delete */}
-                            <View style={styles.questionHeader}>
-                              <Text>Question No: {currentQuestionNumber}</Text>
-                              <TouchableOpacity
-                                onPress={() =>
-                                  handleDelete(
-                                    studentId,
-                                    question.question_id,
-                                    test.BookMarkTid,
-                                    test.CourseId,
-                                    portal.portalId
-                                  )
-                                }
-                              >
-                                <Icon name="delete-forever" size={28} color="red" />
-                              </TouchableOpacity>
 
-                            </View>
-
-                            {/* Paragraph */}
-                            {question.paragraph?.paragraphImgName && (
-                              <View style={styles.paragraphContainer}>
-                                <Text style={styles.paragraphTag}>Paragraph:</Text>
-                                {/* <Image
-                                  source={{ uri: question.paragraph.paragraphImgName }}
-                                  style={styles.paragraphImage}
-                                /> */}
-                                <AutoSizedImage uri={question.paragraph.paragraphImgName} style={styles.paragraphImage} />
-                              </View>
-                            )}
-
-                            {/* Question Image */}
-                            {question.questionImgName && (
-                              <AutoSizedImage uri={question.questionImgName} style={styles.image} />
-                            )}
-
-                            {/* Options */}
-                            {question.options
-                              .sort((a, b) =>
-                                a.option_index.localeCompare(b.option_index)
-                              )
-                              .map((option) => (
-                                <View key={option.option_id} style={styles.optionRow}>
-                                  <Text>({option.option_index})</Text>
-                                  {/* <Image 
-                                   source={{ uri: option.optionImgName } }
-                                  style={styles.optionImage} /> */}
-                                  <AutoSizedImage uri={option.optionImgName} style={styles.optionImage} />
+                            {/* Question + Content Container with Scroll */}
+                            <ScrollView
+                              horizontal   // 👈 if you want left ↔ right scroll
+                              showsHorizontalScrollIndicator={true}
+                              nestedScrollEnabled={true}
+                              style={{ marginBottom: 10 }}
+                            >
+                              <View style={{ flexDirection: "column", paddingRight: 20 }}>
+                                {/* Question + Delete */}
+                                <View style={styles.questionHeader}>
+                                  <Text>Question No: {currentQuestionNumber}</Text>
+                                  <TouchableOpacity
+                                    onPress={() =>
+                                      handleDelete(
+                                        studentId,
+                                        question.question_id,
+                                        test.BookMarkTid,
+                                        test.CourseId,
+                                        portal.portalId
+                                      )
+                                    }
+                                  >
+                                    <Icon name="delete-forever" size={28} color="red" />
+                                  </TouchableOpacity>
                                 </View>
-                              ))}
+
+                                {/* Paragraph */}
+                                {question.paragraph?.paragraphImgName && (
+                                  <View style={styles.paragraphContainer}>
+                                    <Text style={styles.paragraphTag}>Paragraph:</Text>
+                                    <AutoSizedImage
+                                      uri={question.paragraph.paragraphImgName}
+                                      style={styles.paragraphImage}
+                                    />
+                                  </View>
+                                )}
+
+                                {/* Question Image */}
+                                {question.questionImgName && (
+                                  <AutoSizedImage uri={question.questionImgName} style={styles.image} />
+                                )}
+
+                                {/* Options */}
+                                {question.options
+                                  .sort((a, b) => a.option_index.localeCompare(b.option_index))
+                                  .map((option) => (
+                                    <View key={option.option_id} style={styles.optionRow}>
+                                      <Text>({option.option_index})</Text>
+                                      <AutoSizedImage
+                                        uri={option.optionImgName}
+                                        style={styles.optionImage}
+                                      />
+                                    </View>
+                                  ))}
+                              </View>
+                            </ScrollView>
 
                             {/* Solution buttons */}
                             <View style={styles.solutionButtons}>
@@ -252,16 +259,27 @@ const { width, height } = Dimensions.get('window');
 
                             {/* Image Solution */}
                             {visibleSolutions[question.question_id] && (
-                              <AutoSizedImage uri={question.solution.solutionImgName} style={styles.solutionImage} />
+                              <ScrollView
+                                horizontal
+                                showsHorizontalScrollIndicator={true}
+                                nestedScrollEnabled={true}
+                                style={{ marginTop: 10 }}
+                              >
+                                <AutoSizedImage
+                                  uri={question.solution.solutionImgName}
+                                  style={styles.solutionImage}
+                                />
+                              </ScrollView>
                             )}
+
                             {videoPopup === question.question_id && (
                               <Modal visible transparent={false} onRequestClose={() => setVideoPopup(null)}>
                                 <View style={styles.modalContent}>
                                   <TouchableOpacity style={styles.closeBtn} onPress={() => setVideoPopup(null)}>
                                     <Text style={{ fontSize: 18 }}>✖ Close</Text>
                                   </TouchableOpacity>
-                                  <View style = {{backgroundColor:"#fff",height: height - 80 }} >
-                                  {renderVideo(question.solution.video_solution_link)}
+                                  <View style={{ backgroundColor: "#fff", height: height - 80 }} >
+                                    {renderVideo(question.solution.video_solution_link)}
                                   </View>
                                 </View>
                               </Modal>

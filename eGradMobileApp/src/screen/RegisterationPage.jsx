@@ -8,7 +8,7 @@ import CalendarPicker from 'react-native-calendar-picker';
 import { launchImageLibrary } from 'react-native-image-picker';
 import stateList from "./StatesJson.json";
 import districtsMap from "./DistrictsJson.json";
-
+import TermsAndConditions from "./TermsAndConditions";
  import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig";
 const getDOBLimits = (portalId) => {
   const today = new Date();
@@ -942,15 +942,25 @@ const handleEmailBlur = async () => {
           </Text>
         </TouchableOpacity>
         {/* {showTerms && <TermsAndConditions />} */}
-        <View style={styles.checkboxContainer}>
+       <View style={styles.checkboxContainer}>
           <TouchableOpacity
             style={styles.checkbox}
             onPress={() => setFormData(prev => ({ ...prev, termsAccepted: !prev.termsAccepted }))}
           >
             {formData.termsAccepted && <View style={styles.checkedBox} />}
           </TouchableOpacity>
-          <Text>I accept the terms and conditions</Text>
+
+          <Text>
+            I accept the{' '}
+            <Text
+              style={{ color: 'blue', textDecorationLine: 'underline' }}
+              onPress={() => navigation.navigate("TermsScreen")} 
+            >
+              Terms and Conditions
+            </Text>
+          </Text>
         </View>
+
         {errors.termsAccepted && <Text style={styles.error}>{errors.termsAccepted}</Text>}
       </View>
 

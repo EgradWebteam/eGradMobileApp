@@ -7,12 +7,14 @@ import {
   FlatList,
   StyleSheet,
   Modal,
+  ScrollView,
+  Dimensions,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { WebView } from "react-native-webview";
 import { backEndUrl } from "../apiConfig";
-import AutoSizedImage from "./AutoSizedImage"; // ✅ shared component
+import AutoSizedImage from "./AutoSizedImage";  
 import renderVideo from "./renderVideo";
 const SolutionsTab = ({
   testId,
@@ -34,9 +36,9 @@ const SolutionsTab = ({
       sectionIdx !== null && subject?.sections
         ? subject.sections[sectionIdx]
         : {
-            SectionName: null,
-            questions: subject?.sections?.[0]?.questions || [],
-          };
+          SectionName: null,
+          questions: subject?.sections?.[0]?.questions || [],
+        };
 
     setSelectedSubjectSection({
       SubjectName: subject.SubjectName,
@@ -76,85 +78,113 @@ const SolutionsTab = ({
     }
   };
 
+  const SCREEN_WIDTH = Dimensions.get("window").width;
+
   const renderQuestion = ({ item, index }) => {
     return (
       <View style={styles.questionContainer}>
-        <View style={styles.headerRow}>
-          <Text>Question No: {index + 1}</Text>
-          <TouchableOpacity onPress={() => toggleBookmark(item.question_id)}>
-            <Icon
-              name={
-                bookmarkedQuestions.includes(item.question_id)
-                  ? "bookmark"
-                  : "bookmark-o"
-              }
-              size={22}
-              color="blue"
-            />
-          </TouchableOpacity>
-        </View>
+        {/* Scrollable content */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={true}
+          nestedScrollEnabled={true}
+        >
+          {/* Each page must be full screen width */}
+          <View style={{ width: SCREEN_WIDTH, padding: 10 }}>
+            {/* Header Row */}
+            <View style={styles.headerRow}>
+              <Text>Question No: {index + 1}</Text>
+              <TouchableOpacity onPress={() => toggleBookmark(item.question_id)}>
+                <Icon
+                  name={
+                    bookmarkedQuestions.includes(item.question_id)
+                      ? "bookmark"
+                      : "bookmark-o"
+                  }
+                  size={22}
+                  color="blue"
+                />
+              </TouchableOpacity>
+            </View>
 
-        {/* Paragraph */}
-        {item.paragraph?.paragraphImgName && (
-          <View style={{ marginBottom: 10 }}>
-            <Text style={{ fontWeight: "bold", marginBottom: 4 }}>
-              Paragraph:
-            </Text>
-            <AutoSizedImage
-              uri={item.paragraph.paragraphImgName}
-              style={styles.paragraphImage}
-            />
-          </View>
-        )}
-
-        {/* Question */}
-        {item.questionImgName && (
-          <AutoSizedImage uri={item.questionImgName} style={styles.questionImage} />
-        )}
-
-        {/* Options */}
-        <View style={{ marginTop: 10 }}>
-          {item.options?.map((option) => {
-            const isCorrect = item.answer?.split(",").includes(option.option_index);
-            const isUserAnswer = item.userAnswer?.user_answer
-              ?.split(",")
-              .includes(option.option_index);
-
-            let icon = "⭕";
-            if (isCorrect && isUserAnswer) icon = "✅";
-            else if (!isCorrect && isUserAnswer) icon = "❌";
-            else if (isCorrect) icon = "✅";
-
-            return (
-              <View key={option.option_id} style={styles.optionRow}>
-                <Text>
-                  {icon} ({option.option_index})
+            {/* Paragraph */}
+            {item.paragraph?.paragraphImgName && (
+              <View style={{ marginBottom: 10 }}>
+                <Text style={{ fontWeight: "bold", marginBottom: 4 }}>
+                  Paragraph:
                 </Text>
-                {option.optionImgName && (
-                  <AutoSizedImage uri={option.optionImgName} style={styles.optionImage} />
-                )}
+                <AutoSizedImage
+                  uri={item.paragraph.paragraphImgName}
+                  style={styles.paragraphImage}
+                />
               </View>
-            );
-          })}
-        </View>
+            )}
 
-        {/* Solution */}
+            {/* Question */}
+            {item.questionImgName && (
+              <AutoSizedImage
+                uri={item.questionImgName}
+                style={styles.questionImage}
+              />
+            )}
+
+            {/* Options */}
+            <View style={{ marginTop: 10 }}>
+              {item.options?.map((option) => {
+                const isCorrect = item.answer?.split(",").includes(option.option_index);
+                const isUserAnswer = item.userAnswer?.user_answer
+                  ?.split(",")
+                  .includes(option.option_index);
+
+                let icon = "⭕";
+                if (isCorrect && isUserAnswer) icon = "✅";
+                else if (!isCorrect && isUserAnswer) icon = "❌";
+                else if (isCorrect) icon = "✅";
+
+                return (
+                  <View key={option.option_id} style={styles.optionRow}>
+                    <Text>
+                      {icon} ({option.option_index})
+                    </Text>
+                    {option.optionImgName && (
+                      <AutoSizedImage
+                        uri={option.optionImgName}
+                        style={styles.optionImage}
+                      />
+                    )}
+                  </View>
+                );
+              })}
+            </View>
+          </View>
+        </ScrollView>
+
+        {/* Solution Section (outside scroll so it sticks below) */}
         {item.solution?.solutionImgName && (
           <TouchableOpacity
             style={styles.solutionButton}
             onPress={() => toggleSolutionVisibility(item.question_id)}
           >
             <Text style={styles.btnText}>
-              {visibleSolutions[item.question_id] ? "Hide Solution" : "View Solution"}
+              {visibleSolutions[item.question_id]
+                ? "Hide Solution"
+                : "View Solution"}
             </Text>
           </TouchableOpacity>
         )}
 
         {visibleSolutions[item.question_id] && item.solution?.solutionImgName && (
-          <AutoSizedImage
-            uri={item.solution.solutionImgName}
-            style={styles.solutionImage}
-          />
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={true}
+            nestedScrollEnabled={true}
+            style={{ marginTop: 10 }}
+          >
+            <AutoSizedImage
+              uri={item.solution.solutionImgName}
+              style={styles.solutionImage}
+            />
+          </ScrollView>
         )}
 
         {/* Video Solution */}
@@ -168,68 +198,57 @@ const SolutionsTab = ({
             <Text style={styles.btnText}>View Video Solution</Text>
           </TouchableOpacity>
         )}
-
-       {videoPopup === item.question_id && (
-  <Modal visible transparent={false} onRequestClose={() => setVideoPopup(null)}>
-    <View style={styles.modalContent}>
-      <TouchableOpacity style={styles.closeBtn} onPress={() => setVideoPopup(null)}>
-        <Text style={{ fontSize: 18 }}>✖ Close</Text>
-      </TouchableOpacity>
-      {renderVideo(item.solution.video_solution_link)}
-    </View>
-  </Modal>
-)}
       </View>
     );
   };
 
+
   return (
     <View style={{ flex: 1 }}>
       {/* Subject Picker */}
-     <Picker
-  selectedValue={
-    selectedSubjectSection
-      ? (() => {
-          const subjectIdx = testPaperData.subjects?.findIndex(
-            (s) => s.SubjectName === selectedSubjectSection.SubjectName
-          );
-          const sectionIdx =
-            testPaperData.subjects?.[subjectIdx]?.sections?.findIndex(
-              (sec) => sec?.SectionName === selectedSubjectSection.SectionName
-            ) ?? "null";
+      <Picker
+        selectedValue={
+          selectedSubjectSection
+            ? (() => {
+              const subjectIdx = testPaperData.subjects?.findIndex(
+                (s) => s.SubjectName === selectedSubjectSection.SubjectName
+              );
+              const sectionIdx =
+                testPaperData.subjects?.[subjectIdx]?.sections?.findIndex(
+                  (sec) => sec?.SectionName === selectedSubjectSection.SectionName
+                ) ?? "null";
 
-          return `${subjectIdx}-${sectionIdx !== -1 ? sectionIdx : "null"}`;
-        })()
-      : ""
-  }
-  onValueChange={(itemValue) => {
-    const [subjectIdx, sectionIdx] = itemValue.split("-");
-    handleDropdownChange(
-      parseInt(subjectIdx, 10),
-      sectionIdx === "null" ? null : parseInt(sectionIdx, 10)
-    );
-  }}
->
-  {testPaperData.subjects?.map((subject, subjIndex) =>
-    subject.sections && subject.sections.length > 0 ? (
-      subject.sections.map((section, secIndex) => (
-        <Picker.Item
-          key={`${subjIndex}-${secIndex}`}
-          label={`${subject.SubjectName}${
-            section.SectionName ? ` - ${section.SectionName}` : ""
-          }`}
-          value={`${subjIndex}-${secIndex}`}
-        />
-      ))
-    ) : (
-      <Picker.Item
-        key={`${subjIndex}-null`}
-        label={subject.SubjectName}
-        value={`${subjIndex}-null`}
-      />
-    )
-  )}
-</Picker>
+              return `${subjectIdx}-${sectionIdx !== -1 ? sectionIdx : "null"}`;
+            })()
+            : ""
+        }
+        onValueChange={(itemValue) => {
+          const [subjectIdx, sectionIdx] = itemValue.split("-");
+          handleDropdownChange(
+            parseInt(subjectIdx, 10),
+            sectionIdx === "null" ? null : parseInt(sectionIdx, 10)
+          );
+        }}
+      >
+        {testPaperData.subjects?.map((subject, subjIndex) =>
+          subject.sections && subject.sections.length > 0 ? (
+            subject.sections.map((section, secIndex) => (
+              <Picker.Item
+                key={`${subjIndex}-${secIndex}`}
+                label={`${subject.SubjectName}${section.SectionName ? ` - ${section.SectionName}` : ""
+                  }`}
+                value={`${subjIndex}-${secIndex}`}
+              />
+            ))
+          ) : (
+            <Picker.Item
+              key={`${subjIndex}-null`}
+              label={subject.SubjectName}
+              value={`${subjIndex}-null`}
+            />
+          )
+        )}
+      </Picker>
 
 
       {/* Questions */}

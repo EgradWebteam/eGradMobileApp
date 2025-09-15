@@ -22,9 +22,9 @@ const AutoSizedImage = ({ uri, style }) => {
   if (!size) return null;
 
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={true}>
+    // <ScrollView horizontal showsHorizontalScrollIndicator={true}>
       <Image source={{ uri }} style={[style, size]} resizeMode="contain" />
-    </ScrollView>
+    // </ScrollView>
   );
 };
 
