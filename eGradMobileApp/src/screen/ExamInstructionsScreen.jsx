@@ -20,7 +20,7 @@ import { useStudent } from '../hooks/StudentContext.jsx';
 // import { useSession } from '../../StudentDashboard/hooks/SessionContext';
 import { decryptBatch, encryptBatch } from '../utils/CryptoUtils.jsx';
 import axios from 'axios';
-import defaultImage from '../images/StudentImage.png';
+import defaultImage from '../images/studentimage.png';
 import adminCapImg from '../images/capImg.png';
 import OTSHeader from "../components/OTSFolder/OTSHeader";
  import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig.js";

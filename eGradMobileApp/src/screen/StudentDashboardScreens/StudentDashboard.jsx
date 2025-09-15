@@ -105,7 +105,7 @@ useEffect(() => {
 
   const fetchPortalData = async () => {
     try {
-      const response = await fetch(`${frontEndUrl}:${backEndPort}/navbar/get-logo`, {
+      const response = await fetch(`${backEndUrl}/navbar/get-logo`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ domain: frontEndUrl }),

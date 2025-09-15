@@ -11,7 +11,7 @@ import {
 } from "react-native";
 // import { useStudent } from '../../hooks/StudentContext.jsx';
  import { backEndUrl, frontEndUrl,backEndPort } from "../../apiConfig.js";
-// import defaultImage from '../../images/StudentImage.png';
+// import defaultImage from '../../images/studentimage.png';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 // import adminCapImg from '../../images/capImg.png';
  // Replace with RN vector icons

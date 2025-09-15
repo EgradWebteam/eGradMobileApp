@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator, Alert } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity,StyleSheet, Image, ActivityIndicator, Alert } from "react-native";
 import { Picker } from "@react-native-picker/picker"; // or use react-native-dropdown-picker
 import { useNavigation } from "@react-navigation/native";
  import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig";
@@ -10,7 +10,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import imageStarted from "../images/startTest.png";
 import imageResumed from "../images/resomeTest.png";
 import imageViewReport from "../images/viewReport.png";
-console.log("Picker:", Picker);
+import {styles} from "../styles/StudentDashboardStyles"
+
 const TestDetailsContainer = ({course, testDataLoading, refreshTriggerBundle, setRefreshTriggerBundle, onBack, studentId, data, userData, selectedPortalId  }) => {
   const [groupedTests, setGroupedTests] = useState({});
   const [selectedSubjectId, setSelectedSubjectId] = useState("");
@@ -23,7 +24,6 @@ const TestDetailsContainer = ({course, testDataLoading, refreshTriggerBundle, se
   const navigation = useNavigation();
 
   const courseId = course?.course_id;
-
   const images = {
     started: imageStarted,
     resumed: imageResumed,
@@ -218,14 +218,37 @@ const handleStartTestClick = async (test) => {
   };
 
   if (loading) return <ActivityIndicator size="large" color="#0000ff" style={{ flex: 1 }} />;
+const backgroundColors = {
+  1: "#ffe4e1",//chapterwise
+  2: "#d9edf8",//topicwise
+  3: "#f6e6c3",//subjectwise
+  4: "#efebe4",//part test
+  5: "#d6eadf",//full test
+};
+
+const getBackgroundClass = (id) => backgroundColors[id] || "#d6eadf";
+
+
+
+const groupedFilteredTests = filteredTests.reduce((acc, test) => {
+  const type = test.type || "Unknown Type";
+  if (!acc[type]) {
+    acc[type] = [];
+  }
+  acc[type].push(test);
+  return acc;
+}, {});
+const selectedSubjectName = selectedSubjectId
+  ? allSubjects.find(sub => sub.id === selectedSubjectId)?.name
+  : null;
 
   return (
     <ScrollView style={{ flex: 1, padding: 10 }}>
       {selectedPortalId === 1 && (
         <View style={{ marginBottom: 20 }}>
           <Text style={{ fontSize: 22, fontWeight: "bold" }}>{course?.course_name}</Text>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginTop: 10 }}>
-            <Text style={{ color: "blue" }}>Go Back</Text>
+          <TouchableOpacity onPress={() => onBack()} style={styles.back}>
+            <Text style={{ color: "#fff" }}>Go Back</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -257,13 +280,30 @@ const handleStartTestClick = async (test) => {
       {filteredTests.length === 0 && (
         <Text style={{ marginTop: 20 }}>No tests available at the moment. Please check back later.</Text>
       )}
+{selectedSubjectName && (
+  <Text style={{ fontSize: 18, fontWeight: 'bold', marginVertical: 10 }}>
+     {selectedSubjectName}
+  </Text>
+)}
+    {Object.entries(groupedFilteredTests).map(([typeName, tests]) => (
 
-      {filteredTests.map(test => {
+<View key={typeName}>
+   
+    <Text style={{ fontSize: 18, fontWeight: "bold", marginTop: 20, marginBottom: 10 }}>{typeName}</Text>
+
+    {/* Test Cards */}
+    {tests.map(test => {
         const attemptStatus = test.test_attempt_status?.toLowerCase().trim();
         const statusIcon = attemptStatus === "completed" ? "completed" : attemptStatus === "started" || attemptStatus === "resumed" ? "resumed" : "started";
 
         return (
-          <View key={test.test_id} style={{ borderWidth: 1, borderRadius: 8, marginVertical: 8, padding: 10 }}>
+          <View key={test.test_id} style={{ borderRadius: 8, marginVertical: 8, padding: 10 ,
+    backgroundColor: getBackgroundClass(test.typeId),shadowColor: "#000",
+  shadowOffset: { width: 0, height: 3 },  // y-offset 3px
+  shadowOpacity: 0.24,
+  shadowRadius: 8,
+  // Elevation for Android
+  elevation: 5,}}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Image source={images[statusIcon]} style={{ width: 50, height: 50, marginRight: 10 }} />
               <View>
@@ -279,8 +319,8 @@ const handleStartTestClick = async (test) => {
     style={{
       marginTop: 10,
       padding: 10,
-      width:"130px",
-      backgroundColor: attemptStatus === "completed" ? "#2ecc71" : "#06b6d4",
+      width:"10px",
+      backgroundColor: attemptStatus === "completed" ? "#2ecc71" :attemptStatus === "started" || attemptStatus === "resumed"?"#e67e22": "#06b6d4",
       borderRadius: 5,
     }}
     onPress={() =>
@@ -301,7 +341,9 @@ const handleStartTestClick = async (test) => {
 
           </View>
         );
-      })}
+       })}
+  </View>
+))}
 
       {showPopup && (
         <View style={{ position: "absolute", top: "30%", left: "10%", right: "10%", backgroundColor: "#fff", padding: 20, borderRadius: 8, elevation: 5 }}>

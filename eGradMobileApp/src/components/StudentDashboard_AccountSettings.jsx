@@ -10,7 +10,7 @@ import {
   Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons"; // Use Ionicons
-import defaultImage from '../images/StudentImage.png';
+import defaultImage from '../images/studentimage.png';
 import { backEndUrl, frontEndUrl } from "../apiConfig";
 
 const StudentDashboard_AccountSettings = ({ userData, setActiveSubSection, activeSubSection }) => {

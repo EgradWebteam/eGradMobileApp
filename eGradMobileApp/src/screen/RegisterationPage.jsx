@@ -378,7 +378,7 @@ const { minDate, maxDate } = getDOBLimits(portalId);
     if (isSubmitting) { return; }
 
       setIsSubmitting(true);
-      const response = await fetch(`${frontEndUrl}:${backEndPort}/login/studentRegistration`, {
+      const response = await fetch(`${backEndUrl}/login/studentRegistration`, {
         method: "POST",
         body: formDataToSend,
       });
@@ -405,7 +405,7 @@ if (result.success) {
     hasFetchedRef.current = true;
     (async () => {
       // Simulated fetch:
-      const resp = await fetch(`${frontEndUrl}:${backEndPort}/navbar/get-logo`,  {
+      const resp = await fetch(`${backEndUrl}/navbar/get-logo`,  {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -414,7 +414,7 @@ if (result.success) {
         body: JSON.stringify({ domain: frontEndUrl }),
       });
       const data = await resp.json();
-      console.log(`${frontEndUrl}:${backEndPort}/navbar/get-logo`, data);
+      console.log(`${backEndUrl}/navbar/get-logo`, data);
       // setPortalId(data.portalId);
       setPortalId(2); // Stub for UI path
     })();
@@ -448,7 +448,7 @@ const handleEmailBlur = async () => {
     }
 
     // Check if email exists
-    const response = await fetch(`${frontEndUrl}:${backEndPort}/login/checkEmailExists`, {
+    const response = await fetch(`${backEndUrl}/login/checkEmailExists`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

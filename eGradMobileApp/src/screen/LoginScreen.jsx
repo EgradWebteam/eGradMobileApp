@@ -30,7 +30,7 @@ export const LoginScreen = () => {
   console.log(password, email, "these r password nd emails");
 console.log("url",frontEndUrl,backEndPort)
   try {
-    const response = await fetch(`${frontEndUrl}:${backEndPort}/login/studentLogin`, {
+    const response = await fetch(`${backEndUrl}/login/studentLogin`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -90,7 +90,7 @@ navigation.navigate("studentDashboard", { userId: data.user_Id });
     setIsSendingResetCode(true);
     try {
       const response = await fetch(
-        `${frontEndUrl}:${backEndPort}/login/forgot-password`,
+        `${backEndUrl}/login/forgot-password`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

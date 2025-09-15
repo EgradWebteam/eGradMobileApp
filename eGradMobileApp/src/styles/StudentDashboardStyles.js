@@ -22,6 +22,16 @@ export const styles = StyleSheet.create({
     backgroundColor: "#cce4ff", // light blue shade
     alignItems: "center",
   },
+  back:{
+   marginTop: 10 ,
+   backgroundColor:"#15803d",
+   width:80,
+   fontSize:16,
+   height:40,
+   borderRadius:8,
+     alignItems: 'center', 
+   justifyContent:'center'
+  },
   activeButton: {    backgroundColor: "#6c5ce7",
     color:'#fff',}, // darker blue
   buttonText: { color: "#fff", fontWeight: "bold" },

@@ -18,7 +18,7 @@ import { Dimensions } from 'react-native';
 import OTSHeader from "../components/OTSFolder/OTSHeader"; // Assume this is a RN component or replace with your header
 import { Intstruction_content } from "../components/OTSFolder/Intstruction_content.js";
 import adminCapImg from "../images/logoCap.jpeg"; // You may need to import these images differently in RN
-import defaultImage from "../images/StudentImage.png";
+import defaultImage from "../images/studentimage.png";
 import { useStudent } from "../hooks/StudentContext";
 // import { useSession } from "../../StudentDashboard/hooks/SessionContext";
 import {encryptBatch,decryptBatch as decryptDataBatch,} from "../utils/CryptoUtils";
