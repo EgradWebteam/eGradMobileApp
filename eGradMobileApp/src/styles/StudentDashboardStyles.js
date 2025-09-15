@@ -417,6 +417,7 @@ activeButtontext:{
     color: "#fff",
     fontWeight: "bold",
     textAlign: "center",
+    fontSize: 12,
   },
   exploreCoursesHeadingDiv: {
     marginBottom: 12,
