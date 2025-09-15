@@ -9,7 +9,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import stateList from "./StatesJson.json";
 import districtsMap from "./DistrictsJson.json";
 import TermsAndConditions from "./TermsAndConditions";
- import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig";
+import { backEndUrl, frontEndUrl, backEndPort } from "../apiConfig";
 const getDOBLimits = (portalId) => {
   const today = new Date();
 
@@ -41,7 +41,7 @@ const getDOBLimits = (portalId) => {
 };
 
 
- const qualificationOptions = [
+const qualificationOptions = [
   "B.Tech",
   "B.Sc",
   "B.E",
@@ -99,7 +99,7 @@ for (let i = currentYear + 3; i >= currentYear - 10; i--) years.push(i);
 
 export const RegisterationPage = ({ navigation }) => {
   const hasFetchedRef = useRef(false);
-
+  const [openTermsAndConditions, setOpenTermsAndConditions] = useState(false);
   const [formData, setFormData] = useState({
     candidateName: "", dateOfBirth: "",
     gender: "", category: "",
@@ -121,7 +121,7 @@ export const RegisterationPage = ({ navigation }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [portalId, setPortalId] = useState(null);
   const [collegeModalVisible, setCollegeModalVisible] = useState(false);
- const [showCalendar, setShowCalendar] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
 
 
   const validateForm = () => {
@@ -139,7 +139,7 @@ export const RegisterationPage = ({ navigation }) => {
       }
     });
 
- 
+
     if (formData.mobileNo?.length !== 10) {
       validationErrors.mobileNo = "Mobile number must be exactly 10 digits.";
     }
@@ -157,287 +157,287 @@ export const RegisterationPage = ({ navigation }) => {
   };
 
 
-// before proper validations
-// const handleChange = (name, value) => {
-//   let error = "";
+  // before proper validations
+  // const handleChange = (name, value) => {
+  //   let error = "";
 
-//   // 📁 File handling
-//   if (["uploadedPhoto", "proof"].includes(name) && value && typeof value === "object" && value.size) {
-//     const file = value;
-//     const fileSizeKB = file.size / 1024;
-//     const rules = FILE_SIZE_RULES[name];
+  //   // 📁 File handling
+  //   if (["uploadedPhoto", "proof"].includes(name) && value && typeof value === "object" && value.size) {
+  //     const file = value;
+  //     const fileSizeKB = file.size / 1024;
+  //     const rules = FILE_SIZE_RULES[name];
 
-//     if (rules && (fileSizeKB < rules.min || fileSizeKB > rules.max)) {
-//       Alert.alert("File Error", rules.message);
+  //     if (rules && (fileSizeKB < rules.min || fileSizeKB > rules.max)) {
+  //       Alert.alert("File Error", rules.message);
 
-//       // if (name === "uploadedPhoto" && photoInputRef?.current) {
-//       //   photoInputRef.current.clear(); // Use .clear() for RN file inputs if supported
-//       //   setPhotoPreview(null);
-//       // }
+  //       // if (name === "uploadedPhoto" && photoInputRef?.current) {
+  //       //   photoInputRef.current.clear(); // Use .clear() for RN file inputs if supported
+  //       //   setPhotoPreview(null);
+  //       // }
 
-//       // if (name === "proof" && proofInputRef?.current) {
-//       //   proofInputRef.current.clear();
-//       //   setProofPreview(null);
-//       // }
+  //       // if (name === "proof" && proofInputRef?.current) {
+  //       //   proofInputRef.current.clear();
+  //       //   setProofPreview(null);
+  //       // }
 
-//       // setFormData((prev) => ({ ...prev, [name]: null }));
-     
-//       return;
-//     }
+  //       // setFormData((prev) => ({ ...prev, [name]: null }));
 
-//     // Valid file
-//     setFormData((prev) => ({ ...prev, [name]: file }));
-//     setErrors((prev) => ({ ...prev, [name]: "" }));
+  //       return;
+  //     }
 
-//     // In React Native, preview handling depends on image picker library
-//     // setPhotoPreview(...) or setProofPreview(...) can be set with file.uri
-//     // const previewURL = file.uri || null;
-//     // if (name === "uploadedPhoto") setPhotoPreview(previewURL);
-//     // if (name === "proof") setProofPreview(previewURL);
-//     // return;
-//   }
+  //     // Valid file
+  //     setFormData((prev) => ({ ...prev, [name]: file }));
+  //     setErrors((prev) => ({ ...prev, [name]: "" }));
 
-//   // 📍 State change
-//   if (name === "state") {
-//     const selectedState = stateList.find((s) => s.state_name === value);
-//     const stateId = selectedState?.state_id;
-//     const districts = stateId && districtsMap[stateId] ? Object.entries(districtsMap[stateId]) : [];
+  //     // In React Native, preview handling depends on image picker library
+  //     // setPhotoPreview(...) or setProofPreview(...) can be set with file.uri
+  //     // const previewURL = file.uri || null;
+  //     // if (name === "uploadedPhoto") setPhotoPreview(previewURL);
+  //     // if (name === "proof") setProofPreview(previewURL);
+  //     // return;
+  //   }
 
-//     setDistrictOptions(districts);
-//     setFormData((prev) => ({ ...prev, state: value, districts: "" }));
-//     setErrors((prev) => ({ ...prev, state: "", districts: "" }));
-//     return;
-//   }
+  //   // 📍 State change
+  //   if (name === "state") {
+  //     const selectedState = stateList.find((s) => s.state_name === value);
+  //     const stateId = selectedState?.state_id;
+  //     const districts = stateId && districtsMap[stateId] ? Object.entries(districtsMap[stateId]) : [];
 
-//   // 🎓 Qualification change
-//   if (name === "qualifications") {
-//     setFormData((prev) => ({ ...prev, qualifications: value, stream: "" }));
-//     return;
-//   }
+  //     setDistrictOptions(districts);
+  //     setFormData((prev) => ({ ...prev, state: value, districts: "" }));
+  //     setErrors((prev) => ({ ...prev, state: "", districts: "" }));
+  //     return;
+  //   }
 
-//   // 📆 Date of Birth validation
-//   if (name === "dateOfBirth") {
-//     const selectedDate = new Date(value);
-//     const today = new Date();
-//     today.setFullYear(today.getFullYear() - 10);
-//     if (selectedDate > today) {
-//       error = "You must be at least 10 years old.";
-//     }
-//   }
+  //   // 🎓 Qualification change
+  //   if (name === "qualifications") {
+  //     setFormData((prev) => ({ ...prev, qualifications: value, stream: "" }));
+  //     return;
+  //   }
 
-//   // 🔤 Text fields with specific limits
-//   if (["candidateName", "fatherName"].includes(name)) {
-//     if (!/^[A-Za-z\s]*$/.test(value)) {
-//       error = `${name === "candidateName" ? "Candidate Name" : "Father Name"} must contain only letters and spaces.`;
-//     } else if (value.length > 40) {
-//       error = `${name === "candidateName" ? "Candidate Name" : "Father Name"} cannot exceed 40 characters.`;
-//     }
-//   }
+  //   // 📆 Date of Birth validation
+  //   if (name === "dateOfBirth") {
+  //     const selectedDate = new Date(value);
+  //     const today = new Date();
+  //     today.setFullYear(today.getFullYear() - 10);
+  //     if (selectedDate > today) {
+  //       error = "You must be at least 10 years old.";
+  //     }
+  //   }
 
-//   if (["nameOfCollege", "qualificationsOther", "streamOther"].includes(name)) {
-//     if (!/^[A-Za-z\s]*$/.test(value)) {
-//       error = `${name} must contain only letters and spaces.`;
-//     } else if (value.length > 50) {
-//       error = `${name} cannot exceed 50 characters.`;
-//     }
-//   }
+  //   // 🔤 Text fields with specific limits
+  //   if (["candidateName", "fatherName"].includes(name)) {
+  //     if (!/^[A-Za-z\s]*$/.test(value)) {
+  //       error = `${name === "candidateName" ? "Candidate Name" : "Father Name"} must contain only letters and spaces.`;
+  //     } else if (value.length > 40) {
+  //       error = `${name === "candidateName" ? "Candidate Name" : "Father Name"} cannot exceed 40 characters.`;
+  //     }
+  //   }
 
-//   if (["city", "districts"].includes(name)) {
-//     if (!/^[A-Za-z\s]*$/.test(value)) {
-//       error = `${name} must contain only letters and spaces.`;
-//     } else if (value.length > 30) {
-//       error = `${name} cannot exceed 30 characters.`;
-//     }
-//   }
+  //   if (["nameOfCollege", "qualificationsOther", "streamOther"].includes(name)) {
+  //     if (!/^[A-Za-z\s]*$/.test(value)) {
+  //       error = `${name} must contain only letters and spaces.`;
+  //     } else if (value.length > 50) {
+  //       error = `${name} cannot exceed 50 characters.`;
+  //     }
+  //   }
 
-//   if (name === "line1" && value.length > 60) {
-//     error = "Address Line 1 cannot exceed 60 characters.";
-//   }
+  //   if (["city", "districts"].includes(name)) {
+  //     if (!/^[A-Za-z\s]*$/.test(value)) {
+  //       error = `${name} must contain only letters and spaces.`;
+  //     } else if (value.length > 30) {
+  //       error = `${name} cannot exceed 30 characters.`;
+  //     }
+  //   }
 
-//   // 📞 Contact and mobile numbers
-//   if (["contactNo", "mobileNo"].includes(name)) {
-//     if (/[^0-9]/.test(value)) {
-//       error = "Only numbers are allowed.";
-//     } else if (value.length !== 10) {
-//       error = "Number must be exactly 10 digits.";
-//     }
-//   }
+  //   if (name === "line1" && value.length > 60) {
+  //     error = "Address Line 1 cannot exceed 60 characters.";
+  //   }
 
-//   // 📮 Pincode
-//   if (name === "pincode") {
-//     if (/[^0-9]/.test(value)) {
-//       error = "Only numbers are allowed.";
-//     } else if (value.length !== 6) {
-//       error = "Pincode must be exactly 6 digits.";
-//     }
-//   }
+  //   // 📞 Contact and mobile numbers
+  //   if (["contactNo", "mobileNo"].includes(name)) {
+  //     if (/[^0-9]/.test(value)) {
+  //       error = "Only numbers are allowed.";
+  //     } else if (value.length !== 10) {
+  //       error = "Number must be exactly 10 digits.";
+  //     }
+  //   }
 
-//   // 📊 Marks
-//   if (name === "marks") {
-//     const numericValue = parseFloat(value);
-//     if (isNaN(numericValue) || numericValue < 0 || numericValue > 100) {
-//       error = "Percentage must be between 0 and 100.";
-//     }
-//   }
+  //   // 📮 Pincode
+  //   if (name === "pincode") {
+  //     if (/[^0-9]/.test(value)) {
+  //       error = "Only numbers are allowed.";
+  //     } else if (value.length !== 6) {
+  //       error = "Pincode must be exactly 6 digits.";
+  //     }
+  //   }
 
-//   // 🔄 Update state if no error
-//   // if (!error) {
-//     setFormData((prev) => ({ ...prev, [name]: value }));
-//   // } else {
-//     setErrors((prev) => ({ ...prev, [name]: error }));
-//     //   Alert.alert("Validation Error", error);
-//   // }
+  //   // 📊 Marks
+  //   if (name === "marks") {
+  //     const numericValue = parseFloat(value);
+  //     if (isNaN(numericValue) || numericValue < 0 || numericValue > 100) {
+  //       error = "Percentage must be between 0 and 100.";
+  //     }
+  //   }
 
-//   return error;
-// };
+  //   // 🔄 Update state if no error
+  //   // if (!error) {
+  //     setFormData((prev) => ({ ...prev, [name]: value }));
+  //   // } else {
+  //     setErrors((prev) => ({ ...prev, [name]: error }));
+  //     //   Alert.alert("Validation Error", error);
+  //   // }
 
-// after proper validations
-const handleChange = (name, value) => {
-  let error = "";
+  //   return error;
+  // };
 
-  // 📁 File handling
-  if (["uploadedPhoto", "proof"].includes(name) && value && typeof value === "object" && value.size) {
-    const file = value;
-    const fileSizeKB = file.size / 1024;
-    const rules = FILE_SIZE_RULES[name];
+  // after proper validations
+  const handleChange = (name, value) => {
+    let error = "";
 
-    if (rules && (fileSizeKB < rules.min || fileSizeKB > rules.max)) {
-      Alert.alert("File Error", rules.message);
+    // 📁 File handling
+    if (["uploadedPhoto", "proof"].includes(name) && value && typeof value === "object" && value.size) {
+      const file = value;
+      const fileSizeKB = file.size / 1024;
+      const rules = FILE_SIZE_RULES[name];
+
+      if (rules && (fileSizeKB < rules.min || fileSizeKB > rules.max)) {
+        Alert.alert("File Error", rules.message);
+        return;
+      }
+
+      setFormData((prev) => ({ ...prev, [name]: file }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
       return;
     }
 
-    setFormData((prev) => ({ ...prev, [name]: file }));
-    setErrors((prev) => ({ ...prev, [name]: "" }));
-    return;
-  }
+    // 📍 State change
+    if (name === "state") {
+      const selectedState = stateList.find((s) => s.state_name === value);
+      const stateId = selectedState?.state_id;
+      const districts = stateId && districtsMap[stateId] ? Object.entries(districtsMap[stateId]) : [];
 
-  // 📍 State change
-  if (name === "state") {
-    const selectedState = stateList.find((s) => s.state_name === value);
-    const stateId = selectedState?.state_id;
-    const districts = stateId && districtsMap[stateId] ? Object.entries(districtsMap[stateId]) : [];
-
-    setDistrictOptions(districts);
-    setFormData((prev) => ({ ...prev, state: value, districts: "" }));
-    setErrors((prev) => ({ ...prev, state: "", districts: "" }));
-    return;
-  }
-
-  // 🎓 Qualification change
-  if (name === "qualifications") {
-    setFormData((prev) => ({ ...prev, qualifications: value, stream: "" }));
-    return;
-  }
-
-  // 📆 Date of Birth validation
-  if (name === "dateOfBirth") {
-    const selectedDate = new Date(value);
-    const today = new Date();
-    today.setFullYear(today.getFullYear() - 10);
-    if (selectedDate > today) {
-      error = "You must be at least 10 years old.";
-    }
-  }
-
-  // 🔤 Candidate & Father Name
-  if (["candidateName", "fatherName"].includes(name)) {
-    const originalValue = value;
-    value = value.replace(/[^A-Za-z\s]/g, "");
-
-    if (originalValue !== value) {
-      error = `${name === "candidateName" ? "Candidate Name" : "Father Name"} must contain only letters and spaces.`;
-    }
-    if (value.length > 40) {
-      value = value.slice(0, 40); // stop extra chars
-      error = `${name === "candidateName" ? "Candidate Name" : "Father Name"} cannot exceed 40 characters.`;
-    }
-  }
-
-  // 🔤 College & other academic text fields
-  if (["nameOfCollege", "qualificationsOther", "streamOther"].includes(name)) {
-    const originalValue = value;
-    value = value.replace(/[^A-Za-z\s]/g, "");
-
-    if (originalValue !== value) {
-      error = `${name} must contain only letters and spaces.`;
-    }
-    if (value.length > 50) {
-      value = value.slice(0, 50);
-      error = `${name} cannot exceed 50 characters.`;
-    }
-  }
-
-  // 🔤 City & Districts
-  if (["city", "districts"].includes(name)) {
-    const originalValue = value;
-    value = value.replace(/[^A-Za-z\s]/g, "");
-
-    if (originalValue !== value) {
-      error = `${name} must contain only letters and spaces.`;
-    }
-    if (value.length > 30) {
-      value = value.slice(0, 30);
-      error = `${name} cannot exceed 30 characters.`;
-    }
-  }
-
-  // 🏠 Address line
-  if (name === "line1" && value.length > 60) {
-    value = value.slice(0, 60);
-    error = "Address Line 1 cannot exceed 60 characters.";
-  }
-
-  // 📞 Contact and Mobile numbers
-  if (["contactNo", "mobileNo"].includes(name)) {
-    const originalValue = value;
-    value = value.replace(/[^0-9]/g, "").slice(0, 10);
-
-    if (originalValue !== value) {
-      error = "Only numbers are allowed.";
-    }
-    if (value.length !== 10) {
-      error = "Number must be exactly 10 digits.";
-    }
-  }
-
-  // 📮 Pincode
-  if (name === "pincode") {
-    const originalValue = value;
-    value = value.replace(/[^0-9]/g, "").slice(0, 6);
-
-    if (originalValue !== value) {
-      error = "Only numbers are allowed.";
-    }
-    if (value.length !== 6) {
-      error = "Pincode must be exactly 6 digits.";
-    }
-  }
-
-  // 📊 Marks
-  if (name === "marks") {
-    const originalValue = value;
-    value = value.replace(/[^0-9.]/g, "");
-
-    if (originalValue !== value) {
-      error = "Marks must be a number.";
+      setDistrictOptions(districts);
+      setFormData((prev) => ({ ...prev, state: value, districts: "" }));
+      setErrors((prev) => ({ ...prev, state: "", districts: "" }));
+      return;
     }
 
-    if (value.length > 6) {
-      value = value.slice(0, 6); // prevent too long numbers like 1234567
+    // 🎓 Qualification change
+    if (name === "qualifications") {
+      setFormData((prev) => ({ ...prev, qualifications: value, stream: "" }));
+      return;
     }
 
-    const numericValue = parseFloat(value);
-    if (isNaN(numericValue) || numericValue < 0 || numericValue > 100) {
-      error = "Percentage must be between 0 and 100.";
+    // 📆 Date of Birth validation
+    if (name === "dateOfBirth") {
+      const selectedDate = new Date(value);
+      const today = new Date();
+      today.setFullYear(today.getFullYear() - 10);
+      if (selectedDate > today) {
+        error = "You must be at least 10 years old.";
+      }
     }
-  }
 
-  // 🔄 Always update with sanitized + trimmed value
-  setFormData((prev) => ({ ...prev, [name]: value }));
-  setErrors((prev) => ({ ...prev, [name]: error }));
+    // 🔤 Candidate & Father Name
+    if (["candidateName", "fatherName"].includes(name)) {
+      const originalValue = value;
+      value = value.replace(/[^A-Za-z\s]/g, "");
 
-  return error;
-};
+      if (originalValue !== value) {
+        error = `${name === "candidateName" ? "Candidate Name" : "Father Name"} must contain only letters and spaces.`;
+      }
+      if (value.length > 40) {
+        value = value.slice(0, 40); // stop extra chars
+        error = `${name === "candidateName" ? "Candidate Name" : "Father Name"} cannot exceed 40 characters.`;
+      }
+    }
+
+    // 🔤 College & other academic text fields
+    if (["nameOfCollege", "qualificationsOther", "streamOther"].includes(name)) {
+      const originalValue = value;
+      value = value.replace(/[^A-Za-z\s]/g, "");
+
+      if (originalValue !== value) {
+        error = `${name} must contain only letters and spaces.`;
+      }
+      if (value.length > 50) {
+        value = value.slice(0, 50);
+        error = `${name} cannot exceed 50 characters.`;
+      }
+    }
+
+    // 🔤 City & Districts
+    if (["city", "districts"].includes(name)) {
+      const originalValue = value;
+      value = value.replace(/[^A-Za-z\s]/g, "");
+
+      if (originalValue !== value) {
+        error = `${name} must contain only letters and spaces.`;
+      }
+      if (value.length > 30) {
+        value = value.slice(0, 30);
+        error = `${name} cannot exceed 30 characters.`;
+      }
+    }
+
+    // 🏠 Address line
+    if (name === "line1" && value.length > 60) {
+      value = value.slice(0, 60);
+      error = "Address Line 1 cannot exceed 60 characters.";
+    }
+
+    // 📞 Contact and Mobile numbers
+    if (["contactNo", "mobileNo"].includes(name)) {
+      const originalValue = value;
+      value = value.replace(/[^0-9]/g, "").slice(0, 10);
+
+      if (originalValue !== value) {
+        error = "Only numbers are allowed.";
+      }
+      if (value.length !== 10) {
+        error = "Number must be exactly 10 digits.";
+      }
+    }
+
+    // 📮 Pincode
+    if (name === "pincode") {
+      const originalValue = value;
+      value = value.replace(/[^0-9]/g, "").slice(0, 6);
+
+      if (originalValue !== value) {
+        error = "Only numbers are allowed.";
+      }
+      if (value.length !== 6) {
+        error = "Pincode must be exactly 6 digits.";
+      }
+    }
+
+    // 📊 Marks
+    if (name === "marks") {
+      const originalValue = value;
+      value = value.replace(/[^0-9.]/g, "");
+
+      if (originalValue !== value) {
+        error = "Marks must be a number.";
+      }
+
+      if (value.length > 6) {
+        value = value.slice(0, 6); // prevent too long numbers like 1234567
+      }
+
+      const numericValue = parseFloat(value);
+      if (isNaN(numericValue) || numericValue < 0 || numericValue > 100) {
+        error = "Percentage must be between 0 and 100.";
+      }
+    }
+
+    // 🔄 Always update with sanitized + trimmed value
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: error }));
+
+    return error;
+  };
 
 
   const pickImage = (field) => {
@@ -452,24 +452,24 @@ const handleChange = (name, value) => {
       field === "uploadedPhoto" ? setPhotoPreview(file.uri) : setProofPreview(file.uri);
     });
   };
-const clearFormData = () => {
-  setFormData({
+  const clearFormData = () => {
+    setFormData({
 
-    candidateName: "", dateOfBirth: "",
-    gender: "", category: "",
-    emailId: "", confirmEmailId: "",
-    contactNo: "", fatherName: "",
-    EmailId: "", mobileNo: "",
-    line1: "", city: "", state: "", districts: "", pincode: "",
-    qualifications: "", qualificationsOther: "",
-    stream: "", streamOther: "",
-    nameOfCollege: "", passingYear: "", marks: "",
-    uploadedPhoto: null, proof: null,
-    termsAccepted: false,
-  });
-  setErrors({});
-};
-const { minDate, maxDate } = getDOBLimits(portalId);
+      candidateName: "", dateOfBirth: "",
+      gender: "", category: "",
+      emailId: "", confirmEmailId: "",
+      contactNo: "", fatherName: "",
+      EmailId: "", mobileNo: "",
+      line1: "", city: "", state: "", districts: "", pincode: "",
+      qualifications: "", qualificationsOther: "",
+      stream: "", streamOther: "",
+      nameOfCollege: "", passingYear: "", marks: "",
+      uploadedPhoto: null, proof: null,
+      termsAccepted: false,
+    });
+    setErrors({});
+  };
+  const { minDate, maxDate } = getDOBLimits(portalId);
 
   const handleSubmit = async () => {
     const validationErrors = validateForm();
@@ -479,20 +479,20 @@ const { minDate, maxDate } = getDOBLimits(portalId);
       Alert.alert("Validation Error", "Please complete all required fields correctly.");
       return;
     }
-  const formDataToSend = new FormData();
+    const formDataToSend = new FormData();
     formDataToSend.append("candidateName", formData.candidateName);
     formDataToSend.append("dateOfBirth", formData.dateOfBirth);
     formDataToSend.append("gender", formData.gender);
     formDataToSend.append("category", formData.category);
     formDataToSend.append("emailId", formData.emailId);
-      formDataToSend.append("contactNo", formData.contactNo);
+    formDataToSend.append("contactNo", formData.contactNo);
     formDataToSend.append("confirmEmailId", formData.confirmEmailId);
-  
+
     formDataToSend.append("fatherName", formData.fatherName);
     formDataToSend.append("EmailId", formData.EmailId);
     formDataToSend.append("mobileNo", formData.mobileNo);
     formDataToSend.append("line1", formData.line1);
-    formDataToSend.append("city",formData.city);
+    formDataToSend.append("city", formData.city);
     formDataToSend.append("state", formData.state);
     formDataToSend.append("districts", formData.districts);
     formDataToSend.append("pincode", formData.pincode);
@@ -510,35 +510,35 @@ const { minDate, maxDate } = getDOBLimits(portalId);
     }
 
     formDataToSend.append("termsAccepted", formData.termsAccepted.toString());
-    formDataToSend.append("instituteOrDomain",`${frontEndUrl}`);
+    formDataToSend.append("instituteOrDomain", `${frontEndUrl}`);
 
     try {
       const fd = new FormData();
       Object.entries(formData).forEach(([key, val]) => {
-  if (val !== undefined && val !== null) {
-    fd.append(key, val);
-  } else {
-    fd.append(key, ""); // Or optionally skip appending
-  }
-});
+        if (val !== undefined && val !== null) {
+          fd.append(key, val);
+        } else {
+          fd.append(key, ""); // Or optionally skip appending
+        }
+      });
 
-  
-    if (isSubmitting) { return; }
+
+      if (isSubmitting) { return; }
 
       setIsSubmitting(true);
       const response = await fetch(`${backEndUrl}/login/studentRegistration`, {
         method: "POST",
         body: formDataToSend,
       });
-        const result = await response.json();
+      const result = await response.json();
 
-if (result.success) {
-      Alert.alert("Success", "Registration simulated successfully!");
-      navigation.navigate("login");
-      clearFormData();
-}else {
-  Alert.alert("Error", "Registration failed. Please try again.");
-}
+      if (result.success) {
+        Alert.alert("Success", "Registration simulated successfully!");
+        navigation.navigate("login");
+        clearFormData();
+      } else {
+        Alert.alert("Error", "Registration failed. Please try again.");
+      }
     } catch (err) {
       Alert.alert("Error", "Something went wrong. Please try again later.");
       console.error(err);
@@ -553,12 +553,12 @@ if (result.success) {
     hasFetchedRef.current = true;
     (async () => {
       // Simulated fetch:
-      const resp = await fetch(`${backEndUrl}/navbar/get-logo`,  {
+      const resp = await fetch(`${backEndUrl}/navbar/get-logo`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        
+
         body: JSON.stringify({ domain: frontEndUrl }),
       });
       const data = await resp.json();
@@ -567,69 +567,69 @@ if (result.success) {
       setPortalId(2); // Stub for UI path
     })();
   }, []);
-const handleEmailBlur = async () => {
-  const email_id = formData.emailId;
-  const instituteOrDomain = frontEndUrl;
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const handleEmailBlur = async () => {
+    const email_id = formData.emailId;
+    const instituteOrDomain = frontEndUrl;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  if (!email_id) return;
+    if (!email_id) return;
 
-  try {
-    let message = "";
+    try {
+      let message = "";
 
-    const { emailId, confirmEmailId } = formData;
+      const { emailId, confirmEmailId } = formData;
 
-    const isEmailValid = emailRegex.test(emailId);
-    const isConfirmEmailValid = emailRegex.test(confirmEmailId);
+      const isEmailValid = emailRegex.test(emailId);
+      const isConfirmEmailValid = emailRegex.test(confirmEmailId);
 
-    if (emailId && !isEmailValid && confirmEmailId && !isConfirmEmailValid) {
-      message = `Both Email "${emailId}" and Confirm Email "${confirmEmailId}" fields have an invalid format.`;
-    } else if (emailId && !isEmailValid) {
-      message = `Email "${emailId}" field has an invalid format.`;
-    } else if (confirmEmailId && !isConfirmEmailValid) {
-      message = `Confirm Email "${confirmEmailId}" field has an invalid format.`;
+      if (emailId && !isEmailValid && confirmEmailId && !isConfirmEmailValid) {
+        message = `Both Email "${emailId}" and Confirm Email "${confirmEmailId}" fields have an invalid format.`;
+      } else if (emailId && !isEmailValid) {
+        message = `Email "${emailId}" field has an invalid format.`;
+      } else if (confirmEmailId && !isConfirmEmailValid) {
+        message = `Confirm Email "${confirmEmailId}" field has an invalid format.`;
+      }
+
+      if (message) {
+        Alert.alert("Invalid Email", message);
+        return;
+      }
+
+      // Check if email exists
+      const response = await fetch(`${backEndUrl}/login/checkEmailExists`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email_id, instituteOrDomain }),
+      });
+
+      const result = await response.json();
+
+      if (result.message === "Your email already exists. Please use a different email.") {
+        Alert.alert(
+          "Email Exists",
+          `Your email "${confirmEmailId || emailId}" already exists. Please use a different email or Login`,
+          [
+            { text: "Login", onPress: () => navigation.navigate("login") },
+            { text: "Close", style: "cancel" }
+          ]
+        );
+        setFormData(prev => ({ ...prev, emailId: "", confirmEmailId: "" }));
+        return;
+      }
+
+      // Email formats are valid and email doesn't exist
+      if (emailId && confirmEmailId && emailId !== confirmEmailId) {
+        Alert.alert("Email Mismatch", `Email (${emailId}) and Confirm Email (${confirmEmailId}) do not match. Please recheck both fields.`);
+        return;
+      }
+
+    } catch (error) {
+      console.error('Error checking email:', error);
+      Alert.alert("Error", "Failed to verify email. Please try again.");
     }
-
-    if (message) {
-      Alert.alert("Invalid Email", message);
-      return;
-    }
-
-    // Check if email exists
-    const response = await fetch(`${backEndUrl}/login/checkEmailExists`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email_id, instituteOrDomain }),
-    });
-
-    const result = await response.json();
-
-    if (result.message === "Your email already exists. Please use a different email.") {
-      Alert.alert(
-        "Email Exists",
-        `Your email "${confirmEmailId || emailId}" already exists. Please use a different email or Login`,
-        [
-          { text: "Login", onPress: () => navigation.navigate("login") },
-          { text: "Close", style: "cancel" }
-        ]
-      );
-      setFormData(prev => ({ ...prev, emailId: "", confirmEmailId: "" }));
-      return;
-    }
-
-    // Email formats are valid and email doesn't exist
-    if (emailId && confirmEmailId && emailId !== confirmEmailId) {
-      Alert.alert("Email Mismatch", `Email (${emailId}) and Confirm Email (${confirmEmailId}) do not match. Please recheck both fields.`);
-      return;
-    }
-
-  } catch (error) {
-    console.error('Error checking email:', error);
-    Alert.alert("Error", "Failed to verify email. Please try again.");
-  }
-};
+  };
 
   const renderRadioGroup = (options, selected, onSelect) => (
     <View style={{ flexDirection: 'row', marginBottom: 10 }}>
@@ -663,7 +663,7 @@ const handleEmailBlur = async () => {
       {/* Personal Info */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Personal Details</Text>
- <Text style={styles.label}>Candidate Name</Text>
+        <Text style={styles.label}>Candidate Name</Text>
         <TextInput
           style={styles.input} placeholder="Candidate Name"
           value={formData.candidateName}
@@ -671,7 +671,7 @@ const handleEmailBlur = async () => {
         />
         {errors.candidateName && <Text style={styles.error}>{errors.candidateName}</Text>}
 
-      <Text style={styles.label}>Date of Birth</Text>
+        <Text style={styles.label}>Date of Birth</Text>
         <TouchableOpacity onPress={() => setShowCalendar(true)}>
           <TextInput
             style={styles.input}
@@ -682,14 +682,14 @@ const handleEmailBlur = async () => {
         </TouchableOpacity>
         {showCalendar && (
           <CalendarPicker
-          minDate={minDate}
-        maxDate={maxDate}
-        initialDate={maxDate}
-          onDateChange={date => {
-    const formattedDate = date.toISOString().split('T')[0]; // or use dayjs
-    handleChange("dateOfBirth", formattedDate);
-    setShowCalendar(false);
-  }}
+            minDate={minDate}
+            maxDate={maxDate}
+            initialDate={maxDate}
+            onDateChange={date => {
+              const formattedDate = date.toISOString().split('T')[0]; // or use dayjs
+              handleChange("dateOfBirth", formattedDate);
+              setShowCalendar(false);
+            }}
             selectedDayColor="#007AFF"
             selectedDayTextColor="#FFF"
           />
@@ -744,7 +744,7 @@ const handleEmailBlur = async () => {
           onChangeText={text => handleChange("fatherName", text)}
         />
         {errors.fatherName && <Text style={styles.error}>{errors.fatherName}</Text>}
-  <Text style={styles.label}>Parents/Guardian Email ID</Text>
+        <Text style={styles.label}>Parents/Guardian Email ID</Text>
         <TextInput
           style={styles.input}
           placeholder="Father's Email"
@@ -753,7 +753,7 @@ const handleEmailBlur = async () => {
           keyboardType="email-address" autoCapitalize="none"
         />
         {errors.EmailId && <Text style={styles.error}>{errors.EmailId}</Text>}
-  <Text style={styles.label}>Parents/Guardian Phone Number</Text>
+        <Text style={styles.label}>Parents/Guardian Phone Number</Text>
         <TextInput
           style={styles.input}
           placeholder="Father's Phone"
@@ -784,21 +784,21 @@ const handleEmailBlur = async () => {
         />
         {errors.city && <Text style={styles.error}>{errors.city}</Text>}
 
-       <Text style={styles.label}>State</Text>
-<View style={styles.pickerContainer}>
-  <Picker
-    selectedValue={formData.state}
-    onValueChange={(value) => handleChange("state", value)}
-  >
-    <Picker.Item label="Select State" value="" />
-    {stateList.map((state) => (
-      <Picker.Item key={state.state_id} label={state.state_name} value={state.state_name} />
-    ))}
-  </Picker>
-</View>
-{errors.state && <Text style={styles.error}>{errors.state}</Text>}
+        <Text style={styles.label}>State</Text>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={formData.state}
+            onValueChange={(value) => handleChange("state", value)}
+          >
+            <Picker.Item label="Select State" value="" />
+            {stateList.map((state) => (
+              <Picker.Item key={state.state_id} label={state.state_name} value={state.state_name} />
+            ))}
+          </Picker>
+        </View>
+        {errors.state && <Text style={styles.error}>{errors.state}</Text>}
 
-  <Text style={styles.label}>Pincode</Text>
+        <Text style={styles.label}>Pincode</Text>
         <TextInput
           style={styles.input}
           placeholder="Pincode"
@@ -813,75 +813,75 @@ const handleEmailBlur = async () => {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Academic Details</Text>
 
-     
 
-         
-  {portalId === 1 && (
-    <>
-      <Text style={styles.label}>Qualifications *</Text>
-      {renderRadioGroup(["Appearing XII", "Passed XII"], formData.qualifications, val => handleChange("qualifications", val))}
-      {errors.qualifications && <Text style={styles.error}>{errors.qualifications}</Text>}
-    </>
-  )}
 
-  {/* === PORTAL ID === 2 === */}
-  {portalId === 2 && (
-    <>
-      <Text style={styles.label}>Qualifications *</Text>
-      <View style={styles.pickerContainer}>
-    <Picker
-      selectedValue={formData.qualifications}
-      onValueChange={(value) => handleChange("qualifications", value)}
-    >
-      <Picker.Item label="Select Qualification" value="" />
-      {qualificationOptions.map((q) => (
-        <Picker.Item key={q} label={q} value={q} />
-      ))}
-    </Picker>
-  </View>
-      {errors.qualifications && <Text style={styles.error}>{errors.qualifications}</Text>}
 
-      {formData.qualifications === "Other" && (
-        <>
-          <Text style={styles.label}>Enter Your Qualification *</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your qualification"
-            value={formData.qualificationsOther}
-            onChangeText={(text) => handleChange("qualificationsOther", text)}
-          />
-        </>
-      )}
+        {portalId === 1 && (
+          <>
+            <Text style={styles.label}>Qualifications *</Text>
+            {renderRadioGroup(["Appearing XII", "Passed XII"], formData.qualifications, val => handleChange("qualifications", val))}
+            {errors.qualifications && <Text style={styles.error}>{errors.qualifications}</Text>}
+          </>
+        )}
 
-      <Text style={styles.label}>Stream *</Text>
-     <View style={styles.pickerContainer}>
-    <Picker
-      selectedValue={formData.stream}
-      onValueChange={(value) => handleChange("stream", value)}
-    >
-      <Picker.Item label="Select Stream" value="" />
-      {(streamOptions[formData.qualifications] || []).map((stream) => (
-        <Picker.Item key={stream} label={stream} value={stream} />
-      ))}
-    </Picker>
-  </View>
-      {errors.stream && <Text style={styles.error}>{errors.stream}</Text>}
+        {/* === PORTAL ID === 2 === */}
+        {portalId === 2 && (
+          <>
+            <Text style={styles.label}>Qualifications *</Text>
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={formData.qualifications}
+                onValueChange={(value) => handleChange("qualifications", value)}
+              >
+                <Picker.Item label="Select Qualification" value="" />
+                {qualificationOptions.map((q) => (
+                  <Picker.Item key={q} label={q} value={q} />
+                ))}
+              </Picker>
+            </View>
+            {errors.qualifications && <Text style={styles.error}>{errors.qualifications}</Text>}
 
-      {formData.stream === "Other" && (
-        <>
-          <Text style={styles.label}>Enter Your Stream *</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your stream"
-            value={formData.streamOther}
-            onChangeText={(text) => handleChange("streamOther", text)}
-          />
-        </>
-      )}
-    </>
-  )}
+            {formData.qualifications === "Other" && (
+              <>
+                <Text style={styles.label}>Enter Your Qualification *</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter your qualification"
+                  value={formData.qualificationsOther}
+                  onChangeText={(text) => handleChange("qualificationsOther", text)}
+                />
+              </>
+            )}
+
+            <Text style={styles.label}>Stream *</Text>
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={formData.stream}
+                onValueChange={(value) => handleChange("stream", value)}
+              >
+                <Picker.Item label="Select Stream" value="" />
+                {(streamOptions[formData.qualifications] || []).map((stream) => (
+                  <Picker.Item key={stream} label={stream} value={stream} />
+                ))}
+              </Picker>
+            </View>
+            {errors.stream && <Text style={styles.error}>{errors.stream}</Text>}
+
+            {formData.stream === "Other" && (
+              <>
+                <Text style={styles.label}>Enter Your Stream *</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter your stream"
+                  value={formData.streamOther}
+                  onChangeText={(text) => handleChange("streamOther", text)}
+                />
+              </>
+            )}
+          </>
+        )}
         <Text style={styles.label}>Name of College</Text>
-      <TextInput
+        <TextInput
           style={styles.input}
           placeholder="nameOfCollege"
           value={formData.nameOfCollege}
@@ -891,19 +891,19 @@ const handleEmailBlur = async () => {
         {errors.nameOfCollege && <Text style={styles.error}>{errors.nameOfCollege}</Text>}
 
         <Text style={styles.label}>Passing Year</Text>
-      <View style={styles.pickerContainer}>
-  <Picker
-    selectedValue={formData.passingYear}
-    onValueChange={(value) => handleChange("passingYear", value)}
-  >
-    <Picker.Item label="Select Passing Year" value="" />
-    {years.map((year) => (
-      <Picker.Item key={year} label={year.toString()} value={year.toString()} />
-    ))}
-  </Picker>
-</View>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={formData.passingYear}
+            onValueChange={(value) => handleChange("passingYear", value)}
+          >
+            <Picker.Item label="Select Passing Year" value="" />
+            {years.map((year) => (
+              <Picker.Item key={year} label={year.toString()} value={year.toString()} />
+            ))}
+          </Picker>
+        </View>
         {errors.passingYear && <Text style={styles.error}>{errors.passingYear}</Text>}
- <Text style={styles.label}>Marks(%)</Text>
+        <Text style={styles.label}>Marks(%)</Text>
         <TextInput
           style={styles.input}
           placeholder="Percentage Marks"
@@ -936,13 +936,16 @@ const handleEmailBlur = async () => {
 
       {/* Terms & Conditions */}
       <View style={styles.section}>
-        <TouchableOpacity style={styles.termsButton} onPress={() => setShowTerms(!showTerms)}>
+        <TouchableOpacity style={styles.termsButton} 
+        // onPress={() => setOpenTermsAndConditions(true)}
+        onPress={() => navigation.navigate("TermsAndConditions")}
+        >
           <Text style={styles.termsButtonText}>
             {showTerms ? "Hide Terms and Conditions" : "Show Terms and Conditions"}
           </Text>
         </TouchableOpacity>
         {/* {showTerms && <TermsAndConditions />} */}
-       <View style={styles.checkboxContainer}>
+        <View style={styles.checkboxContainer}>
           <TouchableOpacity
             style={styles.checkbox}
             onPress={() => setFormData(prev => ({ ...prev, termsAccepted: !prev.termsAccepted }))}
@@ -951,13 +954,7 @@ const handleEmailBlur = async () => {
           </TouchableOpacity>
 
           <Text>
-            I accept the{' '}
-            <Text
-              style={{ color: 'blue', textDecorationLine: 'underline' }}
-              onPress={() => navigation.navigate("TermsScreen")} 
-            >
-              Terms and Conditions
-            </Text>
+            I accept the terms and Conditions
           </Text>
         </View>
 
@@ -974,12 +971,15 @@ const handleEmailBlur = async () => {
           {isSubmitting ? "Submitting..." : "Submit"}
         </Text>
       </TouchableOpacity>
+      {/* {openTermsAndConditions && (
+        <TermsAndConditions setIsModalOpen={setOpenTermsAndConditions} />
+      )} */}
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
- pickerContainer: {
+  pickerContainer: {
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 5,
