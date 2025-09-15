@@ -196,7 +196,10 @@ useEffect(() => {
                   setSelectedExamId(portal.exams[0]?.exam_id || null);
                 }}
               >
-                <Text>{portal.portal_name}</Text>
+                <Text style={[
+                  styles.portalButtontext,
+                  selectedPortalId === portal.course_portal_id && styles.activeButtontext,
+                ]}>{portal.portal_name}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -212,7 +215,10 @@ useEffect(() => {
                 ]}
                 onPress={() => setSelectedExamId(exam.exam_id)}
               >
-                <Text>{exam.exam_name}</Text>
+                <Text style={[
+                  styles.examButtontext,
+                  selectedExamId === exam.exam_id && styles.activeButtontext,
+                ]}>{exam.exam_name}</Text>
               </TouchableOpacity>
             ))}
           </View>

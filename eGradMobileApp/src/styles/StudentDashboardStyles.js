@@ -221,7 +221,7 @@ export const styles = StyleSheet.create({
     borderRadius: 5,
   },
   activeButton: {
-   backgroundColor: "#6c5ce7",
+   backgroundColor: "#09bffc",
     color:'#fff',
   },
   noCourses: {
@@ -229,7 +229,9 @@ export const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 16,
   },
-
+activeButtontext:{
+  color:'#fff'
+},
   // my results
   containerMyresults: {
     padding: 16,
