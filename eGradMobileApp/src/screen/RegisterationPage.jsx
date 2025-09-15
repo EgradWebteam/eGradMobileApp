@@ -157,7 +157,141 @@ export const RegisterationPage = ({ navigation }) => {
   };
 
 
+// before proper validations
+// const handleChange = (name, value) => {
+//   let error = "";
 
+//   // 📁 File handling
+//   if (["uploadedPhoto", "proof"].includes(name) && value && typeof value === "object" && value.size) {
+//     const file = value;
+//     const fileSizeKB = file.size / 1024;
+//     const rules = FILE_SIZE_RULES[name];
+
+//     if (rules && (fileSizeKB < rules.min || fileSizeKB > rules.max)) {
+//       Alert.alert("File Error", rules.message);
+
+//       // if (name === "uploadedPhoto" && photoInputRef?.current) {
+//       //   photoInputRef.current.clear(); // Use .clear() for RN file inputs if supported
+//       //   setPhotoPreview(null);
+//       // }
+
+//       // if (name === "proof" && proofInputRef?.current) {
+//       //   proofInputRef.current.clear();
+//       //   setProofPreview(null);
+//       // }
+
+//       // setFormData((prev) => ({ ...prev, [name]: null }));
+     
+//       return;
+//     }
+
+//     // Valid file
+//     setFormData((prev) => ({ ...prev, [name]: file }));
+//     setErrors((prev) => ({ ...prev, [name]: "" }));
+
+//     // In React Native, preview handling depends on image picker library
+//     // setPhotoPreview(...) or setProofPreview(...) can be set with file.uri
+//     // const previewURL = file.uri || null;
+//     // if (name === "uploadedPhoto") setPhotoPreview(previewURL);
+//     // if (name === "proof") setProofPreview(previewURL);
+//     // return;
+//   }
+
+//   // 📍 State change
+//   if (name === "state") {
+//     const selectedState = stateList.find((s) => s.state_name === value);
+//     const stateId = selectedState?.state_id;
+//     const districts = stateId && districtsMap[stateId] ? Object.entries(districtsMap[stateId]) : [];
+
+//     setDistrictOptions(districts);
+//     setFormData((prev) => ({ ...prev, state: value, districts: "" }));
+//     setErrors((prev) => ({ ...prev, state: "", districts: "" }));
+//     return;
+//   }
+
+//   // 🎓 Qualification change
+//   if (name === "qualifications") {
+//     setFormData((prev) => ({ ...prev, qualifications: value, stream: "" }));
+//     return;
+//   }
+
+//   // 📆 Date of Birth validation
+//   if (name === "dateOfBirth") {
+//     const selectedDate = new Date(value);
+//     const today = new Date();
+//     today.setFullYear(today.getFullYear() - 10);
+//     if (selectedDate > today) {
+//       error = "You must be at least 10 years old.";
+//     }
+//   }
+
+//   // 🔤 Text fields with specific limits
+//   if (["candidateName", "fatherName"].includes(name)) {
+//     if (!/^[A-Za-z\s]*$/.test(value)) {
+//       error = `${name === "candidateName" ? "Candidate Name" : "Father Name"} must contain only letters and spaces.`;
+//     } else if (value.length > 40) {
+//       error = `${name === "candidateName" ? "Candidate Name" : "Father Name"} cannot exceed 40 characters.`;
+//     }
+//   }
+
+//   if (["nameOfCollege", "qualificationsOther", "streamOther"].includes(name)) {
+//     if (!/^[A-Za-z\s]*$/.test(value)) {
+//       error = `${name} must contain only letters and spaces.`;
+//     } else if (value.length > 50) {
+//       error = `${name} cannot exceed 50 characters.`;
+//     }
+//   }
+
+//   if (["city", "districts"].includes(name)) {
+//     if (!/^[A-Za-z\s]*$/.test(value)) {
+//       error = `${name} must contain only letters and spaces.`;
+//     } else if (value.length > 30) {
+//       error = `${name} cannot exceed 30 characters.`;
+//     }
+//   }
+
+//   if (name === "line1" && value.length > 60) {
+//     error = "Address Line 1 cannot exceed 60 characters.";
+//   }
+
+//   // 📞 Contact and mobile numbers
+//   if (["contactNo", "mobileNo"].includes(name)) {
+//     if (/[^0-9]/.test(value)) {
+//       error = "Only numbers are allowed.";
+//     } else if (value.length !== 10) {
+//       error = "Number must be exactly 10 digits.";
+//     }
+//   }
+
+//   // 📮 Pincode
+//   if (name === "pincode") {
+//     if (/[^0-9]/.test(value)) {
+//       error = "Only numbers are allowed.";
+//     } else if (value.length !== 6) {
+//       error = "Pincode must be exactly 6 digits.";
+//     }
+//   }
+
+//   // 📊 Marks
+//   if (name === "marks") {
+//     const numericValue = parseFloat(value);
+//     if (isNaN(numericValue) || numericValue < 0 || numericValue > 100) {
+//       error = "Percentage must be between 0 and 100.";
+//     }
+//   }
+
+//   // 🔄 Update state if no error
+//   // if (!error) {
+//     setFormData((prev) => ({ ...prev, [name]: value }));
+//   // } else {
+//     setErrors((prev) => ({ ...prev, [name]: error }));
+//     //   Alert.alert("Validation Error", error);
+//   // }
+
+//   return error;
+// };
+
+// after proper validations
 const handleChange = (name, value) => {
   let error = "";
 
@@ -169,32 +303,12 @@ const handleChange = (name, value) => {
 
     if (rules && (fileSizeKB < rules.min || fileSizeKB > rules.max)) {
       Alert.alert("File Error", rules.message);
-
-      // if (name === "uploadedPhoto" && photoInputRef?.current) {
-      //   photoInputRef.current.clear(); // Use .clear() for RN file inputs if supported
-      //   setPhotoPreview(null);
-      // }
-
-      // if (name === "proof" && proofInputRef?.current) {
-      //   proofInputRef.current.clear();
-      //   setProofPreview(null);
-      // }
-
-      // setFormData((prev) => ({ ...prev, [name]: null }));
-     
       return;
     }
 
-    // Valid file
     setFormData((prev) => ({ ...prev, [name]: file }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
-
-    // In React Native, preview handling depends on image picker library
-    // setPhotoPreview(...) or setProofPreview(...) can be set with file.uri
-    // const previewURL = file.uri || null;
-    // if (name === "uploadedPhoto") setPhotoPreview(previewURL);
-    // if (name === "proof") setProofPreview(previewURL);
-    // return;
+    return;
   }
 
   // 📍 State change
@@ -225,68 +339,102 @@ const handleChange = (name, value) => {
     }
   }
 
-  // 🔤 Text fields with specific limits
+  // 🔤 Candidate & Father Name
   if (["candidateName", "fatherName"].includes(name)) {
-    if (!/^[A-Za-z\s]*$/.test(value)) {
+    const originalValue = value;
+    value = value.replace(/[^A-Za-z\s]/g, "");
+
+    if (originalValue !== value) {
       error = `${name === "candidateName" ? "Candidate Name" : "Father Name"} must contain only letters and spaces.`;
-    } else if (value.length > 40) {
+    }
+    if (value.length > 40) {
+      value = value.slice(0, 40); // stop extra chars
       error = `${name === "candidateName" ? "Candidate Name" : "Father Name"} cannot exceed 40 characters.`;
     }
   }
 
+  // 🔤 College & other academic text fields
   if (["nameOfCollege", "qualificationsOther", "streamOther"].includes(name)) {
-    if (!/^[A-Za-z\s]*$/.test(value)) {
+    const originalValue = value;
+    value = value.replace(/[^A-Za-z\s]/g, "");
+
+    if (originalValue !== value) {
       error = `${name} must contain only letters and spaces.`;
-    } else if (value.length > 50) {
+    }
+    if (value.length > 50) {
+      value = value.slice(0, 50);
       error = `${name} cannot exceed 50 characters.`;
     }
   }
 
+  // 🔤 City & Districts
   if (["city", "districts"].includes(name)) {
-    if (!/^[A-Za-z\s]*$/.test(value)) {
+    const originalValue = value;
+    value = value.replace(/[^A-Za-z\s]/g, "");
+
+    if (originalValue !== value) {
       error = `${name} must contain only letters and spaces.`;
-    } else if (value.length > 30) {
+    }
+    if (value.length > 30) {
+      value = value.slice(0, 30);
       error = `${name} cannot exceed 30 characters.`;
     }
   }
 
+  // 🏠 Address line
   if (name === "line1" && value.length > 60) {
+    value = value.slice(0, 60);
     error = "Address Line 1 cannot exceed 60 characters.";
   }
 
-  // 📞 Contact and mobile numbers
+  // 📞 Contact and Mobile numbers
   if (["contactNo", "mobileNo"].includes(name)) {
-    if (/[^0-9]/.test(value)) {
+    const originalValue = value;
+    value = value.replace(/[^0-9]/g, "").slice(0, 10);
+
+    if (originalValue !== value) {
       error = "Only numbers are allowed.";
-    } else if (value.length !== 10) {
+    }
+    if (value.length !== 10) {
       error = "Number must be exactly 10 digits.";
     }
   }
 
   // 📮 Pincode
   if (name === "pincode") {
-    if (/[^0-9]/.test(value)) {
+    const originalValue = value;
+    value = value.replace(/[^0-9]/g, "").slice(0, 6);
+
+    if (originalValue !== value) {
       error = "Only numbers are allowed.";
-    } else if (value.length !== 6) {
+    }
+    if (value.length !== 6) {
       error = "Pincode must be exactly 6 digits.";
     }
   }
 
   // 📊 Marks
   if (name === "marks") {
+    const originalValue = value;
+    value = value.replace(/[^0-9.]/g, "");
+
+    if (originalValue !== value) {
+      error = "Marks must be a number.";
+    }
+
+    if (value.length > 6) {
+      value = value.slice(0, 6); // prevent too long numbers like 1234567
+    }
+
     const numericValue = parseFloat(value);
     if (isNaN(numericValue) || numericValue < 0 || numericValue > 100) {
       error = "Percentage must be between 0 and 100.";
     }
   }
 
-  // 🔄 Update state if no error
-  // if (!error) {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  // } else {
-    setErrors((prev) => ({ ...prev, [name]: error }));
-    //   Alert.alert("Validation Error", error);
-  // }
+  // 🔄 Always update with sanitized + trimmed value
+  setFormData((prev) => ({ ...prev, [name]: value }));
+  setErrors((prev) => ({ ...prev, [name]: error }));
 
   return error;
 };
