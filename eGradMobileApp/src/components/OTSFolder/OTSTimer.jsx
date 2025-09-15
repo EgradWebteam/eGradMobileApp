@@ -26,11 +26,11 @@ const OTSTimer = ({ realStudentId, realTestId, testData, realCourseId }) => {
       <View style={styles.timeAndCalcRow}>
         <Text style={styles.timerText}>Time Left: {formattedTime}</Text>
 
-        {testData?.TestCalculator === "1" && (
+        {/* {testData?.TestCalculator === "1" && (
           <TouchableOpacity onPress={handleCalcClick}>
             <Icon name="calculator-variant" size={28} color="#333" style={styles.icon} />
           </TouchableOpacity>
-        )}
+        )} */}
       </View>
 
       {showCalculator && (

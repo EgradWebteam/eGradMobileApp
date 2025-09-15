@@ -11,19 +11,28 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
   flex: 1,
   },
-  testcontainer:{  backgroundColor: '#fff',
+  testcontainer:{  
+    backgroundColor: '#fff',
     flexGrow: 1,
- padding: 5,},
+},
   navbarcontainer: {
    backgroundColor:'#000',
     padding: 10,
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center'
 
  
   },
    timersection: {
     paddingVertical: 4,         // very small vertical padding
     paddingHorizontal: 8,
+    alignItems:'center',
     backgroundColor: '#fff',
+    flexDirection:'row',
+    justifyContent:'space-between',
+    width:'100%',
+
   },
   subjectcontainer: {
      paddingVertical: 4,         // very small vertical padding
@@ -37,7 +46,7 @@ flexWrap:'wrap',
 gap:'10',
     borderTopWidth: 1,
     borderTopColor: '#eee',
-
+    height: 95
    
   },
   questionImageContainer: {
@@ -45,8 +54,8 @@ gap:'10',
   },
   mainContainerforquestion: {
     flex: 1,
-    padding: 16,
-    minHeight:450
+    padding: 16
+   
    
   },
   
@@ -249,7 +258,7 @@ height: 45,
   },
     testNameHolder: {
     alignItems: "center",
-    marginBottom: 10,
+  
   },
   //repeated
   testName: {
@@ -259,7 +268,7 @@ height: 45,
   },
   buttonHolder: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    gap:10,
    
   },
   button: {
@@ -361,7 +370,8 @@ height: 45,
     sectionLabel: {
     fontSize: 16,
     fontWeight: "bold",
-    marginBottom: 8,
+    width:70
+
   },
   timeAndCalcRow: {
     flexDirection: "row",

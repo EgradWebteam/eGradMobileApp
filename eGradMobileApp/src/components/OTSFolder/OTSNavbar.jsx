@@ -36,12 +36,12 @@ const OTSNavbar = ({ testName, testData, realTestId, realCourseId }) => {
       <View style={styles.buttonHolder}>
         <TouchableOpacity  onPress={openQuestionPaper}>
           <Icon name="alert-circle" size={22} color="#fff" />
-          <Text style={styles.buttonText}>View Questions</Text>
+          {/* <Text style={styles.buttonText}>View Questions</Text> */}
         </TouchableOpacity>
 
         <TouchableOpacity onPress={openInstructions}>
           <DocIcon name="file-document-outline" size={22} color="#fff" />
-          <Text style={styles.buttonText}>View Instructions</Text>
+          {/* <Text style={styles.buttonText}>View Instructions</Text> */}
         </TouchableOpacity>
       </View>
 

@@ -58,10 +58,16 @@ console.log("Attempting logout...");
         navigation.navigate('login');
       } else {
         Alert.alert('Logout Failed', data.message || 'Logout failed');
+            await AsyncStorage.clear();
+        // closeTestWindowIfOpen();
+        navigation.navigate('login');
       }
     } catch (error) {
       console.error('Logout Error:', error);
       Alert.alert('Error', 'Something went wrong. Please try again.');
+          await AsyncStorage.clear();
+        // closeTestWindowIfOpen();
+        navigation.navigate('login');
     }
   };
 

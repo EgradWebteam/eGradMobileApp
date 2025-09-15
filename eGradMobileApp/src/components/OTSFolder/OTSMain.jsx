@@ -591,8 +591,8 @@ const  saveUserResponse = async(payload) => {
         getElapsedTimeForCurrentQuestion={getElapsedTimeForCurrentQuestion}
         setSelectedSubjects={setSelectedSubjects}
       /> */}
-
-      <QuestionStatusProvider testData={isBonusLoaded ? fullTestData : testData} activeSubject={activeSubject} activeSection={activeSection} userAnswers={userAnswers}>
+<View style={{ height: 95 }}>
+      <QuestionStatusProvider testData={isBonusLoaded ? fullTestData : testData} activeSubject={activeSubject} activeSection={activeSection} userAnswers={userAnswers} >
         <TimerProvider testData={testData} resumeTime={resumeTime}>
           <QuestionNavigationButtons
             testData={testData}
@@ -629,7 +629,7 @@ const  saveUserResponse = async(payload) => {
           />
         </TimerProvider>
       </QuestionStatusProvider>
-
+ </View>
       <QuestionStatusProvider testData={testData} activeSubject={activeSubject} activeSection={activeSection} userAnswers={userAnswers}>
         <TimerProvider testData={testData} resumeTime={resumeTime}>
           <ExamSummaryCollector
@@ -641,6 +641,7 @@ const  saveUserResponse = async(payload) => {
           />
         </TimerProvider>
       </QuestionStatusProvider>
+     
     </View>
   );
 }

@@ -304,14 +304,14 @@ return (
           key={pid}
           style={[
             styles.portalButton,
-            selectedPortal === pid && styles.portalButtonActive,
+            selectedPortal === pid && styles.activeButton,
           ]}
           onPress={() => handlePortalSelect(pid)}
         >
           <Text
             style={[
               styles.portalButtonText,
-              selectedPortal === pid && styles.portalButtonTextActive,
+              selectedPortal === pid && styles.activeButtontext,
             ]}
           >
             {pname}
@@ -327,14 +327,14 @@ return (
           key={idx}
           style={[
             styles.examButton,
-            selectedExam === exam && styles.examButtonActive,
+            selectedExam === exam && styles.activeButton,
           ]}
           onPress={() => handleExamSelect(exam)}
         >
           <Text
             style={[
               styles.examButtonText,
-              selectedExam === exam && styles.examButtonTextActive,
+              selectedExam === exam && styles.activeButtontext,
             ]}
           >
             {exam}
