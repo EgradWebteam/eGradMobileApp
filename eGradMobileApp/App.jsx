@@ -12,6 +12,7 @@ import StudentProvider from './src/hooks/StudentContext';
 import TestScreen  from "./src/screen/TestScreen";
 import ExamInstructionsScreen  from "./src/screen/ExamInstructionsScreen";
 import GeneralInstructionsScreen from './src/screen/GeneralInstructionsScreen';
+import TermsAndConditions from './src/screen/TermsAndConditions';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -33,6 +34,7 @@ const App = () => {
           <Stack.Screen name="QBScreen" component={QBScreen} />
           <Stack.Screen name="studentDashboard" component={StudentDashboard} />
           <Stack.Screen name="StudentReport" component={StudentReportMain} />
+          <Stack.Screen name="TermsAndConditions" component={TermsAndConditions} />
         </Stack.Navigator>
       </NavigationContainer>
       <Toast />

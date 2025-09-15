@@ -181,6 +181,7 @@ useEffect(() => {
         userData={studentData?.userDetails}
         logoSrc={portalData.logoImg}
         setActiveSection={setActiveSection}
+        setActiveSubSection={setActiveSubSection}
       />
 
       <View style={styles.body}>
