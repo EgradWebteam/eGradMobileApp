@@ -34,7 +34,7 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
   const [chapterdetails, setChapterdetails] = useState(null);
 
 //   const { validateSession } = useSession();
-console.log(userData)
+console.log("user dataa my coursesssssss",userData);
   useEffect(() => {
     const fetchStorageData = async () => {
       try {

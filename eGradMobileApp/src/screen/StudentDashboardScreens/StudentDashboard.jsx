@@ -149,11 +149,11 @@ useEffect(() => {
             studentName={studentData?.userDetails?.candidate_name}
             portalId={portalData.portalId}
             logoText={portalData.logoText}
-            handleSectionChange={setActiveSection}
+            handleSectionChange={setActiveSection} 
           />
         );
       case 'myCourses':
-        return <StudentDashboardMyCourses studentId={studentData?.userDetails?.student_registration_id} />;
+        return <StudentDashboardMyCourses studentId={studentData?.userDetails?.student_registration_id} userData={studentData?.userDetails}/>;
       case 'buyCourses':
         return <StudentDashboardBuyCourses studentId={studentData?.userDetails?.student_registration_id} setActiveSection={setActiveSection} />;
       case 'results':
