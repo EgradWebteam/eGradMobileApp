@@ -37,24 +37,24 @@ console.log("studnt dashhhhhboarddddd",isOnStudentDashboard)
     switch (title) {
       case "MINI / MICRO COURSES":
         return [
-          { icon: <Icon name="laptop" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#154eb5"} />, text: "Recorded Video Lectures" },
-          { icon: <Icon name="clock-o" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#154eb5"} />, text: "Real Time Mock Tests" },
-          { icon: <Icon name="video-camera" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#154eb5"} />, text: "Video Solutions" },
-          { icon: <Icon name="print" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#154eb5"} />, text: "Study Materials" },
+          { icon: <Icon name="laptop" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#09bffc"} />, text: "Recorded Video Lectures" },
+          { icon: <Icon name="clock-o" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#09bffc"} />, text: "Real Time Mock Tests" },
+          { icon: <Icon name="video-camera" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#09bffc"} />, text: "Video Solutions" },
+          { icon: <Icon name="print" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#09bffc"} />, text: "Study Materials" },
         ];
       case "TEST SERIES":
         return [
-          { icon: <Icon name="clock-o" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#154eb5"} />, text: "Real Time Mock Tests" },
-          { icon: <Icon name="check-square-o" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#154eb5"} />, text: "Rank Based Reports" },
-          { icon: <Icon name="video-camera" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#154eb5"} />, text: "Video Solutions" },
-          { icon: <Icon name="tasks" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#154eb5"} />, text: "Performance Analytics" },
+          { icon: <Icon name="clock-o" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#09bffc"} />, text: "Real Time Mock Tests" },
+          { icon: <Icon name="check-square-o" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#09bffc"} />, text: "Rank Based Reports" },
+          { icon: <Icon name="video-camera" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#09bffc"} />, text: "Video Solutions" },
+          { icon: <Icon name="tasks" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#09bffc"} />, text: "Performance Analytics" },
         ];
       case "PRACTICE QUESTION BANK":
         return [
-          { icon: <Icon name="question" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#154eb5"} />, text: "Challenging Questions" },
-          { icon: <Icon name="lightbulb-o" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#154eb5"} />, text: "Hints, Tips and Tricks" },
-          { icon: <Icon name="check-square-o" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#154eb5"} />, text: "Chapter wise Practice" },
-          { icon: <Icon name="video-camera" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#154eb5"} />, text: "Video Solutions" },
+          { icon: <Icon name="question" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#09bffc"} />, text: "Challenging Questions" },
+          { icon: <Icon name="lightbulb-o" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#09bffc"} />, text: "Hints, Tips and Tricks" },
+          { icon: <Icon name="check-square-o" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#09bffc"} />, text: "Chapter wise Practice" },
+          { icon: <Icon name="video-camera" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#09bffc"} />, text: "Video Solutions" },
         ];
       default:
         return [];
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   },
   btn: {
     marginTop: 12,
-    backgroundColor: "#007bff",
+    backgroundColor: "#09bffc",
     paddingVertical: 10,
     borderRadius: 6,
     alignItems: "center",
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   closeBtn: {
-    backgroundColor: "#007bff",
+    backgroundColor: "#09bffc",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 6,

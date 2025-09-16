@@ -178,6 +178,11 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
     flex: 1
   },
+     containerBuyCourses: {
+    padding: 15,
+    backgroundColor: '#fff',
+    flex: 1
+  },
   heading: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -194,14 +199,11 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16
   },
-  link: {
-    color: 'blue',
-    marginHorizontal: 5,
-  },
+
   portalButtons: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginVertical: 10,
+   gap:10
   },
   portalButton: {
     padding: 10,
@@ -354,15 +356,16 @@ activeButtontext:{
   sidebarItem: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent:"center",
     padding: 12,
     borderRadius: 5,
-    marginBottom: 8,
+  
    backgroundColor: 'transparent',
   },
   activeSidebarItem: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#09bffc',
   },
-  icon: {
+  lefticon: {
     marginRight: 10,
   },
   label: {
@@ -409,11 +412,20 @@ activeButtontext:{
     margin:10,
   },
   btn: {
-    backgroundColor: "#007bff",
+    backgroundColor: "#09bffc",
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 6,
   },
+  TestDetailsCourseName:{
+    fontSize: 22, 
+    fontWeight: "bold",
+     textAlign: 'center'
+     },
+     TestDetailsGoBack:{
+justifyContent:'flex-end',
+alignItems:'flex-end'
+     },
   btnText: {
     color: "#fff",
     fontWeight: "bold",

@@ -246,15 +246,17 @@ const selectedSubjectName = selectedSubjectId
     <ScrollView style={{ flex: 1, padding: 10 }}>
       {selectedPortalId === 1 && (
         <View style={{ marginBottom: 20 }}>
-          <Text style={{ fontSize: 22, fontWeight: "bold" }}>{course?.course_name}</Text>
+          <Text style={styles.TestDetailsCourseName}>{course?.course_name}</Text>
+            <View style={styles.TestDetailsGoBack}>
           <TouchableOpacity onPress={() => onBack()} style={styles.back}>
             <Text style={{ color: "#fff" }}>Go Back</Text>
-          </TouchableOpacity>
+          </TouchableOpacity></View>
         </View>
       )}
 
       {/* Picker for test type / subject */}
 <Picker
+style={{}}
   selectedValue={selectedTestType || selectedSubjectId}
   onValueChange={(itemValue, itemIndex) => {
     if (itemValue.startsWith("type-")) {

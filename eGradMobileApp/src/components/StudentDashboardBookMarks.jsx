@@ -145,11 +145,14 @@ const StudentDashboardBookMarks = ({ studentId }) => {
             key={portal.portalId}
             style={[
               styles.portalButton,
-              selectedPortal === portal.portalId && styles.activePortalButton,
+              selectedPortal === portal.portalId && styles.activeButton,
             ]}
             onPress={() => setSelectedPortal(portal.portalId)}
           >
-            <Text style={styles.portalButtonText}>{portal.portalName}</Text>
+            <Text style={[  
+              styles.portalButtontext,
+              selectedPortal === portal.portalId && styles.activeButtontext,
+                            ]}>{portal.portalName}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>

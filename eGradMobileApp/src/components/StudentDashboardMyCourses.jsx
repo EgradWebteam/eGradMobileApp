@@ -166,14 +166,14 @@ useEffect(() => {
             <>
               <Text>   <Icon name="chevron-right" size={16} color="#000" style={styles.icon} /> </Text>
               <TouchableOpacity onPress={handleBackToCourses}>
-                <Text style={styles.link}>{selectedExam.exam_name}</Text>
+                <Text style={styles.breadcrumbText}>{selectedExam.exam_name}</Text>
               </TouchableOpacity>
             </>
           )}
           {selectedTestCourse && (
             <>
               <Text>   <Icon name="chevron-right" size={16} color="#000" style={styles.icon} /> </Text>
-              <Text style={styles.link}>{selectedTestCourse.course_name || "MINI / MICRO COURSES"}</Text>
+              <Text style={styles.breadcrumbText}>{selectedTestCourse.course_name || "MINI / MICRO COURSES"}</Text>
             </>
           )}
         </View>
@@ -183,7 +183,7 @@ useEffect(() => {
       {showQuizContainer && (
         <>
           <Text style={styles.heading}>My Courses</Text>
-          <View style={styles.portalButtons}>
+          <ScrollView horizontal  style={styles.portalButtons}>
             {portals.map((portal) => (
               <TouchableOpacity
                 key={portal.course_portal_id}
@@ -202,10 +202,10 @@ useEffect(() => {
                 ]}>{portal.portal_name}</Text>
               </TouchableOpacity>
             ))}
-          </View>
+          </ScrollView>
 
           {/* Exam Selector */}
-          <View style={styles.examButtons}>
+          <ScrollView horizontal  style={styles.examButtons}>
             {selectedPortal?.exams.map((exam) => (
               <TouchableOpacity
                 key={exam.exam_id}
@@ -221,7 +221,7 @@ useEffect(() => {
                 ]}>{exam.exam_name}</Text>
               </TouchableOpacity>
             ))}
-          </View>
+          </ScrollView>
 
           {/* Course Cards */}
           {loading ? (
