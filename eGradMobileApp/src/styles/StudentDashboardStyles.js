@@ -121,7 +121,7 @@ export const styles = StyleSheet.create({
     marginRight: 8,
   },
   activePortalButton: { backgroundColor: "#4CAF50" },
-  portalButtonText: { color: "#000" },
+  portalButtonText: { color: "#fff" },
   scrollContent: { flex: 1 },
   testBlock: { marginBottom: 20, padding: 10, backgroundColor: "#f9f9f9" },
   testTitle: { fontSize: 18, fontWeight: "600", marginBottom: 10 },
@@ -265,7 +265,7 @@ activeButtontext:{
     backgroundColor: "#007bff",
   },
   portalButtonText: {
-    color: "#000",
+    color: "#fff",
     fontWeight: "bold",
   },
   examButtonsScroll: {
@@ -283,7 +283,7 @@ activeButtontext:{
     backgroundColor: "#2196f3",
   },
   examButtonText: {
-    color: "#000",
+    color: "#fff",
     fontWeight: "bold",
   },
   resultsContainer: {
@@ -405,7 +405,8 @@ activeButtontext:{
     borderRadius: 10,
   },
   icon: {
-    marginBottom: 10,
+    // marginBottom: 10,
+    margin:10,
   },
   btn: {
     backgroundColor: "#007bff",

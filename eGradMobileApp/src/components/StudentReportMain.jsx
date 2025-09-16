@@ -225,19 +225,26 @@ console.log("dataaa",route.params)
           style={[styles.tabBtn, activeTab === "Your Performance" && styles.activeTab]}
           onPress={() => handleTabChange("Your Performance")}
         >
-          <Text style={styles.tabText}>Your Performance</Text>
+          <Text 
+          style={styles.tabText}
+          >
+          Your Performance</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.tabBtn, activeTab === "Solutions" && styles.activeTab]}
           onPress={() => handleTabChange("Solutions")}
         >
-          <Text style={styles.tabText}>Solutions</Text>
+          <Text 
+          style={styles.tabText}
+          >Solutions</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.tabBtn, activeTab === "Questions" && styles.activeTab]}
           onPress={() => handleTabChange("Questions")}
         >
-          <Text style={styles.tabText}>Detailed Analysis</Text>
+          <Text 
+          style={styles.tabText}
+          >Detailed Analysis</Text>
         </TouchableOpacity>
       </View>
 
@@ -292,21 +299,22 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   headerText: { fontSize: 20, fontWeight: "bold" },
-  backButton: { backgroundColor: "#007bff", padding: 8, borderRadius: 5 },
-  backButtonText: { color: "#fff" },
+  backButton: { backgroundColor: "#198754", padding: 8, borderRadius: 5 },
+  backButtonText: { color: "#fff" , fontWeight:"bold"},
   testDetails: { marginBottom: 16 },
   bold: { fontWeight: "bold" },
   tabRow: { flexDirection: "row", marginBottom: 16 },
   tabBtn: {
     flex: 1,
     padding: 10,
-    backgroundColor: "#eee",
+    backgroundColor: "#444444",
     alignItems: "center",
     borderRadius: 5,
     marginHorizontal: 4,
   },
-  activeTab: { backgroundColor: "#007bff" },
-  tabText: { color: "#000", fontWeight: "bold" },
+  activeTab: { backgroundColor: "rgb(7, 174, 240)" },
+  tabTextActive: { color: "#fff", fontWeight: "bold" },
+  tabText:{color: "#fff", fontWeight: "bold"},
   tabContent: { flex: 1, marginTop: 10 },
   centered: { flex: 1, justifyContent: "center", alignItems: "center" },
   errorText: { color: "red" },
