@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
   },
   activeTab: { backgroundColor: "rgb(7, 174, 240)" },
   tabTextActive: { color: "#fff", fontWeight: "bold" },
-  tabText:{color: "#fff", fontWeight: "bold"},
+  tabText:{color: "#fff", fontWeight: "bold",fontSize:13},
   tabContent: { flex: 1, marginTop: 10 },
   centered: { flex: 1, justifyContent: "center", alignItems: "center" },
   errorText: { color: "red" },

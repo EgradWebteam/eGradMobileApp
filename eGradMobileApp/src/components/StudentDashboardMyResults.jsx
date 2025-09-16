@@ -21,7 +21,7 @@ const StudentDashboardMyResults = ({ studentId, userData }) => {
   const [selectedPortalId, setSelectedPortalId] = useState(null);
   const [selectedExamId, setSelectedExamId] = useState(null);
   const [loading, setLoading] = useState(true);
-console.log("user dataaaa",userData);
+  console.log("user dataaaa", userData);
   // DisableKeysAndMouseInteractions(null);
 
   const navigation = useNavigation();
@@ -182,10 +182,10 @@ console.log("user dataaaa",userData);
                   setSelectedExamId(portal.exams[0]?.exam_id || null);
                 }}
               >
-                <Text style={[  
-                              styles.portalButtontext,
-                              selectedPortalId === portal.course_portal_id &&  styles.activeButtontext,
-                                            ]}>{portal.portal_name}</Text>
+                <Text style={[
+                  styles.portalButtontext,
+                  selectedPortalId === portal.course_portal_id && styles.activeButtontext,
+                ]}>{portal.portal_name}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -202,9 +202,9 @@ console.log("user dataaaa",userData);
                 onPress={() => setSelectedExamId(exam.exam_id)}
               >
                 <Text style={[
-                                  styles.examButtontext,
-                                 selectedExamId === exam.exam_id &&styles.activeButtontext,
-                                ]}>{exam.exam_name}</Text>
+                  styles.examButtontext,
+                  selectedExamId === exam.exam_id && styles.activeButtontext,
+                ]}>{exam.exam_name}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -219,30 +219,45 @@ console.log("user dataaaa",userData);
                     key={idx}
                     style={[
                       styles.resultCard,
-                      { backgroundColor: getBackgroundColor(test.type_of_test_id), borderColor: getBorderColor(test.type_of_test_id) },
+                      test.type_of_test_id === 1 && styles.chapterWiseResultsBorder,
+                      test.type_of_test_id === 2 && styles.topicWiseResultsBorder,
+                      test.type_of_test_id === 3 && styles.subjectWiseResultsBorder,
+                      test.type_of_test_id === 4 && styles.partTestResultsBorder,
+                      test.type_of_test_id === 5 && styles.fullTestResultsBorder,
                     ]}
                   >
-                    <Text   style={[
-                      styles.testName,
-                      { backgroundColor: getBackgroundColor(test.type_of_test_id), borderColor: getBorderColor(test.type_of_test_id) },
-                    ]}>
+                    <Text style={styles.testName}>
                       {course.course_name} - {test.test_name}
                     </Text>
+
                     <View style={styles.resultRow}>
                       <Icon name="trending-up" size={18} color="#555" />
                       <Text style={styles.resultRowText}>Performance</Text>
                     </View>
+
                     <View style={styles.resultRow}>
                       <Icon name="menu-book" size={18} color="#555" />
                       <Text style={styles.resultRowText}>Solutions</Text>
                     </View>
+
                     <TouchableOpacity
-                      style={[styles.viewReportButton, { backgroundColor: getBorderColor(test.type_of_test_id) }]}
+                      style={[
+                        styles.viewReportButton,
+                        {
+                          backgroundColor:
+                            test.type_of_test_id === 1 ? "#976963" :
+                              test.type_of_test_id === 2 ? "#5282ae" :
+                                test.type_of_test_id === 3 ? "#ac9563" :
+                                  test.type_of_test_id === 4 ? "#ceccca" :
+                                    "#579b75"
+                        },
+                      ]}
                       onPress={() => handleViewReportClick(test.test_id, test, course.course_id)}
                     >
                       <Text style={styles.viewReportButtonText}>VIEW REPORT</Text>
                     </TouchableOpacity>
                   </View>
+
                 ))
               )}
           </View>

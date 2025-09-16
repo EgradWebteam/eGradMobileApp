@@ -83,16 +83,7 @@ const SolutionsTab = ({
   const renderQuestion = ({ item, index }) => {
     return (
       <View style={styles.questionContainer}>
-        {/* Scrollable content */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={true}
-          nestedScrollEnabled={true}
-        >
-          {/* Each page must be full screen width */}
-          <View style={{ width: SCREEN_WIDTH, padding: 10 }}>
-            {/* Header Row */}
-            <View style={styles.headerRow}>
+         <View style={styles.headerRow}>
               <Text>Question No: {index + 1}</Text>
               <TouchableOpacity onPress={() => toggleBookmark(item.question_id)}>
                 <Icon
@@ -106,6 +97,16 @@ const SolutionsTab = ({
                 />
               </TouchableOpacity>
             </View>
+        {/* Scrollable content */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={true}
+          nestedScrollEnabled={true}
+        >
+          {/* Each page must be full screen width */}
+          <View style={{ width: SCREEN_WIDTH, padding: 10 }}>
+            {/* Header Row */}
+           
 
             {/* Paragraph */}
             {item.paragraph?.paragraphImgName && (

@@ -149,10 +149,10 @@ const StudentDashboardBookMarks = ({ studentId }) => {
             ]}
             onPress={() => setSelectedPortal(portal.portalId)}
           >
-            <Text style={[  
+            <Text style={[
               styles.portalButtontext,
               selectedPortal === portal.portalId && styles.activeButtontext,
-                            ]}>{portal.portalName}</Text>
+            ]}>{portal.portalName}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -176,7 +176,22 @@ const StudentDashboardBookMarks = ({ studentId }) => {
                         const currentQuestionNumber = questionCounter++;
                         return (
                           <View key={question.question_id} style={styles.questionBlock}>
-
+                            <View style={styles.questionHeader}>
+                              <Text>Question No: {currentQuestionNumber}</Text>
+                              <TouchableOpacity
+                                onPress={() =>
+                                  handleDelete(
+                                    studentId,
+                                    question.question_id,
+                                    test.BookMarkTid,
+                                    test.CourseId,
+                                    portal.portalId
+                                  )
+                                }
+                              >
+                                <Icon name="delete-forever" size={28} color="red" />
+                              </TouchableOpacity>
+                            </View>
                             {/* Question + Content Container with Scroll */}
                             <ScrollView
                               horizontal   // 👈 if you want left ↔ right scroll
@@ -186,22 +201,7 @@ const StudentDashboardBookMarks = ({ studentId }) => {
                             >
                               <View style={{ flexDirection: "column", paddingRight: 20 }}>
                                 {/* Question + Delete */}
-                                <View style={styles.questionHeader}>
-                                  <Text>Question No: {currentQuestionNumber}</Text>
-                                  <TouchableOpacity
-                                    onPress={() =>
-                                      handleDelete(
-                                        studentId,
-                                        question.question_id,
-                                        test.BookMarkTid,
-                                        test.CourseId,
-                                        portal.portalId
-                                      )
-                                    }
-                                  >
-                                    <Icon name="delete-forever" size={28} color="red" />
-                                  </TouchableOpacity>
-                                </View>
+
 
                                 {/* Paragraph */}
                                 {question.paragraph?.paragraphImgName && (

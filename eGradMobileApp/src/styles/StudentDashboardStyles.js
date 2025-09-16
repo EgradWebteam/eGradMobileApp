@@ -235,14 +235,14 @@ activeButtontext:{
   color:'#fff'
 },
   // my results
-  containerMyresults: {
+ containerMyresults: {
     padding: 16,
   },
   heading: {
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 16,
-    textAlign: "center" ,
+    textAlign: "center",
   },
   noResultsContainer: {
     alignItems: "center",
@@ -263,10 +263,14 @@ activeButtontext:{
     backgroundColor: "#f0f0f0",
     marginRight: 8,
   },
-  portalButtonActive: {
+  activeButton: {
     backgroundColor: "#007bff",
   },
-  portalButtonText: {
+  portalButtontext: {
+    color: "#333",
+    fontWeight: "bold",
+  },
+  activeButtontext: {
     color: "#fff",
     fontWeight: "bold",
   },
@@ -281,11 +285,8 @@ activeButtontext:{
     backgroundColor: "#e0e0e0",
     marginRight: 6,
   },
-  examButtonActive: {
-    backgroundColor: "#2196f3",
-  },
-  examButtonText: {
-    color: "#fff",
+  examButtontext: {
+    color: "#333",
     fontWeight: "bold",
   },
   resultsContainer: {
@@ -293,33 +294,62 @@ activeButtontext:{
   },
   resultCard: {
     borderWidth: 2,
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 12,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    elevation: 3,
   },
   testName: {
     fontSize: 16,
     fontWeight: "bold",
-    marginBottom: 8,
+    marginBottom: 12,
+    textAlign: "center",
   },
   resultRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 4,
+    marginBottom: 6,
   },
   resultRowText: {
     marginLeft: 8,
     fontSize: 14,
+    color: "#333",
   },
   viewReportButton: {
-    marginTop: 8,
-    paddingVertical: 10,
-    borderRadius: 6,
+    marginTop: 12,
+    paddingVertical: 12,
+    borderRadius: 8,
     alignItems: "center",
   },
   viewReportButtonText: {
     color: "#fff",
     fontWeight: "bold",
+  },
+
+  // 🔹 Specific Borders (use in dynamic styles)
+  chapterWiseResultsBorder: {
+    borderColor: "#976963",
+    backgroundColor: "#fdf7f7",
+  },
+  subjectWiseResultsBorder: {
+    borderColor: "#ac9563",
+    backgroundColor: "#faf8f3",
+  },
+  fullTestResultsBorder: {
+    borderColor: "#579b75",
+    backgroundColor: "#f2fdf5",
+  },
+  topicWiseResultsBorder: {
+    borderColor: "#5282ae",
+    backgroundColor: "#f3f9fd",
+  },
+  partTestResultsBorder: {
+    borderColor: "#ceccca",
+    backgroundColor: "#fcfcfc",
   },
 
 // Left side barrr
@@ -337,7 +367,7 @@ activeButtontext:{
     borderRadius: 5,
   },
   sidebar: {
-    width: 220,
+    width: 200,
     backgroundColor: "#f0f0f0",
     paddingVertical: 40,
   },
@@ -366,7 +396,8 @@ activeButtontext:{
     backgroundColor: '#09bffc',
   },
   lefticon: {
-    marginRight: 10,
+    // marginRight: 10,
+    margin:10,
   },
   label: {
     fontSize: 16,
