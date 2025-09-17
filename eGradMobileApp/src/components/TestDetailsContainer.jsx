@@ -77,10 +77,19 @@ const fetchCourseTests = useCallback(async () => {
 }, [courseId, studentId, processTestDetails,refreshTrigger]);
 
 
+  // useEffect(() => {
+  //   if (data) processTestDetails(data);
+  //   fetchCourseTests();
+  // }, [data, fetchCourseTests, processTestDetails]);
   useEffect(() => {
-    if (data) processTestDetails(data);
+  if (data) {
+    processTestDetails(data);
+    setLoading(false);
+  } else if (courseId) {
     fetchCourseTests();
-  }, [data, fetchCourseTests, processTestDetails]);
+  }
+}, [data, courseId, fetchCourseTests, processTestDetails]);
+
 
   const filterTestsBySubject = (tests) => {
     if (!selectedSubjectId) return tests;
