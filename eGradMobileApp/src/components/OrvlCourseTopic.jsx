@@ -209,8 +209,8 @@ const OrvlCourseTopic = ({
   };
 
   const handleClosePopup = async () => {
-    const isValid = await validateSession();
-    if (!isValid) return;
+    // const isValid = await validateSession();
+    // if (!isValid) return;
     setSelectedLecture(null);
     setSelectedExercise(null);
     setShowPopup(false);
