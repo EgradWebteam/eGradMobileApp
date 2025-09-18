@@ -19,6 +19,7 @@ import { RadioButton } from "react-native-paper";
 // const { width } = Dimensions.get("window");
 import ResponsiveImage from './OTSFolder/ResponsiveImage';
 import { backEndUrl } from "../apiConfig";
+import renderVideo from "./renderVideo";
 const Popup = ({
   visible,
   onClose,
@@ -550,11 +551,12 @@ useEffect(() => {
         )}  */}
       </View>
         ) : lecture ? (
-          <WebView
-            source={{ uri: getVideoEmbedUrl(lecture.lecture_video_link) }}
-            style={{ flex: 1 }}
-            allowsFullscreenVideo
-          />
+          // <WebView
+          //   source={{ uri: getVideoEmbedUrl(lecture.lecture_video_link) }}
+          //   style={{ flex: 1 }}
+          //   allowsFullscreenVideo
+          // />
+          renderVideo(lecture.lecture_video_link)
         ) : (
           <Text>No Data Available</Text>
         )}
@@ -633,7 +635,26 @@ useEffect(() => {
               </View>
             </View>
           </Modal>
+        )} */}
+        {solutionVisibility && (
+  <Modal visible transparent animationType="fade">
+    <View style={styles.solutionOverlay}>
+      <View style={styles.solutionContent}>
+        <TouchableOpacity onPress={() => setSolutionVisibility(null)}>
+          <Text style={styles.closeBtn}>✕</Text>
+        </TouchableOpacity>
+
+        {/* Use shared renderVideo utility */}
+        {solutionVideo && renderVideo(solutionVideo)}
+
+        {solutionImage && (
+          <ResponsiveImage uri={solutionImage} />
         )}
+      </View>
+    </View>
+  </Modal>
+)}
+
       </View>
     </Modal>
   );

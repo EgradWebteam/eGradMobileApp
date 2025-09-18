@@ -253,11 +253,37 @@ const SolutionsTab = ({
 
 
       {/* Questions */}
-      <FlatList
-        data={selectedSubjectSection?.questions || []}
-        keyExtractor={(item) => item.question_id.toString()}
-        renderItem={renderQuestion}
-      />
+     <FlatList
+  data={selectedSubjectSection?.questions || []}
+  keyExtractor={(item) => item.question_id.toString()}
+  renderItem={renderQuestion}
+/>
+
+{videoPopup && (
+  <Modal
+    visible
+    transparent={false}
+    onRequestClose={() => setVideoPopup(null)}
+  >
+    <View style={styles.modalContent}>
+      <TouchableOpacity
+        style={styles.closeBtn}
+        onPress={() => setVideoPopup(null)}
+      >
+        <Text style={{ fontSize: 18 }}>✖ Close</Text>
+      </TouchableOpacity>
+      <View style={{ backgroundColor: "#fff", height: Dimensions.get("window").height - 80 }}>
+        {renderVideo(
+          selectedSubjectSection.questions.find(
+            (q) => q.question_id === videoPopup
+          )?.solution?.video_solution_link
+        )}
+      </View>
+    </View>
+  </Modal>
+)}
+
+
     </View>
   );
 };
