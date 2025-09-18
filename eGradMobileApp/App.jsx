@@ -13,6 +13,7 @@ import TestScreen  from "./src/screen/TestScreen";
 import ExamInstructionsScreen  from "./src/screen/ExamInstructionsScreen";
 import GeneralInstructionsScreen from './src/screen/GeneralInstructionsScreen';
 import TermsAndConditions from './src/screen/TermsAndConditions';
+import StudyMaterial from './src/components/StudyMaterial';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -37,6 +38,7 @@ const App = () => {
           <Stack.Screen name="studentDashboard" component={StudentDashboard} />
           <Stack.Screen name="StudentReport" component={StudentReportMain} />
           <Stack.Screen name="TermsAndConditions" component={TermsAndConditions} />
+          <Stack.Screen name="StudyMaterial" component={StudyMaterial}/>
         </Stack.Navigator>
       </NavigationContainer>
       <Toast />
