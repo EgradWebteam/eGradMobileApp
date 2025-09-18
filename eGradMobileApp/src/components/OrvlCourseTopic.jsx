@@ -374,8 +374,24 @@ export default OrvlCourseTopic;
 // ------------------------ STYLES ------------------------
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 10, backgroundColor: "#fff" },
-  goBackBtn: { marginBottom: 10 },
-  goBackText: { color: "#007bff", fontSize: 16 },
+  goBackBtn: {  
+    backgroundColor: "#028a0f",
+  paddingVertical: 10,
+  paddingHorizontal: 16,
+  borderRadius: 8,
+  alignSelf: "flex-end",  
+  marginBottom: 16,
+  shadowColor: "#000",
+  shadowOpacity: 0.1,
+  shadowRadius: 4,
+  shadowOffset: { width: 0, height: 2 },
+  elevation: 3,
+},
+  goBackText: {
+     color: "#fff",
+  fontWeight: "600",
+  fontSize: 14,
+    },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
