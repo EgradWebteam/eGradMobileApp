@@ -159,147 +159,169 @@ const StudentDashboardBookMarks = ({ studentId }) => {
 
       {loading ? (
         <ActivityIndicator size="large" style={{ marginTop: 20 }} />
-      ) : filteredTests.length > 0 ? (
-        <ScrollView style={styles.scrollContent}>
-          {filteredTests.map((portal) =>
-            portal.tests.map((test) => {
-              let questionCounter = 1;
-              return (
-                <View key={test.TestId} style={styles.testBlock}>
-                  <Text style={styles.testTitle}>
-                    {test.CourseName} - {test.TestName}
-                  </Text>
+      ) :
+        filteredTests.length > 0 ? (
+          <ScrollView style={styles.scrollContent}>
+            {filteredTests.map((portal, portalIndex) =>
+              portal.tests.map((test, testIndex) => {
+                let questionCounter = 1;
+                return (
+                  <View
+                    key={`portal-${portal.portalId}-test-${test.TestId}-${testIndex}`}
+                    style={styles.testBlock}
+                  >
+                    <Text style={styles.testTitle}>
+                      {test.CourseName} - {test.TestName}
+                    </Text>
 
-                  {test.subjects?.map((subject) =>
-                    subject.sections.map((section) =>
-                      section.questions.map((question) => {
-                        const currentQuestionNumber = questionCounter++;
-                        return (
-                          <View key={question.question_id} style={styles.questionBlock}>
-                            <View style={styles.questionHeader}>
-                              <Text>Question No: {currentQuestionNumber}</Text>
-                              <TouchableOpacity
-                                onPress={() =>
-                                  handleDelete(
-                                    studentId,
-                                    question.question_id,
-                                    test.BookMarkTid,
-                                    test.CourseId,
-                                    portal.portalId
-                                  )
-                                }
-                              >
-                                <Icon name="delete-forever" size={28} color="red" />
-                              </TouchableOpacity>
-                            </View>
-                            {/* Question + Content Container with Scroll */}
-                            <ScrollView
-                              horizontal   // 👈 if you want left ↔ right scroll
-                              showsHorizontalScrollIndicator={true}
-                              nestedScrollEnabled={true}
-                              style={{ marginBottom: 10 }}
+                    {test.subjects?.map((subject, subjIndex) =>
+                      subject.sections.map((section, secIndex) =>
+                        section.questions.map((question, qIndex) => {
+                          const currentQuestionNumber = questionCounter++;
+                          return (
+                            <View
+                              key={`test-${test.TestId}-subj-${subjIndex}-sec-${secIndex}-q-${question.question_id}-${qIndex}`}
+                              style={styles.questionBlock}
                             >
-                              <View style={{ flexDirection: "column", paddingRight: 20 }}>
-                                {/* Question + Delete */}
-
-
-                                {/* Paragraph */}
-                                {question.paragraph?.paragraphImgName && (
-                                  <View style={styles.paragraphContainer}>
-                                    <Text style={styles.paragraphTag}>Paragraph:</Text>
-                                    <AutoSizedImage
-                                      uri={question.paragraph.paragraphImgName}
-                                      style={styles.paragraphImage}
-                                    />
-                                  </View>
-                                )}
-
-                                {/* Question Image */}
-                                {question.questionImgName && (
-                                  <AutoSizedImage uri={question.questionImgName} style={styles.image} />
-                                )}
-
-                                {/* Options */}
-                                {question.options
-                                  .sort((a, b) => a.option_index.localeCompare(b.option_index))
-                                  .map((option) => (
-                                    <View key={option.option_id} style={styles.optionRow}>
-                                      <Text>({option.option_index})</Text>
-                                      <AutoSizedImage
-                                        uri={option.optionImgName}
-                                        style={styles.optionImage}
-                                      />
-                                    </View>
-                                  ))}
+                              <View style={styles.questionHeader}>
+                                <Text>Question No: {currentQuestionNumber}</Text>
+                                <TouchableOpacity
+                                  onPress={() =>
+                                    handleDelete(
+                                      studentId,
+                                      question.question_id,
+                                      test.BookMarkTid,
+                                      test.CourseId,
+                                      portal.portalId
+                                    )
+                                  }
+                                >
+                                  <Icon name="delete-forever" size={28} color="red" />
+                                </TouchableOpacity>
                               </View>
-                            </ScrollView>
 
-                            {/* Solution buttons */}
-                            <View style={styles.solutionButtons}>
-                              {question.solution?.solutionImgName && (
-                                <TouchableOpacity
-                                  style={styles.solutionBtn}
-                                  onPress={() => toggleSolution(question.question_id)}
-                                >
-                                  <Text style={styles.solutionBtnText}>
-                                    {visibleSolutions[question.question_id]
-                                      ? "Hide Solution"
-                                      : "View Solution"}
-                                  </Text>
-                                </TouchableOpacity>
-                              )}
-                              {question.solution?.video_solution_link && (
-                                <TouchableOpacity
-                                  style={styles.solutionBtn}
-                                  onPress={() => setVideoPopup(question.question_id)}
-                                >
-                                  <Text style={styles.solutionBtnText}>
-                                    View Video Solution
-                                  </Text>
-                                </TouchableOpacity>
-                              )}
-                            </View>
-
-                            {/* Image Solution */}
-                            {visibleSolutions[question.question_id] && (
+                              {/* Question + Content Container with Scroll */}
                               <ScrollView
                                 horizontal
                                 showsHorizontalScrollIndicator={true}
                                 nestedScrollEnabled={true}
-                                style={{ marginTop: 10 }}
+                                style={{ marginBottom: 10 }}
                               >
-                                <AutoSizedImage
-                                  uri={question.solution.solutionImgName}
-                                  style={styles.solutionImage}
-                                />
-                              </ScrollView>
-                            )}
+                                <View style={{ flexDirection: "column", paddingRight: 20 }}>
+                                  {/* Paragraph */}
+                                  {question.paragraph?.paragraphImgName && (
+                                    <View style={styles.paragraphContainer}>
+                                      <Text style={styles.paragraphTag}>Paragraph:</Text>
+                                      <AutoSizedImage
+                                        uri={question.paragraph.paragraphImgName}
+                                        style={styles.paragraphImage}
+                                      />
+                                    </View>
+                                  )}
 
-                            {videoPopup === question.question_id && (
-                              <Modal visible transparent={false} onRequestClose={() => setVideoPopup(null)}>
-                                <View style={styles.modalContent}>
-                                  <TouchableOpacity style={styles.closeBtn} onPress={() => setVideoPopup(null)}>
-                                    <Text style={{ fontSize: 18 }}>✖ Close</Text>
-                                  </TouchableOpacity>
-                                  <View style={{ backgroundColor: "#fff", height: height - 80 }} >
-                                    {renderVideo(question.solution.video_solution_link)}
-                                  </View>
+                                  {/* Question Image */}
+                                  {question.questionImgName && (
+                                    <AutoSizedImage
+                                      uri={question.questionImgName}
+                                      style={styles.image}
+                                    />
+                                  )}
+
+                                  {/* Options */}
+                                  {question.options
+                                    .sort((a, b) =>
+                                      a.option_index.localeCompare(b.option_index)
+                                    )
+                                    .map((option, optIndex) => (
+                                      <View
+                                        key={`q-${question.question_id}-opt-${option.option_id}-${optIndex}`}
+                                        style={styles.optionRow}
+                                      >
+                                        <Text>({option.option_index})</Text>
+                                        <AutoSizedImage
+                                          uri={option.optionImgName}
+                                          style={styles.optionImage}
+                                        />
+                                      </View>
+                                    ))}
                                 </View>
-                              </Modal>
-                            )}
-                          </View>
-                        );
-                      })
-                    )
-                  )}
-                </View>
-              );
-            })
-          )}
-        </ScrollView>
-      ) : (
-        <Text style={styles.emptyMsg}>You haven't bookmarked anything yet!</Text>
-      )}
+                              </ScrollView>
+
+                              {/* Solution buttons */}
+                              <View style={styles.solutionButtons}>
+                                {question.solution?.solutionImgName && (
+                                  <TouchableOpacity
+                                    style={styles.solutionBtn}
+                                    onPress={() => toggleSolution(question.question_id)}
+                                  >
+                                    <Text style={styles.solutionBtnText}>
+                                      {visibleSolutions[question.question_id]
+                                        ? "Hide Solution"
+                                        : "View Solution"}
+                                    </Text>
+                                  </TouchableOpacity>
+                                )}
+                                {question.solution?.video_solution_link && (
+                                  <TouchableOpacity
+                                    style={styles.solutionBtn}
+                                    onPress={() => setVideoPopup(question.question_id)}
+                                  >
+                                    <Text style={styles.solutionBtnText}>
+                                      View Video Solution
+                                    </Text>
+                                  </TouchableOpacity>
+                                )}
+                              </View>
+
+                              {/* Image Solution */}
+                              {visibleSolutions[question.question_id] && (
+                                <ScrollView
+                                  horizontal
+                                  showsHorizontalScrollIndicator={true}
+                                  nestedScrollEnabled={true}
+                                  style={{ marginTop: 10 }}
+                                >
+                                  <AutoSizedImage
+                                    uri={question.solution.solutionImgName}
+                                    style={styles.solutionImage}
+                                  />
+                                </ScrollView>
+                              )}
+
+                              {videoPopup === question.question_id && (
+                                <Modal
+                                  visible
+                                  transparent={false}
+                                  onRequestClose={() => setVideoPopup(null)}
+                                >
+                                  <View style={styles.modalContent}>
+                                    <TouchableOpacity
+                                      style={styles.closeBtn}
+                                      onPress={() => setVideoPopup(null)}
+                                    >
+                                      <Text style={{ fontSize: 18 }}>✖ Close</Text>
+                                    </TouchableOpacity>
+                                    <View
+                                      style={{ backgroundColor: "#fff", height: height - 80 }}
+                                    >
+                                      {renderVideo(question.solution.video_solution_link)}
+                                    </View>
+                                  </View>
+                                </Modal>
+                              )}
+                            </View>
+                          );
+                        })
+                      )
+                    )}
+                  </View>
+                );
+              })
+            )}
+          </ScrollView>
+        ) : (
+          <Text style={styles.emptyMsg}>You haven't bookmarked anything yet!</Text>
+        )}
     </View>
   );
 };

@@ -58,16 +58,16 @@ const CourseCards = React.memo(({
 
   return (
     <View style={styles.cardContainer}>
-    
-        <View style={[styles.card, getBorderColor(courseTypeId)]}>
-          <View style={[styles.cardHeader, getBackgroundColor(courseTypeId)]}>
-            <Text style={styles.cardTitle}>{title}</Text>
-          </View>
 
-          <View style={styles.imageContainer}>
-            <Image source={{ uri: cardImage }} style={styles.image} resizeMode="cover" />
-          </View>
-  {showBuySection ? (
+      <View style={[styles.card, getBorderColor(courseTypeId)]}>
+        <View style={[styles.cardHeader, getBackgroundColor(courseTypeId)]}>
+          <Text style={styles.cardTitle}>{title}</Text>
+        </View>
+
+        <View style={styles.imageContainer}>
+          <Image source={{ uri: cardImage }} style={styles.image} resizeMode="cover" />
+        </View>
+        {showBuySection ? (
           <View style={styles.detailsContainer}>
             {portalId === 1 ? (
               <>
@@ -83,7 +83,9 @@ const CourseCards = React.memo(({
                     {originalPrice && <Text style={styles.strikeThrough}> ₹{originalPrice}</Text>}
                   </Text>
                 </View>
-
+                <Text style={styles.note}>
+                  *Includes instant performance feedback, rank analysis, image and video solutions.
+                </Text>
                 <TouchableOpacity
                   style={[styles.button, getBackgroundColor(courseTypeId)]}
                   onPress={() => onBuy(price)}
@@ -91,9 +93,7 @@ const CourseCards = React.memo(({
                   <Text style={styles.buttonText}>{isUpgrade ? 'Upgrade' : 'Buy Now'}</Text>
                 </TouchableOpacity>
 
-                <Text style={styles.note}>
-                  *Includes instant performance feedback, rank analysis, image and video solutions.
-                </Text>
+
               </>
             ) : (
               <>
@@ -114,7 +114,9 @@ const CourseCards = React.memo(({
                     {originalPrice && <Text style={styles.strikeThrough}> ₹{originalPrice}</Text>}
                   </Text>
                 </View>
-
+                <Text style={styles.note}>
+                  *Includes tests, study materials, instant reports, and video solutions.
+                </Text>
                 <TouchableOpacity
                   style={[styles.button, getBackgroundColor(courseTypeId)]}
                   onPress={() => onBuy(price)}
@@ -122,20 +124,18 @@ const CourseCards = React.memo(({
                   <Text style={styles.buttonText}>{isUpgrade ? 'Upgrade' : 'Buy Now'}</Text>
                 </TouchableOpacity>
 
-                <Text style={styles.note}>
-                  *Includes tests, study materials, instant reports, and video solutions.
-                </Text>
+
               </>
             )}
           </View>
-  ):showGoToTestSection ? (
+        ) : showGoToTestSection ? (
 
           <TouchableOpacity style={[styles.button, styles.fullTestBg]} onPress={onGoToTest}>
             <Text style={styles.buttonText}>{testButtonLabel}</Text>
           </TouchableOpacity>
-       
-      ) : null}
-    </View></View>
+
+        ) : null}
+      </View></View>
   );
 });
 
@@ -165,14 +165,14 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     alignItems: 'center',
-  justifyContent:'center',
+    justifyContent: 'center',
     marginVertical: 10,
   },
   image: {
     width: 200,
     height: 200,
-      alignItems: 'center',
-  justifyContent:'center',
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 8,
   },
   detailsContainer: {
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
   // Border Colors
   fullTestBorder: {
     borderColor: '#579b75',
-   
+
   },
   subjectWiseBorder: {
     borderColor: '#ac9563',
