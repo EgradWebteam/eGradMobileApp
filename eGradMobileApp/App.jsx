@@ -25,6 +25,8 @@ const App = () => {
             headerShown: false,
           }}
         >
+
+          
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="ExamInstructions" component={ExamInstructionsScreen} />
           <Stack.Screen name="GeneralInstructions" component={GeneralInstructionsScreen} />
