@@ -7,16 +7,23 @@ import {
     Image,
     StyleSheet,
 } from "react-native";
-
+import { useNavigation } from "@react-navigation/native";
+import { encryptBatch } from "../utils/CryptoUtils";
 import videoIcon from "../assets/video.png";
 import exerciseIcon from "../assets/excercise.png";
 import pdfIcon from "../assets/pdf.png";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const LectureExerciseListNative = ({
+const LectureExerciseList = ({
     lectures,
     onLectureClick,
     onExerciseClick,
     StudyMaterial,
+    topicid,
+    chapter_id,
+    chapter_name,
+    study_material_id,
+    chapter_study_material_pdf_count
 }) => {
     const formatVideoTime = (seconds) => {
         const h = Math.floor(seconds / 3600);
@@ -27,9 +34,35 @@ const LectureExerciseListNative = ({
             : `${m}:${String(s).padStart(2, "0")}`;
     };
 
-    const handleOpenPdf = (pdfFile) => {
-        alert(`Open PDF: ${pdfFile}`);
-    };
+const navigation = useNavigation();
+
+  const handleOpenPdf = async (fileName, topicId, studyMaterialId, chapterId) => {
+    // const isValid = await validateSession();
+    // if (!isValid) return;
+console.log("open pdfff firedddddd");
+console.log("ids from open pdfff",topicId,chapterId,studyMaterialId,fileName)
+   let localStorageUserId = null;
+try {
+  localStorageUserId = await AsyncStorage.getItem("userId");
+  console.log("local storage user idddd", localStorageUserId);
+} catch (err) {
+  console.error("❌ Failed to get userId from AsyncStorage:", err);
+}
+
+    // 🔐 Encrypt params
+    const [et, es, ec] = await encryptBatch([
+      topicId,
+      studyMaterialId,
+      chapterId,
+    ]);
+    
+
+    // Build query params like web
+    const params = { et, es, ec, userId: localStorageUserId, fileUrl: fileName };
+
+    // Navigate to StudyMaterial screen and pass params
+    navigation.navigate("StudyMaterial", params);
+  };
 
     return (
         <ScrollView style={styles.container}>
@@ -83,7 +116,12 @@ const LectureExerciseListNative = ({
                                 <Text>{pdf.study_material_pdf.split("/").pop()}</Text>
                                 <TouchableOpacity
                                     style={styles.startButtonDoc}
-                                    onPress={() => handleOpenPdf(pdf.study_material_pdf)}
+                                    onPress={() =>   handleOpenPdf(
+                              pdf.study_material_pdf,
+                              topicid,
+                              pdf.study_material_id,
+                              chapter_id
+                            )}
                                 >
                                     <Text style={styles.buttonText}>Open Document</Text>
                                 </TouchableOpacity>
@@ -111,7 +149,12 @@ const LectureExerciseListNative = ({
                             </Text>
                             <TouchableOpacity
                                 style={styles.startButtonDoc}
-                                onPress={() => handleOpenPdf(material.study_material_pdf)}
+                                onPress={() =>   handleOpenPdf(
+                              material.study_material_pdf,
+                              topicid,
+                              material.study_material_id,
+                              chapter_id
+                            )}
                             >
                                 <Text style={styles.buttonText}>Open Document</Text>
                             </TouchableOpacity>
@@ -123,7 +166,7 @@ const LectureExerciseListNative = ({
     );
 };
 
-export default LectureExerciseListNative;
+export default LectureExerciseList;
 
 const styles = StyleSheet.create({
     container: { flex: 1, padding: 10 },
