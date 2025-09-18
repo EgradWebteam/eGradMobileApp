@@ -1,26 +1,24 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  StyleSheet,
   Alert
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { useSession } from '../StudentDashboard/hooks/SessionContext';
- import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig";
+import axios from 'axios';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
 import CourseCards from './CourseCards';
 import BundleCourseCard from './BundleCourseCard';
 import TestDetailsContainer from './TestDetailsContainer';
 import BundleCourseContainer from './BundleCourseContainer';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import PracticeQuestionBank from './PracticeQuestionBank';
+import { backEndUrl } from '../apiConfig';
 import { styles } from '../styles/StudentDashboardStyles';
-// OR
-// import Icon from 'react-native-vector-icons/Feather';
 
-import axios from 'axios';
 const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
   const [loading, setLoading] = useState(true);
   const [selectedTestCourse, setSelectedTestCourse] = useState(null);
@@ -33,122 +31,86 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
   const [selectedExamId, setSelectedExamId] = useState(null);
   const [chapterdetails, setChapterdetails] = useState(null);
 
-//   const { validateSession } = useSession();
-console.log("user dataa my coursesssssss",userData);
+  // Fetch purchased courses
   useEffect(() => {
-    const fetchStorageData = async () => {
+    const fetchPurchasedCourses = async () => {
+      setLoading(true);
       try {
-        const allKeys = await AsyncStorage.getAllKeys();
-        const allItems = await AsyncStorage.multiGet(allKeys);
-
-        const storageObject = {};
-        allItems.forEach(([key, value]) => {
-          storageObject[key] = value;
+        const token = await AsyncStorage.getItem('accessToken');
+        const res = await axios.get(`${backEndUrl}/studentmycourses/PurchasedCourses/${studentId}`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
-
-        console.log("📦 AsyncStorage Contents:", storageObject);
-      } catch (error) {
-        console.error('Error fetching AsyncStorage data:', error);
+        const data = res.data;
+        setPortals(data || []);
+        if (data.length > 0) {
+          const defaultPortal = data[0];
+          const defaultExam = defaultPortal.exams[0];
+          setSelectedPortalId(defaultPortal.course_portal_id);
+          setSelectedExamId(defaultExam?.exam_id || null);
+        }
+      } catch (err) {
+        console.error('Error fetching courses:', err);
+        Alert.alert('Error', 'Failed to fetch courses');
+      } finally {
+        setLoading(false);
       }
     };
+    if (studentId) fetchPurchasedCourses();
+  }, [studentId]);
 
-    fetchStorageData();
-  }, []);
-useEffect(() => {
-  const fetchPurchasedCourses = async () => {
-    setLoading(true);
-    try {
-      const token = await AsyncStorage.getItem("accessToken");
-      const res = await axios.get(`${backEndUrl}/studentmycourses/PurchasedCourses/${studentId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = res.data;
-      setPortals(data || []);
-      if (data.length > 0) {
-        const defaultPortal = data[0];
-        const defaultExam = defaultPortal.exams[0];
-        setSelectedPortalId(defaultPortal.course_portal_id);
-        setSelectedExamId(defaultExam?.exam_id || null);
-      }
-    } catch (err) {
-      console.error("Error fetching courses:", err);
-      Alert.alert("Error", "Failed to fetch courses");
-    } finally {
-      setLoading(false);
-    }
-  };
-  if (studentId) {
-    fetchPurchasedCourses();
-  }
-}, [studentId]);
-
-  const selectedPortal = useMemo(() => {
-    return portals.find(p => p.course_portal_id === selectedPortalId);
-  }, [portals, selectedPortalId]);
-
-  const selectedExam = useMemo(() => {
-    return selectedPortal?.exams.find(e => e.exam_id === selectedExamId);
-  }, [selectedPortal, selectedExamId]);
-
-  const filteredCourses = useMemo(() => {
-    return selectedExam?.courses || [];
-  }, [selectedExam]);
-// console.log(selectedTestCourse ,
-        // courseContainer , courseIds.length)
-  const handleGoToTest = async (course) => {
-    // const isValid = await validateSession();
-    // if (!isValid) return;
-// console.log(selectedTestCourse ,
-        // courseContainer , courseIds.length,course)
-        console.log(course);
- setSelectedTestCourse(course);
-  setShowQuizContainer(false);
-  setShowTestContainer(selectedPortalId === 1);
-  setCourseContainer(selectedPortalId === 2);
-
-  try {
-    await AsyncStorage.setItem(
-      'studentDashboardState',
-      JSON.stringify({
-        activeSection: 'myCourses',
-        selectedTestCourse: course,
-        selectedPortalId,
-        showQuizContainer: false,
-        showTestContainer: selectedPortalId === 1,
-        courseContainer: selectedPortalId === 2,
-        selectedExamId
-      })
-    );
-  } catch (error) {
-    console.error('Failed to save dashboard state:', error);
-  }
-  };
-useEffect(() => {
-  const restoreDashboardState = async () => {
-    try {
-      const savedState = await AsyncStorage.getItem('studentDashboardState');
-      if (savedState) {
-        const parsed = JSON.parse(savedState);
-        if (parsed.activeSection === 'myCourses') {
-          setSelectedTestCourse(parsed.selectedTestCourse || null);
-          setShowQuizContainer(parsed.showQuizContainer ?? true);
-          setShowTestContainer(parsed.showTestContainer ?? false);
-        //   setShowTopicContainer(parsed.showTopicContainer ?? false);
-        //   setTopicId(parsed.topicId || '');
-          setSelectedPortalId(parsed.selectedPortalId || null);
-          setCourseIds(parsed.selectedTestCourse || []); // <- You might want course IDs here, not selectedTestCourse
-          setSelectedExamId(parsed.selectedExamId || null);
-          setCourseContainer(parsed.courseContainer ?? false);
-        //   setOpenCourseOrvl(parsed.openCourseOrvl ?? false);
+  // Restore state
+  useEffect(() => {
+    const restoreDashboardState = async () => {
+      try {
+        const savedState = await AsyncStorage.getItem('studentDashboardState');
+        if (savedState) {
+          const parsed = JSON.parse(savedState);
+          if (parsed.activeSection === 'myCourses') {
+            setSelectedTestCourse(parsed.selectedTestCourse || null);
+            setShowQuizContainer(parsed.showQuizContainer ?? true);
+            setShowTestContainer(parsed.showTestContainer ?? false);
+            setSelectedPortalId(parsed.selectedPortalId || null);
+            setCourseIds(parsed.courseIds || []); // fixed from selectedTestCourse
+            setSelectedExamId(parsed.selectedExamId || null);
+            setCourseContainer(parsed.courseContainer ?? false);
+          }
         }
+      } catch (err) {
+        console.error('Failed to restore dashboard state:', err);
       }
-    } catch (err) {
-      console.error('Failed to parse studentDashboardState on restore:', err);
+    };
+    restoreDashboardState();
+  }, []);
+
+  const selectedPortal = useMemo(() => portals.find(p => p.course_portal_id === selectedPortalId), [portals, selectedPortalId]);
+  const selectedExam = useMemo(() => selectedPortal?.exams.find(e => e.exam_id === selectedExamId), [selectedPortal, selectedExamId]);
+  const filteredCourses = useMemo(() => selectedExam?.courses || [], [selectedExam]);
+
+  const handleGoToTest = async (course) => {
+    setSelectedTestCourse(course);
+    setShowQuizContainer(false);
+    setShowTestContainer(selectedPortalId === 1);
+    setCourseContainer(selectedPortalId === 2);
+
+    try {
+      await AsyncStorage.setItem(
+        'studentDashboardState',
+        JSON.stringify({
+          activeSection: 'myCourses',
+          selectedTestCourse: course,
+          selectedPortalId,
+          showQuizContainer: false,
+          showTestContainer: selectedPortalId === 1,
+          courseContainer: selectedPortalId === 2,
+          selectedExamId,
+          courseIds
+        })
+      );
+    } catch (error) {
+      console.error('Failed to save dashboard state:', error);
     }
   };
 
-  restoreDashboardState();
-}, []);
   const handleBackToCourses = () => {
     setSelectedTestCourse(null);
     setShowQuizContainer(true);
@@ -158,13 +120,13 @@ useEffect(() => {
 
   return (
     <ScrollView style={styles.containerMyCourses}>
-      {/* Breadcrumb Navigation */}
+      {/* Breadcrumb */}
       {(!showQuizContainer || selectedTestCourse) && (
         <View style={styles.breadcrumb}>
           <Text style={styles.breadcrumbText}>My Courses</Text>
           {selectedExam && (
             <>
-              <Text>   <Icon name="chevron-right" size={16} color="#000" style={styles.icon} /> </Text>
+              <Text> <Icon name="chevron-right" size={16} color="#000" /> </Text>
               <TouchableOpacity onPress={handleBackToCourses}>
                 <Text style={styles.breadcrumbText}>{selectedExam.exam_name}</Text>
               </TouchableOpacity>
@@ -172,8 +134,8 @@ useEffect(() => {
           )}
           {selectedTestCourse && (
             <>
-              <Text>   <Icon name="chevron-right" size={16} color="#000" style={styles.icon} /> </Text>
-              <Text style={styles.breadcrumbText}>{selectedTestCourse.course_name || "MINI / MICRO COURSES"}</Text>
+              <Text> <Icon name="chevron-right" size={16} color="#000" /> </Text>
+              <Text style={styles.breadcrumbText}>{selectedTestCourse.course_name || 'MINI / MICRO COURSES'}</Text>
             </>
           )}
         </View>
@@ -183,42 +145,34 @@ useEffect(() => {
       {showQuizContainer && (
         <>
           <Text style={styles.heading}>My Courses</Text>
-          <ScrollView horizontal  style={styles.portalButtons}>
+          <ScrollView horizontal style={styles.portalButtons}>
             {portals.map((portal) => (
               <TouchableOpacity
                 key={portal.course_portal_id}
-                style={[
-                  styles.portalButton,
-                  selectedPortalId === portal.course_portal_id && styles.activeButton,
-                ]}
+                style={[styles.portalButton, selectedPortalId === portal.course_portal_id && styles.activeButton]}
                 onPress={() => {
                   setSelectedPortalId(portal.course_portal_id);
                   setSelectedExamId(portal.exams[0]?.exam_id || null);
                 }}
               >
-                <Text style={[
-                  styles.portalButtontext,
-                  selectedPortalId === portal.course_portal_id && styles.activeButtontext,
-                ]}>{portal.portal_name}</Text>
+                <Text style={[styles.portalButtontext, selectedPortalId === portal.course_portal_id && styles.activeButtontext]}>
+                  {portal.portal_name}
+                </Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
 
           {/* Exam Selector */}
-          <ScrollView horizontal  style={styles.examButtons}>
+          <ScrollView horizontal style={styles.examButtons}>
             {selectedPortal?.exams.map((exam) => (
               <TouchableOpacity
                 key={exam.exam_id}
-                style={[
-                  styles.examButton,
-                  selectedExamId === exam.exam_id && styles.activeButton,
-                ]}
+                style={[styles.examButton, selectedExamId === exam.exam_id && styles.activeButton]}
                 onPress={() => setSelectedExamId(exam.exam_id)}
               >
-                <Text style={[
-                  styles.examButtontext,
-                  selectedExamId === exam.exam_id && styles.activeButtontext,
-                ]}>{exam.exam_name}</Text>
+                <Text style={[styles.examButtontext, selectedExamId === exam.exam_id && styles.activeButtontext]}>
+                  {exam.exam_name}
+                </Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -233,29 +187,26 @@ useEffect(() => {
               exam_id={selectedExam.exam_id}
               exam_name={selectedExam.exam_name}
               studentId={studentId}
-              Portal2data={{
-                courses: selectedExam.courses,
-              }}
+              Portal2data={{ courses: selectedExam.courses }}
               setCourseIds={setCourseIds}
-              onGoToCourse={(course) => handleGoToTest(course)}
+              onGoToCourse={handleGoToTest}
             />
           ) : (
-             filteredCourses.map((course) => (
-             <CourseCards
+            filteredCourses.map((course) => (
+              <CourseCards
                 key={course.course_id}
                 cardImage={course.course_img}
-
                 title={course.course_name}
                 context="myCourses"
                 actionLabel="Go to Test"
                 onGoToTest={() => handleGoToTest(course)}
-            />
-          ))
-        )}
-      </>
-    )}
+              />
+            ))
+          )}
+        </>
+      )}
 
-      {/* Test / Bundle Container */}
+      {/* Test / Bundle / PQB Container */}
       {selectedTestCourse && (
         courseContainer && courseIds.length > 0 ? (
           <BundleCourseContainer
@@ -268,7 +219,7 @@ useEffect(() => {
             courseIds={courseIds}
             onBack={handleBackToCourses}
           />
-        ) : (
+        ) : selectedPortalId === 1 ? (
           <TestDetailsContainer
             course={selectedTestCourse}
             studentId={studentId}
@@ -276,11 +227,19 @@ useEffect(() => {
             selectedPortalId={selectedPortalId}
             onBack={handleBackToCourses}
           />
+        ) : (
+          <PracticeQuestionBank
+            course={selectedTestCourse}
+            studentId={studentId}
+            userData={userData}
+            selectedPortalId={selectedPortalId}
+            selectedExam={selectedExam}
+            onBack={handleBackToCourses}
+          />
         )
       )}
     </ScrollView>
   );
 };
-
 
 export default StudentDashboardMyCourses;
