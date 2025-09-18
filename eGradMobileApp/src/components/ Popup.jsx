@@ -395,7 +395,7 @@ useEffect(() => {
               <CheckBox
                 value={selectedOptions.includes(option.option_index)}
                 onValueChange={() =>
-                  handleMultiSelect(option.option_index)
+                  handleOptionChange(option.option_index)
                 }
                 disabled={answerDisabled}
               />
