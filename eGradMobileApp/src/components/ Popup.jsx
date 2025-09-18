@@ -42,14 +42,14 @@ const Popup = ({
   setAnswerDisabled,
   feedback,
   setFeedback,
-  solutionVideo,
+   solutionVideo,
   solutionImage,
   previousLectureOrExercise,
   nextLectureOrExercise,
 }) => {
   // const [isMobile, setIsMobile] = useState(width <= 768);
   // const [showPalette, setShowPalette] = useState(width > 768);
-  const [solutionTypes, setSolutionTypes] = useState({});
+ const [solutionTypes, setSolutionTypes] = useState({});
   const [solutionVisibility, setSolutionVisibility] = useState(null);
   const [cursorPosition, setCursorPosition] = useState(0);
   const inputRef = useRef(null);
@@ -244,6 +244,14 @@ const Popup = ({
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
       <View style={styles.container}>
         {/* Header */}
+        <View style={styles.navBtns}>
+         <TouchableOpacity
+          style={styles.navBtn}
+          onPress={previousLectureOrExercise}
+        >
+          <Text style={styles.navBtnText}>Previous</Text>
+        </TouchableOpacity>
+        <View style={styles.MainContainerExcercise}>
         <View style={styles.header}>
           <Text style={styles.title}>
             {exercise ? exercise.exercise_name : lecture?.orvl_lecture_name}
@@ -254,12 +262,7 @@ const Popup = ({
 
         </View>
 
-        <TouchableOpacity
-          style={styles.navBtn}
-          onPress={previousLectureOrExercise}
-        >
-          <Text style={styles.navBtnText}>Previous</Text>
-        </TouchableOpacity>
+       
         {/* Content */}
         {exercise && exercise.questions?.length > 0 ? (
           <View style={styles.slideshow}>
@@ -485,18 +488,25 @@ const Popup = ({
                   </TouchableOpacity>
                 )}
 
-                {answerDisabled && (
-                  <TouchableOpacity
-                    style={styles.btn}
-                    onPress={async () => {
-                      // const isValid = await validateSession();
-                      // if (!isValid) return;
-                      setSolutionVisibility(currentQuestion.exercise_question_id);
-                    }}
-                  >
-                    <Text style={styles.btnText}>View Solution</Text>
-                  </TouchableOpacity>
-                )}
+  {answerDisabled && (
+    <TouchableOpacity
+      style={styles.btn}
+      onPress={async () => {
+        // const isValid = await validateSession();
+        // if (!isValid) return;
+         setSolutionVisibility(
+                            currentQuestion.exercise_question_id
+                          );
+                          setSolutionTypes((prev) => ({
+                            ...prev,
+                            [currentQuestion.exercise_question_id]:
+                              solutionVideo ? "video" : "image",
+                          }));
+      }}
+    >
+      <Text style={styles.btnText}>View Solution</Text>
+    </TouchableOpacity>
+  )}
 
                 {currentQuestionIndex < exercise.questions.length - 1 && (
                   <TouchableOpacity
@@ -544,28 +554,74 @@ const Popup = ({
         ) : (
           <Text>No Data Available</Text>
         )}
-        <TouchableOpacity
+
+        </View>
+         <TouchableOpacity
           style={styles.navBtn}
           onPress={nextLectureOrExercise}
         >
           <Text style={styles.navBtnText}>Next</Text>
         </TouchableOpacity>
+        </View>
         {/* Solution Modal */}
-        {/* {solutionVisibility && (
+        {exercise &&
+        currentQuestion &&
+        solutionVisibility === currentQuestion.exercise_question_id  && (
           <Modal visible transparent animationType="fade">
             <View style={styles.solutionOverlay}>
               <View style={styles.solutionContent}>
                 <TouchableOpacity onPress={() => setSolutionVisibility(null)}>
                   <Text style={styles.closeBtn}>✕</Text>
                 </TouchableOpacity>
+<View style={styles.navigationButtons}>
+  
+  {solutionVideo && (
+    <TouchableOpacity
+      style={[
+        styles.button,
+        solutionTypes[currentQuestion.exercise_question_id] === "video" &&
+          styles.activeButton,
+      ]}
+      onPress={() =>
+        setSolutionTypes((prev) => ({
+          ...prev,
+          [currentQuestion.exercise_question_id]: "video",
+        }))
+      }
+    >
+      <Text style={styles.buttonText}>Video Solution</Text>
+    </TouchableOpacity>
+  )}
 
-                {solutionVideo && (
+  {solutionImage && (
+    <TouchableOpacity
+      style={[
+        styles.button,
+        solutionTypes[currentQuestion.exercise_question_id] === "image" &&
+          styles.activeButton,
+      ]}
+      onPress={() =>
+        setSolutionTypes((prev) => ({
+          ...prev,
+          [currentQuestion.exercise_question_id]: "image",
+        }))
+      }
+    >
+      <Text style={styles.buttonText}>Image Solution</Text>
+    </TouchableOpacity>
+  )}
+</View>
+
+
+                {solutionTypes[currentQuestion.exercise_question_id] ===
+                    "video" && solutionVideo && (
                   <WebView
                     source={{ uri: getVideoEmbedUrl(solutionVideo) }}
                     style={{ flex: 1 }}
                   />
                 )}
-                {solutionImage && (
+                { solutionTypes[currentQuestion.exercise_question_id] ===
+                    "image" && solutionImage && (
                   <ResponsiveImage uri= { solutionImage }
                     
                   />
@@ -606,6 +662,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     padding: 12,
+    height: 40,     
     borderBottomWidth: 1,
     borderColor: "#ccc",
   },
@@ -630,9 +687,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   navBtns: {
-    flexDirection: "row",
-    justifyContent: "space-around",
+    flexDirection: "column",
+    justifyContent: "space-between",
     marginVertical: 15,
+   
   },
   navigationButtons: {
     flexDirection: "row",
@@ -786,7 +844,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     gap: 16, // Not fully supported; manage via spacing on children
   },
-
+  solutionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    backgroundColor:'red',
+    padding: 10,
+  },
+  button: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginHorizontal: 5,
+    backgroundColor: '#e0e0e0', // Inactive button background
+  },
+  activeButton: {
+    backgroundColor: '#007bff', // Active button background
+  },
+  buttonText: {
+    color: 'black',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   arrowButton: {
     width: 45,
     height: 30,
@@ -808,12 +886,12 @@ const styles = StyleSheet.create({
   unvisited: { color: "#000" },
   unanswered: { color: "#fff" },
   answered: { color: "#fff" },
-  questionNumberRow: {
-    flexDirection: 'row',
-    gap: '10',
-    maxHeight: 60,
-    minHeight: 50
-  },
+      questionNumberRow: {
+         flexDirection: 'row',
+         gap:'10',
+         Height: 30,
+        
+         },
   questionBtn: {
     marginRight: 5,
     padding: 10,
