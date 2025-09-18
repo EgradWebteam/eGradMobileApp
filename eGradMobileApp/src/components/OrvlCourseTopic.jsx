@@ -131,7 +131,120 @@ const OrvlCourseTopic = ({
 
   useEffect(() => {
     if (selectedExercise?.exercise_name_id) fetchexerciseMeta();
-  }, [courseData, selectedExercise, studentId, courseCreationId, isAdmin]);
+  }, [courseData, selectedExercise, studentId, courseCreationId]);
+useEffect(() => {
+  if (selectedExercise) {
+    const questionid =
+      selectedExercise?.questions?.[currentQuestionIndex]
+        ?.exercise_question_id;
+    if (!questionid) return;
+
+    if (exerciseMeta && typeof exerciseMeta === "object") {
+      const meta = exerciseMeta[questionid];
+
+      if (!meta || meta.status === "unvisited") {
+        // Check if already submitted for this question to prevent repeated calls
+        if (!submittedStatusRef.current[questionid]) {
+          submitExerciseStatus(questionid);
+          submittedStatusRef.current[questionid] = true;
+        }
+        setAnswerDisabled(false);
+        setUserAnswer("");
+        setFeedback(null);
+        setSolutionVideo(null);
+        setSolutionImage(null);
+        setSelectedOptions([]);
+      } else if (meta.status === "answered") {
+        // Reset the submission flag so it can be submitted again if needed later
+        submittedStatusRef.current[questionid] = false;
+
+        
+      const questionType =
+          selectedExercise.questions[currentQuestionIndex].qtype_text;
+
+        const correctAnswer = meta.answer_text || "";
+        const userResponse = meta.response || "";
+
+ if (questionType === "MSQ" || questionType === "MSQN") { 
+  const response = meta.response;
+
+  if (typeof response === "string" && response.length > 0) {
+    const userAnsArray = response
+      .split(",")
+      .map(opt => opt.trim().toLowerCase()) // normalize to lowercase
+      .sort();
+
+    setSelectedOptions(userAnsArray);
+
+    // Normalize correct answers
+    const correctAnsArray = correctAnswer
+      .split(",")
+      .map(opt => opt.trim().toLowerCase()) // normalize to lowercase
+      .sort();
+
+    // Compare user response to correct answer
+    const isCorrect =
+      userAnsArray.length === correctAnsArray.length &&
+      userAnsArray.every((val, index) => val === correctAnsArray[index]);
+
+    setFeedback(
+      isCorrect
+        ? "Correct Answer"
+        : `Wrong Answer. Correct: ${correctAnsArray.join(", ")}`
+    );
+  }
+} else if (questionType === "NATD") {
+  const userNum = parseFloat(userResponse?.trim());
+const rangeMatch = (correctAnswer || '').match(/(-?\d*\.?\d+)\s*-\s*(-?\d*\.?\d+)/);
+const min = rangeMatch ? parseFloat(rangeMatch[1]) : NaN;
+const max = rangeMatch ? parseFloat(rangeMatch[2]) : NaN;
+
+
+  setUserAnswer(userResponse);
+
+  if (!isNaN(userNum) && !isNaN(min) && !isNaN(max)) {
+    const isCorrect = userNum >= min && userNum <= max;
+
+    setFeedback(
+      isCorrect
+        ? "Correct Answer"
+        : `Wrong Answer. Correct Range: ${min} - ${max}`
+    );
+  } else {
+    setFeedback("Invalid answer format or range.");
+  }
+} else {
+  // Handle non-MSQ types with lowercase normalization too
+  const normalizedUser = userResponse?.trim().toLowerCase() || "";
+  const normalizedCorrect = correctAnswer?.trim().toLowerCase() || "";
+
+  setUserAnswer(userResponse);
+
+  setFeedback(
+    normalizedUser === normalizedCorrect
+      ? "Correct Answer"
+      : `Wrong Answer. Correct: ${correctAnswer}`
+  );
+}
+
+       if(meta.videoSolution) {setSolutionVideo(meta.videoSolution || null);}
+       if(meta.imageSolution) {setSolutionImage(meta.imageSolution || null);}
+
+        setAnswerDisabled(true);
+      } else {
+        submittedStatusRef.current[questionid] = false;
+
+        setAnswerDisabled(false);
+        setUserAnswer("");
+        setFeedback(null);
+        setSolutionVideo(null);
+        setSolutionImage(null);
+        setSelectedOptions([]);
+      }
+    }
+  }
+}, [selectedExercise, currentQuestionIndex, exerciseMeta]);
+
 
   // ------------------------ SUBMIT EXERCISE STATUS ------------------------
   const submitExerciseStatus = async (questionid) => {
@@ -217,89 +330,110 @@ const OrvlCourseTopic = ({
   };
 
   // ------------------------ NAVIGATION ------------------------
-  const nextLectureOrExercise = async () => {
-    // const isValid = await validateSession();
-    // if (!isValid) return;
-    if (!courseData || !selectedLecture) return;
+ const nextLectureOrExercise = async () => {
+  // const isValid = await validateSession();
+  // if (!isValid) return;
 
-    const currentLectureIndex = courseData.lectures.findIndex(
-      (lecture) => lecture.orvl_lecture_name_id === selectedLecture.orvl_lecture_name_id
+  if (!courseData || !selectedLecture) return;
+
+  const currentLectureIndex = courseData.lectures.findIndex(
+    (lecture) => lecture.orvl_lecture_name_id === selectedLecture.orvl_lecture_name_id
+  );
+
+  const currentLecture = courseData.lectures[currentLectureIndex];
+  const exercises = currentLecture.exercises;
+
+  if (!showExercise) {
+    // On lecture
+    if (exercises && exercises.length > 0) {
+      setSelectedExercise(exercises[0]);
+      setShowExercise(true);
+      setCurrentQuestionIndex(0);
+    } else {
+      // No exercises → next lecture
+      const nextLecture = courseData.lectures[currentLectureIndex + 1];
+      if (nextLecture) {
+        setSelectedLecture(nextLecture);
+        setSelectedExercise(null);
+        setShowExercise(false);
+      } else {
+        alert("You're already at the last lecture.");
+      }
+    }
+  } else {
+    // On an exercise
+    const currentExerciseIndex = exercises.findIndex(
+      (ex) => ex.exercise_name_id === selectedExercise.exercise_name_id
     );
 
-    const currentLecture = courseData.lectures[currentLectureIndex];
-    const exercises = currentLecture.exercises;
+    if (currentExerciseIndex < exercises.length - 1) {
+      setSelectedExercise(exercises[currentExerciseIndex + 1]);
+      setCurrentQuestionIndex(0);
+    } else {
+      // Move to next lecture
+      const nextLecture = courseData.lectures[currentLectureIndex + 1];
+      if (nextLecture) {
+        setSelectedLecture(nextLecture);
+        setSelectedExercise(null);
+        setShowExercise(false);
+      } else {
+        alert("You're already at the last lecture.");
+      }
+    }
+  }
+};
 
-    if (!showExercise) {
-      if (exercises.length > 0) {
-        setSelectedExercise(exercises[0]);
+  const previousLectureOrExercise = async() => {
+  // const isValid = await validateSession();
+  //   if (!isValid) return;
+  if (!courseData || !selectedLecture) return;
+
+  const currentLectureIndex = courseData.lectures.findIndex(
+    (lecture) =>
+      lecture.orvl_lecture_name_id === selectedLecture.orvl_lecture_name_id
+  );
+
+  const currentLecture = courseData.lectures[currentLectureIndex];
+  const exercises = currentLecture.exercises;
+
+  if (showExercise && selectedExercise) {
+    // ✅ Case 1: On an exercise
+    const currentExerciseIndex = exercises.findIndex(
+      (ex) => ex.exercise_name_id === selectedExercise.exercise_name_id
+    );
+
+    if (currentExerciseIndex > 0) {
+      // Go to previous exercise
+      setSelectedExercise(exercises[currentExerciseIndex - 1]);
+      setCurrentQuestionIndex(0);
+    } else {
+      // First exercise → go back to lecture
+      setShowExercise(false);
+      setSelectedExercise(null);
+    }
+  } else {
+    // ✅ Case 2: On lecture → go to previous lecture
+    const previousLecture = courseData.lectures[currentLectureIndex - 1];
+
+    if (previousLecture) {
+      setSelectedLecture(previousLecture);
+
+      if (previousLecture.exercises.length > 0) {
+        // Previous lecture has exercises → go to last one
+        const lastExercise = previousLecture.exercises[previousLecture.exercises.length - 1];
+        setSelectedExercise(lastExercise);
         setShowExercise(true);
         setCurrentQuestionIndex(0);
       } else {
-        const nextLecture = courseData.lectures[currentLectureIndex + 1];
-        if (nextLecture) {
-          setSelectedLecture(nextLecture);
-          setSelectedExercise(null);
-          setShowExercise(false);
-        } else Alert.alert("Info", "You're already at the last lecture.");
-      }
-    } else {
-      const currentExerciseIndex = exercises.findIndex(
-        (ex) => ex.exercise_name_id === selectedExercise.exercise_name_id
-      );
-      if (currentExerciseIndex < exercises.length - 1) {
-        setSelectedExercise(exercises[currentExerciseIndex + 1]);
-        setCurrentQuestionIndex(0);
-      } else {
-        const nextLecture = courseData.lectures[currentLectureIndex + 1];
-        if (nextLecture) {
-          setSelectedLecture(nextLecture);
-          setSelectedExercise(null);
-          setShowExercise(false);
-        } else Alert.alert("Info", "You're already at the last lecture.");
-      }
-    }
-  };
-
-  const previousLectureOrExercise = async () => {
-    // const isValid = await validateSession();
-    // if (!isValid) return;
-    if (!courseData || !selectedLecture) return;
-
-    const currentLectureIndex = courseData.lectures.findIndex(
-      (lecture) => lecture.orvl_lecture_name_id === selectedLecture.orvl_lecture_name_id
-    );
-
-    const currentLecture = courseData.lectures[currentLectureIndex];
-    const exercises = currentLecture.exercises;
-
-    if (showExercise && selectedExercise) {
-      const currentExerciseIndex = exercises.findIndex(
-        (ex) => ex.exercise_name_id === selectedExercise.exercise_name_id
-      );
-      if (currentExerciseIndex > 0) {
-        setSelectedExercise(exercises[currentExerciseIndex - 1]);
-        setCurrentQuestionIndex(0);
-      } else {
-        setShowExercise(false);
+        // No exercises → just show lecture
         setSelectedExercise(null);
+        setShowExercise(false);
       }
     } else {
-      const previousLecture = courseData.lectures[currentLectureIndex - 1];
-      if (previousLecture) {
-        setSelectedLecture(previousLecture);
-        if (previousLecture.exercises.length > 0) {
-          const lastExercise =
-            previousLecture.exercises[previousLecture.exercises.length - 1];
-          setSelectedExercise(lastExercise);
-          setShowExercise(true);
-          setCurrentQuestionIndex(0);
-        } else {
-          setSelectedExercise(null);
-          setShowExercise(false);
-        }
-      } else Alert.alert("Info", "You're already at the first lecture.");
+      alert("You're already at the first lecture.");
     }
-  };
+  }
+};
 
   // ------------------------ RENDER ------------------------
   if (loading) return <ActivityIndicator size="large" color="#0000ff" />;
@@ -320,48 +454,47 @@ const OrvlCourseTopic = ({
       <View style={styles.content}>
         {showPopup ? (
           <Popup
-            lecture={selectedLecture}
-            userAnswer={userAnswer}
-            setUserAnswer={setUserAnswer}
-            answerDisabled={answerDisabled}
-            setAnswerDisabled={setAnswerDisabled}
-            feedback={feedback}
-            setFeedback={setFeedback}
-            exercise={selectedExercise}
-            setExerciseMeta={setExerciseMeta}
-            onClose={handleClosePopup}
-            fetchExerciseStatus={fetchexerciseMeta}
-            topic_id={courseData.topic_id}
-            subject_id={courseData.subject_id}
-            chapter_id={courseData.chapter_id}
-            currentQuestionIndex={currentQuestionIndex}
-            setCurrentQuestionIndex={setCurrentQuestionIndex}
-            exerciseMeta={exerciseMeta}
-            previousLectureOrExercise={previousLectureOrExercise}
-            nextLectureOrExercise={nextLectureOrExercise}
-            studentId={studentId}
-            course_id={courseCreationId}
-            solutionVideo={solutionVideo}
-            solutionImage={solutionImage}
-            playedTimeRef={playedTimeRef}
-            selectedOptions={selectedOptions}
-            setSelectedOptions={setSelectedOptions}
-            showExercise={showExercise}
-            submitExerciseStatus={submitExerciseStatus}
+          lecture={selectedLecture}
+          userAnswer={userAnswer}
+          setUserAnswer={setUserAnswer}          
+          answerDisabled={answerDisabled}  
+          setAnswerDisabled = {setAnswerDisabled}      
+          feedback={feedback}
+          setFeedback={setFeedback}
+          exercise={selectedExercise}
+          setExerciseMeta={setExerciseMeta}
+          onClose={handleClosePopup}
+          fetchExerciseStatus={fetchexerciseMeta}
+          topic_id={courseData.topic_id}
+          subject_id={courseData.subject_id}
+          chapter_id={courseData.chapter_id}
+          currentQuestionIndex={currentQuestionIndex}
+          setCurrentQuestionIndex={setCurrentQuestionIndex}
+          exerciseMeta ={exerciseMeta}
+          previousLectureOrExercise={previousLectureOrExercise}
+          nextLectureOrExercise={nextLectureOrExercise}
+          studentId = {studentId}
+          course_id = {courseCreationId}
+          solutionVideo={solutionVideo}
+          solutionImage={solutionImage}
+          playedTimeRef={playedTimeRef}
+          selectedOptions={selectedOptions}
+          setSelectedOptions ={setSelectedOptions}
+          showExercise={showExercise}
           />
         ) : (
           <LectureExerciseList
-            topicid={topicid}
+           topicid={topicid}
             lectures={courseData.lectures}
             onLectureClick={handleLectureClick}
             onExerciseClick={handleExerciseClick}
+            // userStatus={userStatus}
             StudyMaterial={courseData.StudyMaterial}
             chapter_id={courseData.chapter_id}
-            chapter_name={courseData.chapter_name}
+            chapter_name = {courseData.chapter_name}
             study_material_id={courseData.study_material_id}
-            chapter_study_material_pdf_count={
-              courseData.chapter_study_material_pdf_count
-            }
+            chapter_study_material_pdf_count={courseData.chapter_study_material_pdf_count}
+          
           />
         )}
       </View>

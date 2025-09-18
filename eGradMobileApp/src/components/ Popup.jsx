@@ -9,13 +9,14 @@ import {
   Image,
   StyleSheet,
   Dimensions,
+  ImageBackground,
   Alert,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { WebView } from "react-native-webview";
 import CheckBox from "@react-native-community/checkbox";
 import { RadioButton } from "react-native-paper"; 
-const { width } = Dimensions.get("window");
+// const { width } = Dimensions.get("window");
 import ResponsiveImage from './OTSFolder/ResponsiveImage';
 import { backEndUrl } from "../apiConfig";
 const Popup = ({
@@ -45,8 +46,8 @@ const Popup = ({
   previousLectureOrExercise,
   nextLectureOrExercise,
 }) => {
-  const [isMobile, setIsMobile] = useState(width <= 768);
-  const [showPalette, setShowPalette] = useState(width > 768);
+  // const [isMobile, setIsMobile] = useState(width <= 768);
+  // const [showPalette, setShowPalette] = useState(width > 768);
   const [solutionTypes, setSolutionTypes] = useState({});
   const [solutionVisibility, setSolutionVisibility] = useState(null);
    const [cursorPosition, setCursorPosition] = useState(0);
@@ -68,21 +69,26 @@ const Popup = ({
     }
     return undefined;
   };
-useEffect(() => {
-  const update = () => {
-    const mobile = Dimensions.get("window").width <= 768;
-    setIsMobile(mobile);
-    setShowPalette(!mobile);
-  };
+  const backgroundImages = {
+  answered: require('../images/Answered.png'),
+  unanswered: require('../images/NotAnswered.png'),
+  unvisited: require('../images/Visited.png'),
+};
+// useEffect(() => {
+//   const update = () => {
+//     const mobile = Dimensions.get("window").width <= 768;
+//     setIsMobile(mobile);
+//     setShowPalette(!mobile);
+//   };
 
-  // subscribe
-  const subscription = Dimensions.addEventListener("change", update);
+//   // subscribe
+//   const subscription = Dimensions.addEventListener("change", update);
 
-  // cleanup
-  return () => {
-    subscription?.remove();
-  };
-}, []);
+//   // cleanup
+//   return () => {
+//     subscription?.remove();
+//   };
+// }, []);
  const questionId = exercise?.questions?.[currentQuestionIndex]?.exercise_question_id
 const handleNatipChange = (value) => {
     if (answerDisabled || submitLock.current) return;
@@ -269,14 +275,41 @@ useEffect(() => {
         {exercise && exercise.questions?.length > 0 ? (
                 <View style={styles.slideshow}>
         {/* Question Section */}
-        <View style={styles.exerciseQuestionContainers}>
-          <View style={styles.questionsAndImgScrollContainer}>
+         <View style={styles.exerciseQuestionContainers}>
+        <ScrollView horizontal style={styles.questionNumberRow}>
+       
+ 
+        {exercise.questions.map((question, index) => {
+          const status = getStatus(question.exercise_question_id);
+
+          return (
+            <View key={question.exercise_question_id} style={styles.questionNumberRow}>
+         <TouchableOpacity
+  key={question.exercise_question_id}
+  style={[styles.questionBtnSNMR, styles[status]]}
+  onPress={() => setCurrentQuestionIndex(index)}
+>
+  <ImageBackground
+    source={backgroundImages[status]} // Use the dynamic key
+    style={styles.imageBackground}
+    imageStyle={styles.imageStyle}
+  >
+    <Text style={[styles.questionBtnText, styles[status]]}>{index + 1}</Text>
+  </ImageBackground>
+</TouchableOpacity>
+
+            </View>
+          );
+        })}
+   
+    </ScrollView>
+          <ScrollView style={styles.optionsScroll}>
             <View style={styles.questionTypeAndID}>
               <Text style={styles.questionText}>
                 Question No : {currentQuestion.exercise_question_sort_id}
               </Text>
               <Text>Type : {currentQuestion.qtype_text}</Text>
-              {isMobile && (
+              {/* {isMobile && (
                 <TouchableOpacity onPress={togglePalette} style={styles.toggleIcon}>
                   {showPalette ? (
                     <Text style={styles.closeIcon}>✖</Text>
@@ -284,7 +317,7 @@ useEffect(() => {
                     <Text style={styles.hamburgerIcon}>☰</Text>
                   )}
                 </TouchableOpacity>
-              )}
+              )} */}
             </View>
 
             <View style={styles.questionAndImage} ref={inputRef}>
@@ -404,7 +437,7 @@ useEffect(() => {
               <RadioButton
                 value={option.option_index}
                 status={
-                  selectedOption === option.option_index
+                 userAnswer === option.option_index
                     ? "checked"
                     : "unchecked"
                 }
@@ -425,7 +458,7 @@ useEffect(() => {
 
               {feedback && <Text>{feedback}</Text>}
             </View>
-          </View>
+          </ScrollView>
 
           {/* Navigation Buttons */}
           <View style={styles.navigationButtons}>
@@ -473,8 +506,8 @@ useEffect(() => {
 
         </View>
 
-        {/* Status Palette */}
-        {showPalette && (
+      
+     {/* {showPalette && (
           <View style={[styles.statusPalette, showPalette ? styles.showPaletteMobile : null]}>
             <View style={styles.statusPaletteContainer}>
               {exercise.questions.map((question, index) => {
@@ -495,7 +528,7 @@ useEffect(() => {
               })}
             </View>
           </View>
-        )}
+        )}  */}
       </View>
         ) : lecture ? (
           <WebView
@@ -578,6 +611,8 @@ const styles = StyleSheet.create({
   alignItems: "center",
   marginVertical: 15,
   paddingHorizontal: 20,
+  minHeight:30,
+  maxHeight:50
 },
 btnText: {
   color: "#fff",
@@ -699,6 +734,20 @@ btnText: {
     justifyContent: 'center',
     alignItems: 'center',
   },
+  questionBtnText: {
+  fontWeight:900,
+textAlign: 'center'
+  },
+  imageBackground: {
+  width: 45,
+  height: 45,
+  justifyContent: "center",
+  alignItems: "center", // ensure text is centered inside
+},
+imageStyle: {
+  resizeMode: "contain",
+},
+
 
   arrowBtns: {
     display: 'flex',
@@ -727,5 +776,25 @@ btnText: {
     elevation: 3,
     color: 'black',
   },
-
+unvisited: { color: "#000" },
+  unanswered: { color: "#fff" },
+  answered: { color: "#fff" },
+      questionNumberRow: {
+         flexDirection: 'row',
+         gap:'10',
+         maxHeight: 60,
+         minHeight:50
+         },
+  questionBtn: {
+    marginRight: 5,
+    padding: 10,
+    backgroundColor: '#eee',
+    borderRadius: 5,
+  },
+    questionBtnSNMR:{
+height: 45,
+    width: 45,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
