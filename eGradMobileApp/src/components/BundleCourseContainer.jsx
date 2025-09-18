@@ -382,10 +382,11 @@ goBackText: {
     elevation: 3,
   },
   chapterTitle: {
-    fontWeight: "700",
-    fontSize: 15,
+    fontWeight: "800",
+    fontSize: 17,
     marginBottom: 8,
     color: "#222",
+    textAlign:"center",
   },
   chapterInfo: {
     fontSize: 14,
