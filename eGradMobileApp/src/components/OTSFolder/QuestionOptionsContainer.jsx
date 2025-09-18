@@ -105,7 +105,7 @@ const handleArrowInput = (direction) => {
 
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.excercisecontainer}>
       {/* MCQ - Single Selection */}
 {[1, 2, 8].includes(questionTypeId) && (
   <RadioButton.Group
