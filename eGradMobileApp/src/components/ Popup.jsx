@@ -570,16 +570,17 @@ useEffect(() => {
         </TouchableOpacity>
         </View>
         {/* Solution Modal */}
+
         {exercise &&
         currentQuestion &&
-        solutionVisibility === currentQuestion.exercise_question_id  && (
-          <Modal visible transparent animationType="fade">
-            <View style={styles.solutionOverlay}>
-              <View style={styles.solutionContent}>
-                <TouchableOpacity onPress={() => setSolutionVisibility(null)}>
-                  <Text style={styles.closeBtn}>✕</Text>
-                </TouchableOpacity>
-<View style={styles.navigationButtons}>
+        solutionVisibility === currentQuestion.exercise_question_id  &&  (
+  <Modal visible transparent animationType="fade">
+    <View style={styles.solutionOverlay}>
+      <View style={styles.solutionContent}>
+        <TouchableOpacity onPress={() => setSolutionVisibility(null)}>
+          <Text style={styles.closeBtn}>✕</Text>
+        </TouchableOpacity>
+<View style={styles.solutionButtons}>
   
   {solutionVideo && (
     <TouchableOpacity
@@ -595,8 +596,10 @@ useEffect(() => {
         }))
       }
     >
-      <Text style={styles.buttonText}>Video Solution</Text>
+      <Text style={[styles.buttonText,  solutionTypes[currentQuestion.exercise_question_id] ==='video' &&
+          styles.activeButtontext]}>Video Solution</Text>
     </TouchableOpacity>
+   
   )}
 
   {solutionImage && (
@@ -613,43 +616,22 @@ useEffect(() => {
         }))
       }
     >
-      <Text style={styles.buttonText}>Image Solution</Text>
+      <Text style={[styles.buttonText,  solutionTypes[currentQuestion.exercise_question_id] === "image" &&
+          styles.activeButtontext]}>Image Solution</Text>
     </TouchableOpacity>
   )}
 </View>
-
-
-                {solutionTypes[currentQuestion.exercise_question_id] ===
-                    "video" && solutionVideo && (
-                  <WebView
-                    source={{ uri: getVideoEmbedUrl(solutionVideo) }}
-                    style={{ flex: 1 }}
-                  />
-                )}
-                { solutionTypes[currentQuestion.exercise_question_id] ===
-                    "image" && solutionImage && (
-                  <ResponsiveImage uri= { solutionImage }
-                    
-                  />
-                )}
-              </View>
-            </View>
-          </Modal>
-        )} */}
-        {solutionVisibility && (
-  <Modal visible transparent animationType="fade">
-    <View style={styles.solutionOverlay}>
-      <View style={styles.solutionContent}>
-        <TouchableOpacity onPress={() => setSolutionVisibility(null)}>
-          <Text style={styles.closeBtn}>✕</Text>
-        </TouchableOpacity>
+<ScrollView>
 
         {/* Use shared renderVideo utility */}
-        {solutionVideo && renderVideo(solutionVideo)}
+        {solutionTypes[currentQuestion.exercise_question_id] ===
+                    "video" && solutionVideo && renderVideo(solutionVideo)}
 
-        {solutionImage && (
+        {solutionTypes[currentQuestion.exercise_question_id] ===
+                    "image" && solutionImage &&  (
           <ResponsiveImage uri={solutionImage} />
-        )}
+        )}</ScrollView>
+       
       </View>
     </View>
   </Modal>
@@ -668,7 +650,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     padding: 12,
-    height: 40,     
+    height: 50,     
     borderBottomWidth: 1,
     borderColor: "#ccc",
   },
@@ -734,8 +716,8 @@ btnText: {
     alignItems: "center",
   },
   solutionContent: {
-    width: "90%",
-    height: "70%",
+    width: "100%",
+    height: "90%",
     backgroundColor: "#fff",
     borderRadius: 10,
     padding: 10,
@@ -853,18 +835,23 @@ imageStyle: {
   solutionButtons: {
     flexDirection: 'row',
     justifyContent: 'center',
-    backgroundColor:'red',
+   
+    minHeight:50,
     padding: 10,
   },
   button: {
     paddingVertical: 10,
     paddingHorizontal: 20,
+    maxWidth:100,
     borderRadius: 5,
     marginHorizontal: 5,
     backgroundColor: '#e0e0e0', // Inactive button background
   },
   activeButton: {
     backgroundColor: '#007bff', // Active button background
+  },
+  activeButtontext:{
+color:'#fff',
   },
   buttonText: {
     color: 'black',
@@ -914,7 +901,7 @@ height: 45,
   alignSelf: "center",        // Centers the button horizontally
   width: "50%",               // Button width (adjustable)
   maxWidth: 400,
-    height:40,              // Optional: max width for larger screens
+              // Optional: max width for larger screens
   paddingVertical: 14,        // Button height
   backgroundColor: "#e7f6f7", // Blue color
   borderRadius: 8,            // Rounded corners
