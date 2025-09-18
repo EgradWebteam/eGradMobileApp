@@ -269,8 +269,15 @@ useEffect(() => {
           <TouchableOpacity onPress={onClose}>
             <Text style={styles.closeBtn}>✕</Text>
           </TouchableOpacity>
+          
         </View>
 
+        <TouchableOpacity
+          style={styles.navBtn}
+          onPress={previousLectureOrExercise}
+        >
+          <Text style={styles.navBtnText}>Previous</Text>
+        </TouchableOpacity>
         {/* Content */}
         {exercise && exercise.questions?.length > 0 ? (
                 <View style={styles.slideshow}>
@@ -539,7 +546,12 @@ useEffect(() => {
         ) : (
           <Text>No Data Available</Text>
         )}
-
+ <TouchableOpacity
+          style={styles.navBtn}
+          onPress={nextLectureOrExercise}
+        >
+          <Text style={styles.navBtnText}>Next</Text>
+        </TouchableOpacity>
         {/* Solution Modal */}
         {solutionVisibility && (
           <Modal visible transparent animationType="fade">
@@ -797,4 +809,27 @@ height: 45,
     alignItems: 'center',
     justifyContent: 'center',
   },
+    navBtn: {
+  alignSelf: "center",        // Centers the button horizontally
+  width: "50%",               // Button width (adjustable)
+  maxWidth: 400,              // Optional: max width for larger screens
+  paddingVertical: 14,        // Button height
+  backgroundColor: "#e7f6f7", // Blue color
+  borderRadius: 8,            // Rounded corners
+  alignItems: "center",
+  justifyContent: "center",
+  marginVertical: 10,         // Space above and below
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.2,
+  shadowRadius: 3,
+  elevation: 3,               // For Android shadow
+},
+
+navBtnText: {
+  color: "#000",
+  fontWeight: "600",
+  fontSize: 16,
+  textAlign: "center",
+},
 });
