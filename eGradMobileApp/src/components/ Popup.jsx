@@ -42,14 +42,14 @@ const Popup = ({
   setAnswerDisabled,
   feedback,
   setFeedback,
-   solutionVideo,
+  solutionVideo,
   solutionImage,
   previousLectureOrExercise,
   nextLectureOrExercise,
 }) => {
   // const [isMobile, setIsMobile] = useState(width <= 768);
   // const [showPalette, setShowPalette] = useState(width > 768);
- const [solutionTypes, setSolutionTypes] = useState({});
+  const [solutionTypes, setSolutionTypes] = useState({});
   const [solutionVisibility, setSolutionVisibility] = useState(null);
   const [cursorPosition, setCursorPosition] = useState(0);
   const inputRef = useRef(null);
@@ -245,62 +245,71 @@ const Popup = ({
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.navBtns}>
-         <TouchableOpacity
-          style={styles.navBtn}
-          onPress={previousLectureOrExercise}
-        >
-          <Text style={styles.navBtnText}>Previous</Text>
-        </TouchableOpacity>
-        <View style={styles.MainContainerExcercise}>
-        <View style={styles.header}>
-          <Text style={styles.title}>
-            {exercise ? exercise.exercise_name : lecture?.orvl_lecture_name}
-          </Text>
-          <TouchableOpacity onPress={onClose}>
-            <Text style={styles.closeBtn}>✕</Text>
+           <View style={styles.header}>
+              <Text style={styles.title}>
+                {exercise ? exercise.exercise_name : lecture?.orvl_lecture_name}
+              </Text>
+              <TouchableOpacity onPress={onClose}>
+                <Text style={styles.closeBtn}>✕</Text>
+              </TouchableOpacity>
+
+            </View>
+          
+          <View style={styles.MainContainerExcercise}>
+            {/* <View style={styles.header}>
+              <Text style={styles.title}>
+                {exercise ? exercise.exercise_name : lecture?.orvl_lecture_name}
+              </Text>
+              <TouchableOpacity onPress={onClose}>
+                <Text style={styles.closeBtn}>✕</Text>
+              </TouchableOpacity>
+
+            </View> */}
+
+<TouchableOpacity
+            style={styles.navBtn}
+            onPress={previousLectureOrExercise}
+          >
+            <Text style={styles.navBtnText}>Previous</Text>
           </TouchableOpacity>
-
-        </View>
-
-       
-        {/* Content */}
-        {exercise && exercise.questions?.length > 0 ? (
-          <View style={styles.slideshow}>
-            {/* Question Section */}
-            <View style={styles.exerciseQuestionContainers}>
-              <ScrollView horizontal style={styles.questionNumberRow}>
+            {/* Content */}
+            {exercise && exercise.questions?.length > 0 ? (
+              <View style={styles.slideshow}>
+                {/* Question Section */}
+                <View style={styles.exerciseQuestionContainers}>
+                  <ScrollView horizontal style={styles.questionNumberRow}>
 
 
-                {exercise.questions.map((question, index) => {
-                  const status = getStatus(question.exercise_question_id);
+                    {exercise.questions.map((question, index) => {
+                      const status = getStatus(question.exercise_question_id);
 
-                  return (
-                    <View key={question.exercise_question_id} style={styles.questionNumberRow}>
-                      <TouchableOpacity
-                        key={question.exercise_question_id}
-                        style={[styles.questionBtnSNMR, styles[status]]}
-                        onPress={() => setCurrentQuestionIndex(index)}
-                      >
-                        <ImageBackground
-                          source={backgroundImages[status]} // Use the dynamic key
-                          style={styles.imageBackground}
-                          imageStyle={styles.imageStyle}
-                        >
-                          <Text style={[styles.questionBtnText, styles[status]]}>{index + 1}</Text>
-                        </ImageBackground>
-                      </TouchableOpacity>
+                      return (
+                        <View key={question.exercise_question_id} style={styles.questionNumberRow}>
+                          <TouchableOpacity
+                            key={question.exercise_question_id}
+                            style={[styles.questionBtnSNMR, styles[status]]}
+                            onPress={() => setCurrentQuestionIndex(index)}
+                          >
+                            <ImageBackground
+                              source={backgroundImages[status]} // Use the dynamic key
+                              style={styles.imageBackground}
+                              imageStyle={styles.imageStyle}
+                            >
+                              <Text style={[styles.questionBtnText, styles[status]]}>{index + 1}</Text>
+                            </ImageBackground>
+                          </TouchableOpacity>
 
-                    </View>
-                  );
-                })}
+                        </View>
+                      );
+                    })}
 
-              </ScrollView>
-              <View style={styles.questionTypeAndID}>
-                <Text style={styles.questionText}>
-                  Question No : {currentQuestion.exercise_question_sort_id}
-                </Text>
-                <Text>Type : {currentQuestion.qtype_text}</Text>
-                {/* {isMobile && (
+                  </ScrollView>
+                  <View style={styles.questionTypeAndID}>
+                    <Text style={styles.questionText}>
+                      Question No : {currentQuestion.exercise_question_sort_id}
+                    </Text>
+                    <Text>Type : {currentQuestion.qtype_text}</Text>
+                    {/* {isMobile && (
                 <TouchableOpacity onPress={togglePalette} style={styles.toggleIcon}>
                   {showPalette ? (
                     <Text style={styles.closeIcon}>✖</Text>
@@ -309,192 +318,192 @@ const Popup = ({
                   )}
                 </TouchableOpacity>
               )} */}
-              </View>
-              {/* <ScrollView style={styles.optionsScroll}> */}
-
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={true}
-                nestedScrollEnabled={true}
-              >
-                <View style={[styles.questionAndImage, { width: SCREEN_WIDTH }]} ref={inputRef}>
-                  <View style={{
-                    height: SCREEN_HEIGHT * 0.5, // set specific height (50% of screen)
-                  }}>
-                    <ScrollView
-                      showsVerticalScrollIndicator={true}
-                      nestedScrollEnabled={true}
-                    >
-                      {currentQuestion.qtype_text === "CTQ" && currentQuestion.paragraph_img && (
-                        <View style={styles.imgContainer}>
-                          <ResponsiveImage uri={currentQuestion.paragraph_img}
-                            style={styles.paragraphImage}
-                          />
-                        </View>
-                      )}
-
-                      {currentQuestion.question_img_name && (
-                        <View style={styles.imgContainer}>
-                          <ResponsiveImage uri={currentQuestion.question_img_name}
-                            style={styles.questionImage}
-                          />
-                        </View>
-                      )}
-
-                      {(currentQuestion.qtype_text === "NATD" || currentQuestion.qtype_text === "NATI") && (
-                        <View style={styles.NATInputHolder}>
-                          {/* Input Box */}
-                          <View style={styles.NATLabel}>
-                            <TextInput
-                              style={[styles.natInput, answerDisabled && styles.inputDisabled]}
-                              value={userAnswer}
-                              ref={inputRef}
-                              editable={!answerDisabled}
-                              placeholder="Enter your answer"
-                              keyboardType="numeric"
-                              showSoftInputOnFocus={false}
-                              onChangeText={() => { }}
-
-                            />
-                            <Text style={styles.unitText}>{currentQuestion.exercise_answer_unit}</Text>
-                          </View>
-
-                          {/* Keypad */}
-                          <View style={styles.backSpaceBtn}>
-                            {/* Backspace */}
-                            <TouchableOpacity
-                              style={styles.backSpaceButton}
-                              onPress={() => handleNatipChange("BACK SPACE")}
-                              disabled={answerDisabled}
-                            >
-                              <Text style={styles.calcText}>BACK SPACE</Text>
-                            </TouchableOpacity>
-                          </View>
-                          {/* Number Keys */}
-                          <View style={styles.CalculatorBox}>
-                            {["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", ".", "-"].map((key) => (
-                              <TouchableOpacity
-                                key={key}
-                                style={styles.calcButton}
-                                onPress={() => handleNatipChange(key)}
-                                disabled={answerDisabled}
-                              >
-                                <Text style={styles.calcText}>{key}</Text>
-                              </TouchableOpacity>
-                            ))}
-                          </View>
-
-                          {/* Arrow Keys */}
-                          <View style={styles.arrowBtns}>
-                            <TouchableOpacity
-                              style={styles.arrowButton}
-                              onPress={() => handleArrowClick("left")}
-                              disabled={answerDisabled || cursorPosition === 0}
-                            >
-                              <Text style={styles.arrowText}>←</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                              style={styles.arrowButton}
-                              onPress={() => handleArrowClick("right")}
-                              disabled={answerDisabled || cursorPosition === userAnswer.length}
-                            >
-                              <Text style={styles.arrowText}>→</Text>
-                            </TouchableOpacity>
-                          </View>
-                          <View style={styles.backSpaceBtn}>
-                            {/* Clear */}
-                            <TouchableOpacity
-                              style={styles.backSpaceButton}
-                              onPress={() => handleNatipChange('ClearAll')}
-                              disabled={answerDisabled}
-                            >
-                              <Text style={styles.calcText}> CLEAR ALL</Text>
-                            </TouchableOpacity>
-                          </View>
-                        </View>
-                      )}
-
-                      {(currentQuestion.qtype_text === "MCQ4" ||
-                        currentQuestion.qtype_text === "MCQ5" ||
-                        currentQuestion.qtype_text === "CTQ" ||
-                        currentQuestion.qtype_text === "TF" ||
-                        currentQuestion.qtype_text === "MSQ" ||
-                        currentQuestion.qtype_text === "MSQN") &&
-                        currentQuestion.options?.length > 0 && (
-                          <View style={styles.optionsContainer}>
-                            {currentQuestion.options
-                              .sort((a, b) => a.option_index.localeCompare(b.option_index))
-                              .map((option) => (
-                                <View key={option.option_id} style={styles.optionLabel}>
-                                  {/* For MSQ / MSQN → CheckBox */}
-                                  {(currentQuestion.qtype_text === "MSQ" ||
-                                    currentQuestion.qtype_text === "MSQN") ? (
-                                    <CheckBox
-                                      value={selectedOptions.includes(option.option_index)}
-                                      onValueChange={() =>
-                                        handleOptionChange(option.option_index)
-                                      }
-                                      disabled={answerDisabled}
-                                    />
-                                  ) : (
-                                    // For MCQ / CTQ / TF → Radio Button
-                                    <RadioButton
-                                      value={option.option_index}
-                                      status={
-                                        userAnswer === option.option_index
-                                          ? "checked"
-                                          : "unchecked"
-                                      }
-                                      onPress={() => handleOptionChange(option.option_index)}
-                                      disabled={answerDisabled}
-                                    />
-                                  )}
-
-                                  {option.option_img_name ? (
-                                    <ResponsiveImage uri={option.option_img_name} />
-                                  ) : (
-                                    <Text style={styles.optionIndex}>{option.option_index}</Text>
-                                  )}
-                                </View>
-                              ))}
-                          </View>
-                        )}
-
-                      {feedback && <Text>{feedback}</Text>}
-                    </ScrollView>
                   </View>
-                </View>
-              </ScrollView>
-              {/* </ScrollView> */}
+                  {/* <ScrollView style={styles.optionsScroll}> */}
 
-              {/* Navigation Buttons */}
-              <View style={styles.navigationButtons}>
-                {currentQuestionIndex > 0 && (
-                  <TouchableOpacity
-                    style={styles.btn}
-                    onPress={() => setCurrentQuestionIndex(currentQuestionIndex - 1)}
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={true}
+                    nestedScrollEnabled={true}
                   >
-                    <Text style={styles.btnText}>Previous</Text>
-                  </TouchableOpacity>
-                )}
+                    <View style={[styles.questionAndImage, { width: SCREEN_WIDTH }]} ref={inputRef}>
+                      <View style={{
+                        height: SCREEN_HEIGHT * 0.5, // set specific height (50% of screen)
+                      }}>
+                        <ScrollView
+                          showsVerticalScrollIndicator={true}
+                          nestedScrollEnabled={true}
+                        >
+                          {currentQuestion.qtype_text === "CTQ" && currentQuestion.paragraph_img && (
+                            <View style={styles.imgContainer}>
+                              <ResponsiveImage uri={currentQuestion.paragraph_img}
+                                style={styles.paragraphImage}
+                              />
+                            </View>
+                          )}
 
-                {!answerDisabled && (
-                  <TouchableOpacity
-                    style={styles.btn}
-                    onPress={handleSubmitAnswer}
-                    disabled={answerDisabled}
-                  >
-                    <Text style={styles.btnText}>Submit</Text>
-                  </TouchableOpacity>
-                )}
+                          {currentQuestion.question_img_name && (
+                            <View style={styles.imgContainer}>
+                              <ResponsiveImage uri={currentQuestion.question_img_name}
+                                style={styles.questionImage}
+                              />
+                            </View>
+                          )}
 
-  {answerDisabled && (
-    <TouchableOpacity
-      style={styles.btn}
-      onPress={async () => {
-        // const isValid = await validateSession();
-        // if (!isValid) return;
-         setSolutionVisibility(
+                          {(currentQuestion.qtype_text === "NATD" || currentQuestion.qtype_text === "NATI") && (
+                            <View style={styles.NATInputHolder}>
+                              {/* Input Box */}
+                              <View style={styles.NATLabel}>
+                                <TextInput
+                                  style={[styles.natInput, answerDisabled && styles.inputDisabled]}
+                                  value={userAnswer}
+                                  ref={inputRef}
+                                  editable={!answerDisabled}
+                                  placeholder="Enter your answer"
+                                  keyboardType="numeric"
+                                  showSoftInputOnFocus={false}
+                                  onChangeText={() => { }}
+
+                                />
+                                <Text style={styles.unitText}>{currentQuestion.exercise_answer_unit}</Text>
+                              </View>
+
+                              {/* Keypad */}
+                              <View style={styles.backSpaceBtn}>
+                                {/* Backspace */}
+                                <TouchableOpacity
+                                  style={styles.backSpaceButton}
+                                  onPress={() => handleNatipChange("BACK SPACE")}
+                                  disabled={answerDisabled}
+                                >
+                                  <Text style={styles.calcText}>BACK SPACE</Text>
+                                </TouchableOpacity>
+                              </View>
+                              {/* Number Keys */}
+                              <View style={styles.CalculatorBox}>
+                                {["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", ".", "-"].map((key) => (
+                                  <TouchableOpacity
+                                    key={key}
+                                    style={styles.calcButton}
+                                    onPress={() => handleNatipChange(key)}
+                                    disabled={answerDisabled}
+                                  >
+                                    <Text style={styles.calcText}>{key}</Text>
+                                  </TouchableOpacity>
+                                ))}
+                              </View>
+
+                              {/* Arrow Keys */}
+                              <View style={styles.arrowBtns}>
+                                <TouchableOpacity
+                                  style={styles.arrowButton}
+                                  onPress={() => handleArrowClick("left")}
+                                  disabled={answerDisabled || cursorPosition === 0}
+                                >
+                                  <Text style={styles.arrowText}>←</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                  style={styles.arrowButton}
+                                  onPress={() => handleArrowClick("right")}
+                                  disabled={answerDisabled || cursorPosition === userAnswer.length}
+                                >
+                                  <Text style={styles.arrowText}>→</Text>
+                                </TouchableOpacity>
+                              </View>
+                              <View style={styles.backSpaceBtn}>
+                                {/* Clear */}
+                                <TouchableOpacity
+                                  style={styles.backSpaceButton}
+                                  onPress={() => handleNatipChange('ClearAll')}
+                                  disabled={answerDisabled}
+                                >
+                                  <Text style={styles.calcText}> CLEAR ALL</Text>
+                                </TouchableOpacity>
+                              </View>
+                            </View>
+                          )}
+
+                          {(currentQuestion.qtype_text === "MCQ4" ||
+                            currentQuestion.qtype_text === "MCQ5" ||
+                            currentQuestion.qtype_text === "CTQ" ||
+                            currentQuestion.qtype_text === "TF" ||
+                            currentQuestion.qtype_text === "MSQ" ||
+                            currentQuestion.qtype_text === "MSQN") &&
+                            currentQuestion.options?.length > 0 && (
+                              <View style={styles.optionsContainer}>
+                                {currentQuestion.options
+                                  .sort((a, b) => a.option_index.localeCompare(b.option_index))
+                                  .map((option) => (
+                                    <View key={option.option_id} style={styles.optionLabel}>
+                                      {/* For MSQ / MSQN → CheckBox */}
+                                      {(currentQuestion.qtype_text === "MSQ" ||
+                                        currentQuestion.qtype_text === "MSQN") ? (
+                                        <CheckBox
+                                          value={selectedOptions.includes(option.option_index)}
+                                          onValueChange={() =>
+                                            handleOptionChange(option.option_index)
+                                          }
+                                          disabled={answerDisabled}
+                                        />
+                                      ) : (
+                                        // For MCQ / CTQ / TF → Radio Button
+                                        <RadioButton
+                                          value={option.option_index}
+                                          status={
+                                            userAnswer === option.option_index
+                                              ? "checked"
+                                              : "unchecked"
+                                          }
+                                          onPress={() => handleOptionChange(option.option_index)}
+                                          disabled={answerDisabled}
+                                        />
+                                      )}
+
+                                      {option.option_img_name ? (
+                                        <ResponsiveImage uri={option.option_img_name} />
+                                      ) : (
+                                        <Text style={styles.optionIndex}>{option.option_index}</Text>
+                                      )}
+                                    </View>
+                                  ))}
+                              </View>
+                            )}
+
+                          {feedback && <Text>{feedback}</Text>}
+                        </ScrollView>
+                      </View>
+                    </View>
+                  </ScrollView>
+                  {/* </ScrollView> */}
+
+                  {/* Navigation Buttons */}
+                  <View style={styles.navigationButtons}>
+                    {currentQuestionIndex > 0 && (
+                      <TouchableOpacity
+                        style={styles.btn}
+                        onPress={() => setCurrentQuestionIndex(currentQuestionIndex - 1)}
+                      >
+                        <Text style={styles.btnText}>Previous</Text>
+                      </TouchableOpacity>
+                    )}
+
+                    {!answerDisabled && (
+                      <TouchableOpacity
+                        style={styles.btn}
+                        onPress={handleSubmitAnswer}
+                        disabled={answerDisabled}
+                      >
+                        <Text style={styles.btnText}>Submit</Text>
+                      </TouchableOpacity>
+                    )}
+
+                    {answerDisabled && (
+                      <TouchableOpacity
+                        style={styles.btn}
+                        onPress={async () => {
+                          // const isValid = await validateSession();
+                          // if (!isValid) return;
+                          setSolutionVisibility(
                             currentQuestion.exercise_question_id
                           );
                           setSolutionTypes((prev) => ({
@@ -502,26 +511,26 @@ const Popup = ({
                             [currentQuestion.exercise_question_id]:
                               solutionVideo ? "video" : "image",
                           }));
-      }}
-    >
-      <Text style={styles.btnText}>View Solution</Text>
-    </TouchableOpacity>
-  )}
+                        }}
+                      >
+                        <Text style={styles.btnText}>View Solution</Text>
+                      </TouchableOpacity>
+                    )}
 
-                {currentQuestionIndex < exercise.questions.length - 1 && (
-                  <TouchableOpacity
-                    style={styles.btn}
-                    onPress={() => setCurrentQuestionIndex(currentQuestionIndex + 1)}
-                  >
-                    <Text style={styles.btnText}>Next</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
+                    {currentQuestionIndex < exercise.questions.length - 1 && (
+                      <TouchableOpacity
+                        style={styles.btn}
+                        onPress={() => setCurrentQuestionIndex(currentQuestionIndex + 1)}
+                      >
+                        <Text style={styles.btnText}>Next</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
 
-            </View>
+                </View>
 
 
-            {/* {showPalette && (
+                {/* {showPalette && (
           <View style={[styles.statusPalette, showPalette ? styles.showPaletteMobile : null]}>
             <View style={styles.statusPaletteContainer}>
               {exercise.questions.map((question, index) => {
@@ -543,93 +552,104 @@ const Popup = ({
             </View>
           </View>
         )}  */}
-          </View>
-        ) : lecture ? (
-          // <WebView
-          //   source={{ uri: getVideoEmbedUrl(lecture.lecture_video_link) }}
-          //   style={{ flex: 1 }}
-          //   allowsFullscreenVideo
-          // />
-          renderVideo(lecture.lecture_video_link)
-        ) : (
-          <Text>No Data Available</Text>
-        )}
+              </View>
+            ) : lecture ? (
+              // <WebView
+              //   source={{ uri: getVideoEmbedUrl(lecture.lecture_video_link) }}
+              //   style={{ flex: 1 }}
+              //   allowsFullscreenVideo
+              // />
+              renderVideo(lecture.lecture_video_link)
+            ) : (
+              <Text>No Data Available</Text>
+            )}
 
-        </View>
-         <TouchableOpacity
-          style={styles.navBtn}
-          onPress={nextLectureOrExercise}
-        >
-          <Text style={styles.navBtnText}>Next</Text>
-        </TouchableOpacity>
+          </View>
+          <TouchableOpacity
+            style={styles.navBtn}
+            onPress={nextLectureOrExercise}
+          >
+            <Text style={styles.navBtnText}>Next</Text>
+          </TouchableOpacity>
         </View>
         {/* Solution Modal */}
         {exercise &&
-        currentQuestion &&
-        solutionVisibility === currentQuestion.exercise_question_id  && (
-          <Modal visible transparent animationType="fade">
-            <View style={styles.solutionOverlay}>
-              <View style={styles.solutionContent}>
-                <TouchableOpacity onPress={() => setSolutionVisibility(null)}>
-                  <Text style={styles.closeBtn}>✕</Text>
-                </TouchableOpacity>
-<View style={styles.navigationButtons}>
-  
-  {solutionVideo && (
-    <TouchableOpacity
-      style={[
-        styles.button,
-        solutionTypes[currentQuestion.exercise_question_id] === "video" &&
-          styles.activeButton,
-      ]}
-      onPress={() =>
-        setSolutionTypes((prev) => ({
-          ...prev,
-          [currentQuestion.exercise_question_id]: "video",
-        }))
-      }
-    >
-      <Text style={styles.buttonText}>Video Solution</Text>
-    </TouchableOpacity>
-  )}
+          currentQuestion &&
+          solutionVisibility === currentQuestion.exercise_question_id && (
+            <Modal visible transparent animationType="fade">
+              <View style={styles.solutionOverlay}>
+                <View style={styles.solutionContent}>
+                  <TouchableOpacity onPress={() => setSolutionVisibility(null)}>
+                    <Text style={styles.closeBtn}>✕</Text>
+                  </TouchableOpacity>
+                  <View style={styles.navigationButtons}>
 
-  {solutionImage && (
-    <TouchableOpacity
-      style={[
-        styles.button,
-        solutionTypes[currentQuestion.exercise_question_id] === "image" &&
-          styles.activeButton,
-      ]}
-      onPress={() =>
-        setSolutionTypes((prev) => ({
-          ...prev,
-          [currentQuestion.exercise_question_id]: "image",
-        }))
-      }
-    >
-      <Text style={styles.buttonText}>Image Solution</Text>
-    </TouchableOpacity>
-  )}
-</View>
+                    {solutionVideo && (
+                      <TouchableOpacity
+                        style={[
+                          styles.button,
+                          solutionTypes[currentQuestion.exercise_question_id] === "video" &&
+                          styles.activeButton,
+                        ]}
+                        onPress={() =>
+                          setSolutionTypes((prev) => ({
+                            ...prev,
+                            [currentQuestion.exercise_question_id]: "video",
+                          }))
+                        }
+                      >
+                        <Text style={styles.buttonText}>Video Solution</Text>
+                      </TouchableOpacity>
+                    )}
+
+                    {solutionImage && (
+                      <TouchableOpacity
+                        style={[
+                          styles.button,
+                          solutionTypes[currentQuestion.exercise_question_id] === "image" &&
+                          styles.activeButton,
+                        ]}
+                        onPress={() =>
+                          setSolutionTypes((prev) => ({
+                            ...prev,
+                            [currentQuestion.exercise_question_id]: "image",
+                          }))
+                        }
+                      >
+                        <Text style={styles.buttonText}>Image Solution</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
 
 
-                {solutionTypes[currentQuestion.exercise_question_id] ===
-                    "video" && solutionVideo && (
-                  <WebView
-                    source={{ uri: getVideoEmbedUrl(solutionVideo) }}
-                    style={{ flex: 1 }}
-                  />
-                )}
-                { solutionTypes[currentQuestion.exercise_question_id] ===
+                    {solutionVisibility && (
+  <Modal visible transparent animationType="fade">
+    <View style={styles.solutionOverlay}>
+      <View style={styles.solutionContent}>
+        <TouchableOpacity onPress={() => setSolutionVisibility(null)}>
+          <Text style={styles.closeBtn}>✕</Text>
+        </TouchableOpacity>
+
+        {/* Use shared renderVideo utility */}
+        {solutionVideo && renderVideo(solutionVideo)}
+
+        {solutionImage && (
+          <ResponsiveImage uri={solutionImage} />
+        )}
+      </View>
+    </View>
+  </Modal>
+)}
+                  {solutionTypes[currentQuestion.exercise_question_id] ===
                     "image" && solutionImage && (
-                  <ResponsiveImage uri= { solutionImage }
-                    
-                  />
-                )}
+                      <ResponsiveImage uri={solutionImage}
+
+                      />
+                    )}
+                </View>
               </View>
-            </View>
-          </Modal>
-        )} */}
+            </Modal>
+          )}
         {solutionVisibility && (
           <Modal visible transparent animationType="fade">
             <View style={styles.solutionOverlay}>
@@ -662,9 +682,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     padding: 12,
-    height: 40,     
-    borderBottomWidth: 1,
-    borderColor: "#ccc",
+    // height: 40,
+    // borderBottomWidth: 1,
+    // borderColor: "#ccc",
   },
   exerciseQuestionContainers: {
     padding: 10
@@ -690,7 +710,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-between",
     marginVertical: 15,
-   
+
   },
   navigationButtons: {
     flexDirection: "row",
@@ -847,7 +867,7 @@ const styles = StyleSheet.create({
   solutionButtons: {
     flexDirection: 'row',
     justifyContent: 'center',
-    backgroundColor:'red',
+    backgroundColor: 'red',
     padding: 10,
   },
   button: {
@@ -886,12 +906,12 @@ const styles = StyleSheet.create({
   unvisited: { color: "#000" },
   unanswered: { color: "#fff" },
   answered: { color: "#fff" },
-      questionNumberRow: {
-         flexDirection: 'row',
-         gap:'10',
-         Height: 30,
-        
-         },
+  questionNumberRow: {
+    flexDirection: 'row',
+    gap: '10',
+    Height: 30,
+
+  },
   questionBtn: {
     marginRight: 5,
     padding: 10,
