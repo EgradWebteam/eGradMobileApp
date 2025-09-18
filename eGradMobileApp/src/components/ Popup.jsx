@@ -41,14 +41,14 @@ const Popup = ({
   setAnswerDisabled,
   feedback,
   setFeedback,
-  solutionVideo,
+   solutionVideo,
   solutionImage,
   previousLectureOrExercise,
   nextLectureOrExercise,
 }) => {
   // const [isMobile, setIsMobile] = useState(width <= 768);
   // const [showPalette, setShowPalette] = useState(width > 768);
-  const [solutionTypes, setSolutionTypes] = useState({});
+ const [solutionTypes, setSolutionTypes] = useState({});
   const [solutionVisibility, setSolutionVisibility] = useState(null);
    const [cursorPosition, setCursorPosition] = useState(0);
   const inputRef = useRef(null);
@@ -74,6 +74,8 @@ const Popup = ({
   unanswered: require('../images/NotAnswered.png'),
   unvisited: require('../images/Visited.png'),
 };
+console.log( solutionVideo,
+  solutionImage,solutionTypes)
 // useEffect(() => {
 //   const update = () => {
 //     const mobile = Dimensions.get("window").width <= 768;
@@ -262,6 +264,14 @@ useEffect(() => {
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
       <View style={styles.container}>
         {/* Header */}
+        <View style={styles.navBtns}>
+         <TouchableOpacity
+          style={styles.navBtn}
+          onPress={previousLectureOrExercise}
+        >
+          <Text style={styles.navBtnText}>Previous</Text>
+        </TouchableOpacity>
+        <View style={styles.MainContainerExcercise}>
         <View style={styles.header}>
           <Text style={styles.title}>
             {exercise ? exercise.exercise_name : lecture?.orvl_lecture_name}
@@ -272,12 +282,7 @@ useEffect(() => {
           
         </View>
 
-        <TouchableOpacity
-          style={styles.navBtn}
-          onPress={previousLectureOrExercise}
-        >
-          <Text style={styles.navBtnText}>Previous</Text>
-        </TouchableOpacity>
+       
         {/* Content */}
         {exercise && exercise.questions?.length > 0 ? (
                 <View style={styles.slideshow}>
@@ -310,7 +315,7 @@ useEffect(() => {
         })}
    
     </ScrollView>
-          <ScrollView style={styles.optionsScroll}>
+          <View>
             <View style={styles.questionTypeAndID}>
               <Text style={styles.questionText}>
                 Question No : {currentQuestion.exercise_question_sort_id}
@@ -327,7 +332,7 @@ useEffect(() => {
               )} */}
             </View>
 
-            <View style={styles.questionAndImage} ref={inputRef}>
+            <ScrollView style={styles.optionsScroll} ref={inputRef}>
               {currentQuestion.qtype_text === "CTQ" && currentQuestion.paragraph_img && (
                 <View style={styles.imgContainer}>
                   <ResponsiveImage uri= {currentQuestion.paragraph_img }
@@ -464,8 +469,8 @@ useEffect(() => {
 )}
 
               {feedback && <Text>{feedback}</Text>}
-            </View>
-          </ScrollView>
+            </ScrollView>
+          </View>
 
           {/* Navigation Buttons */}
           <View style={styles.navigationButtons}>
@@ -494,7 +499,14 @@ useEffect(() => {
       onPress={async () => {
         // const isValid = await validateSession();
         // if (!isValid) return;
-        setSolutionVisibility(currentQuestion.exercise_question_id);
+         setSolutionVisibility(
+                            currentQuestion.exercise_question_id
+                          );
+                          setSolutionTypes((prev) => ({
+                            ...prev,
+                            [currentQuestion.exercise_question_id]:
+                              solutionVideo ? "video" : "image",
+                          }));
       }}
     >
       <Text style={styles.btnText}>View Solution</Text>
@@ -546,28 +558,74 @@ useEffect(() => {
         ) : (
           <Text>No Data Available</Text>
         )}
- <TouchableOpacity
+
+        </View>
+         <TouchableOpacity
           style={styles.navBtn}
           onPress={nextLectureOrExercise}
         >
           <Text style={styles.navBtnText}>Next</Text>
         </TouchableOpacity>
+        </View>
         {/* Solution Modal */}
-        {solutionVisibility && (
+        {exercise &&
+        currentQuestion &&
+        solutionVisibility === currentQuestion.exercise_question_id  && (
           <Modal visible transparent animationType="fade">
             <View style={styles.solutionOverlay}>
               <View style={styles.solutionContent}>
                 <TouchableOpacity onPress={() => setSolutionVisibility(null)}>
                   <Text style={styles.closeBtn}>✕</Text>
                 </TouchableOpacity>
+<View style={styles.navigationButtons}>
+  
+  {solutionVideo && (
+    <TouchableOpacity
+      style={[
+        styles.button,
+        solutionTypes[currentQuestion.exercise_question_id] === "video" &&
+          styles.activeButton,
+      ]}
+      onPress={() =>
+        setSolutionTypes((prev) => ({
+          ...prev,
+          [currentQuestion.exercise_question_id]: "video",
+        }))
+      }
+    >
+      <Text style={styles.buttonText}>Video Solution</Text>
+    </TouchableOpacity>
+  )}
 
-                {solutionVideo && (
+  {solutionImage && (
+    <TouchableOpacity
+      style={[
+        styles.button,
+        solutionTypes[currentQuestion.exercise_question_id] === "image" &&
+          styles.activeButton,
+      ]}
+      onPress={() =>
+        setSolutionTypes((prev) => ({
+          ...prev,
+          [currentQuestion.exercise_question_id]: "image",
+        }))
+      }
+    >
+      <Text style={styles.buttonText}>Image Solution</Text>
+    </TouchableOpacity>
+  )}
+</View>
+
+
+                {solutionTypes[currentQuestion.exercise_question_id] ===
+                    "video" && solutionVideo && (
                   <WebView
                     source={{ uri: getVideoEmbedUrl(solutionVideo) }}
                     style={{ flex: 1 }}
                   />
                 )}
-                {solutionImage && (
+                { solutionTypes[currentQuestion.exercise_question_id] ===
+                    "image" && solutionImage && (
                   <ResponsiveImage uri= { solutionImage }
                     
                   />
@@ -589,6 +647,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     padding: 12,
+    height: 40,     
     borderBottomWidth: 1,
     borderColor: "#ccc",
   },
@@ -613,9 +672,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   navBtns: {
-    flexDirection: "row",
-    justifyContent: "space-around",
+    flexDirection: "column",
+    justifyContent: "space-between",
     marginVertical: 15,
+   
   },
   navigationButtons: {
   flexDirection: "row",
@@ -769,7 +829,27 @@ imageStyle: {
     paddingHorizontal: 20,
     gap: 16, // Not fully supported; manage via spacing on children
   },
-
+  solutionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    backgroundColor:'red',
+    padding: 10,
+  },
+  button: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginHorizontal: 5,
+    backgroundColor: '#e0e0e0', // Inactive button background
+  },
+  activeButton: {
+    backgroundColor: '#007bff', // Active button background
+  },
+  buttonText: {
+    color: 'black',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   arrowButton: {
     width: 45,
     height: 30,
@@ -794,8 +874,8 @@ unvisited: { color: "#000" },
       questionNumberRow: {
          flexDirection: 'row',
          gap:'10',
-         maxHeight: 60,
-         minHeight:50
+         Height: 30,
+        
          },
   questionBtn: {
     marginRight: 5,
@@ -812,7 +892,8 @@ height: 45,
     navBtn: {
   alignSelf: "center",        // Centers the button horizontally
   width: "50%",               // Button width (adjustable)
-  maxWidth: 400,              // Optional: max width for larger screens
+  maxWidth: 400,
+    height:40,              // Optional: max width for larger screens
   paddingVertical: 14,        // Button height
   backgroundColor: "#e7f6f7", // Blue color
   borderRadius: 8,            // Rounded corners
@@ -831,5 +912,6 @@ navBtnText: {
   fontWeight: "600",
   fontSize: 16,
   textAlign: "center",
+
 },
 });
