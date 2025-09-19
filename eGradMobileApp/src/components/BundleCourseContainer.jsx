@@ -139,6 +139,8 @@ console.log("user dataaaa bundleeee",userData)
           activeSection: "myCourses",
           selectedTestCourse: courseIds,
           selectedPortalId: 2,
+          showQuizContainer: false,
+          showTestContainer: false,
           courseContainer: true,
           selectedExam,
           selectedCourseId: courseCreationId,
@@ -177,7 +179,10 @@ console.log("user dataaaa bundleeee",userData)
             "studentDashboardState",
             JSON.stringify({
               activeSection: "myCourses",
+              // selectedTestCourse: course,
               selectedPortalId: 2,
+              showQuizContainer: false,
+              showTestContainer: false,
               courseContainer: true,
               selectedTestCourse: courseIds,
               selectedExam,
@@ -203,13 +208,21 @@ console.log("user dataaaa bundleeee",userData)
           style={[styles.sectionBtn, activeSection === "orvl" && styles.activeBtn]}
           onPress={() => handleSectionChange("orvl")}
         >
-          <Text style={styles.btnText}>Recorded Lectures</Text>
+          <Text   style={[
+        styles.btnText,
+        activeSection === "orvl" && styles.activeBtnText, // 👈 add this
+      ]}>
+        Recorded Lectures</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.sectionBtn, activeSection === "test" && styles.activeBtn]}
           onPress={() => handleSectionChange("test")}
         >
-          <Text style={styles.btnText}>My Tests</Text>
+          <Text  style={[
+        styles.btnText,
+        activeSection === "test" && styles.activeBtnText, // 👈 add this
+      ]}>
+        My Tests</Text>
         </TouchableOpacity>
       </View>
 
@@ -243,7 +256,11 @@ console.log("user dataaaa bundleeee",userData)
                     ]}
                     onPress={() => setSelectedSubject(subject)}
                   >
-                    <Text style={styles.btnText}>{subject}</Text>
+                    <Text  style={[
+          styles.btnText,
+          selectedSubject === subject && styles.activeBtnText, 
+        ]}>
+          {subject}</Text>
                   </TouchableOpacity>
                 ))}
               </ScrollView>
@@ -338,7 +355,9 @@ goBackText: {
     fontWeight: "600",
     color: "#222",
   },
-
+activeBtnText: {
+  color: "#fff", // White when active
+},
   /* Subject filter pills */
   subjectFilter: {
     marginBottom: 16,
