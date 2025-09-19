@@ -103,7 +103,6 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
           showTestContainer: selectedPortalId === 1,
           courseContainer: selectedPortalId === 2,
           selectedExamId,
-          courseIds
         })
       );
     } catch (error) {
@@ -236,9 +235,18 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
               exam_id={selectedExam.exam_id}
               exam_name={selectedExam.exam_name}
               studentId={studentId}
-              Portal2data={{ courses: selectedExam.courses }}
+              // Portal2data={{ courses: selectedExam.courses }}
+               Portal2data={{
+                          courses:
+                            portals
+                              .find((portal) => portal.course_portal_id === 2)
+                              ?.exams.find(
+                                (exam) => exam.exam_id === selectedExam.exam_id
+                              )?.courses || [],
+                        }}
               setCourseIds={setCourseIds}
-              onGoToCourse={handleGoToTest}
+              // onGoToCourse={handleGoToTest}
+              onGoToCourse={(course) => handleGoToTest(course)}
             />
           ) : (
             filteredCourses.map((course) => (
