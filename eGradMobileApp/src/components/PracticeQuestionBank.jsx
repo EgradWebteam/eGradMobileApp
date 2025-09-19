@@ -260,6 +260,7 @@ const getBackgroundClass = (id) => backgroundColors[id] || "#f0f0f0";
       : null,
   ]}
   disabled={isCompleted}
+  
 >
   <Text style={styles.btnText}>
     {isCompleted

@@ -133,7 +133,7 @@ useEffect(() => {
     fetchInstructions();
   }, [testId, studentId, courseId]);
 
-  const handleBeginTest = async () => {
+  const handlePractice = async () => {
     // const isValid = await validateSessionWithoutNavigation();
     // if (isValid) {
       setIsSaving(true);
@@ -143,7 +143,7 @@ useEffect(() => {
           ? await encryptBatch([realTestId, realStudentId, realCourseId])
           : await encryptBatch([realTestId]);
 
-        navigation.navigate('TestScreen', {
+        navigation.navigate('PracticeScreen', {
           testId: encodeURIComponent(encrypted[0]),
           studentId: studentId ? encodeURIComponent(encrypted[1]) : null,
           courseId: courseId ? encodeURIComponent(encrypted[2]) : null,
@@ -159,20 +159,6 @@ useEffect(() => {
     // }
   };
 
-  const handlePrevious = async () => {
-    // const isValid = await validateSessionWithoutNavigation();
-    // if (isValid) {
-      const encrypted = studentId
-        ? await encryptBatch([realTestId, realStudentId, realCourseId])
-        : await encryptBatch([realTestId]);
-
-      navigation.navigate('GeneralInstructions', {
-        testId: encodeURIComponent(encrypted[0]),
-        studentId: studentId ? encodeURIComponent(encrypted[1]) : null,
-        courseId: courseId ? encodeURIComponent(encrypted[2]) : null,
-      });
-    // }
-  };
 
   if (isLoading) {
     return (
@@ -256,9 +242,9 @@ useEffect(() => {
       
 
         <TouchableOpacity
-          onPress={handleBeginTest}
+          onPress={handlePractice}
          
-          style={[styles.buttonPrimary ]}
+          style={[styles.buttonPrimary, isSaving && styles.disabledButton]}
         >
           <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
