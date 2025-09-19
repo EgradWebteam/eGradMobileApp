@@ -243,23 +243,23 @@ useEffect(() => {
 
     if (!res.ok) throw new Error("Failed to submit");
 
-    // Disable further submission and update state
-    setAnswerDisabled(true);
-    setExerciseMeta((prevMeta) => ({
-      ...prevMeta,
-      [currentQuestion.exercise_question_id]: {
-        status: "answered",
-        response: submittedAnswer,
-      },
-    }));
-  } catch (e) {
-    // Show feedback if submission fails
-    setFeedback("Failed to submit. Try again.");
-  } finally {
-    // Reset the lock after the operation is done
-    submitLock.current = false;
-  }
-};
+      // Disable further submission and update state
+      setAnswerDisabled(true);
+      setExerciseMeta((prevMeta) => ({
+        ...prevMeta,
+        [currentQuestion.exercise_question_id]: {
+          status: "answered",
+          response: submittedAnswer,
+        },
+      }));
+    } catch (e) {
+      // Show feedback if submission fails
+      setFeedback("Failed to submit. Try again.");
+    } finally {
+      // Reset the lock after the operation is done
+      submitLock.current = false;
+    }
+  };
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
