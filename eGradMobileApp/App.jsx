@@ -15,6 +15,7 @@ import ExamInstructionsScreen  from "./src/screen/ExamInstructionsScreen";
 import GeneralInstructionsScreen from './src/screen/GeneralInstructionsScreen';
 import TermsAndConditions from './src/screen/TermsAndConditions';
 import StudyMaterial from './src/components/StudyMaterial';
+import PracticeScreen from './src/screen/PracticeScreen';
 import {
   
   ActivityIndicator,
@@ -111,6 +112,7 @@ const determineInitialRoute = async () => {
           <Stack.Screen name="TermsAndConditions" component={TermsAndConditions} />
           <Stack.Screen name="StudyMaterial" component={StudyMaterial} />
           <Stack.Screen name="TestScreen" component={TestScreen} />
+            <Stack.Screen name="PracticeScreen" component={PracticeScreen} />
         </Stack.Navigator>
       </NavigationContainer>
       <Toast />
