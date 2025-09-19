@@ -78,6 +78,7 @@ const determineInitialRoute = async () => {
       setInitialRoute('Home');
     }
   } catch (err) {
+      await AsyncStorage.clear();
     console.error('Error checking student data:', err);
     setInitialRoute('Home'); // fallback route if anything fails
   }
