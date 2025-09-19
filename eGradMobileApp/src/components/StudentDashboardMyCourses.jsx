@@ -70,7 +70,7 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
             setShowQuizContainer(parsed.showQuizContainer ?? true);
             setShowTestContainer(parsed.showTestContainer ?? false);
             setSelectedPortalId(parsed.selectedPortalId || null);
-            setCourseIds(parsed.courseIds || []); // fixed from selectedTestCourse
+            setCourseIds(parsed.selectedTestCourse || []); // fixed from selectedTestCourse
             setSelectedExamId(parsed.selectedExamId || null);
             setCourseContainer(parsed.courseContainer ?? false);
           }
