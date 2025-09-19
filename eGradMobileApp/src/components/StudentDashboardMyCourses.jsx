@@ -287,11 +287,12 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
         ) : (
           <PracticeQuestionBank
             course={selectedTestCourse}
+            onBack={handleBackToCourses}
             studentId={studentId}
             userData={userData}
             selectedPortalId={selectedPortalId}
+            course_name={selectedTestCourse.course_name}
             selectedExam={selectedExam}
-            onBack={handleBackToCourses}
           />
         )
       )}
