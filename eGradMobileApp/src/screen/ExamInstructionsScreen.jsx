@@ -13,7 +13,7 @@ import {
  
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
-
+import ResponsiveImage from '../components/OTSFolder/ResponsiveImage.js';
 import { styles } from '../styles/OTSStyles.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -224,11 +224,10 @@ useEffect(() => {
   img: ({ width, height, ...props }) => {
     //  console.log('Image props:', props); 
       const { tnode } = props;
-  console.log('Full tnode:', tnode);
   // Log the src to debug the value
   const src = tnode?.domNode?.attribs?.src;
 
-  console.log('Image src:', src);
+
 
   if (!src) {
     console.warn('Image src is missing or undefined');
@@ -237,17 +236,10 @@ useEffect(() => {
 
   const isBase64 = src.startsWith('data:image/');
   return isBase64 ? (
-    <Image
-      style={[styles.image, { width: width || 100, height: height || 100 }]}
-      source={{ uri: src }}
-      {...props}
-    />
+  
+            <ResponsiveImage uri={src} />
   ) : (
-    <Image
-      style={[styles.image, { width: width || 100, height: height || 100 }]}
-      source={{ uri: src }}
-      {...props}
-    />
+  <ResponsiveImage uri={src} />
   );
 },
 
