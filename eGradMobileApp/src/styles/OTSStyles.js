@@ -87,7 +87,7 @@ height: 45,
   },
   heading: {
     fontSize: 22,
-    fontWeight: 'bold',
+    fontWeight: 90,
     marginBottom: 20,
   },
   instructionPoint: {
@@ -157,7 +157,7 @@ height: 45,
   },
  
  
-  subHeadingSecondary: { fontSize: 18, fontWeight: "600", marginTop: 16, marginBottom: 8 },
+  subHeadingSecondary: { fontSize: 18, fontWeight: 60, marginTop: 16, marginBottom: 8 },
   instructionContainer: { flex: 1 },
   instructionSection: { marginBottom: 20 },
  
@@ -434,7 +434,7 @@ height: 45,
   //repeated
   subHeading: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: 60,
     marginBottom: 6,
     color: '#333',
   },
