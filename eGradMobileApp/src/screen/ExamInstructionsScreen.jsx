@@ -8,6 +8,7 @@ import {
   ScrollView,
   Alert,
   BackHandler,
+  Dimensions,
   ActivityIndicator,
  
 } from 'react-native';
@@ -24,6 +25,7 @@ import defaultImage from '../images/studentimage.png';
 import adminCapImg from '../images/capImg.png';
 import OTSHeader from "../components/OTSFolder/OTSHeader";
  import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig.js";
+ import RenderHtml from 'react-native-render-html';
 const ExamInstructionsScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -182,27 +184,80 @@ useEffect(() => {
 
   const instructionHeading = instructionsData[0]?.instruction_heading || 'Exam Instructions';
   const instructionPoints = instructionsData[0]?.instruction_points || [];
-
+// console.log(instructionPoints.join('') )
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.containergi}>
       <OTSHeader />
+        <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <Text style={styles.heading}>{instructionHeading}</Text>
 
-      {instructionPoints.map((point, index) => (
-        <Text key={index} style={styles.instructionPoint}>
-          {point.replace(/<[^>]+>/g, '')}
-        </Text>
-      ))}
+     
+     
+        <RenderHtml
+          contentWidth={Dimensions.get('window').width}
+          source={{ html: instructionPoints.join('') }} // Join if the instruction points are an array of strings
+          tagsStyles={{
+            p: { fontSize: 16, lineHeight: 24, marginBottom: 10 },
+            ul: { marginBottom: 10 },
+            ol: { marginBottom: 10 },
+            li: { fontSize: 16, color: '#555', marginBottom: 5 },
+            strong: { fontWeight: 'bold' },
+            em: { fontStyle: 'italic' },
+            h1: { fontSize: 28, fontWeight: 'bold', marginBottom: 15 },
+            h2: { fontSize: 24, fontWeight: 'bold', marginBottom: 12 },
+            h3: { fontSize: 20, fontWeight: 'bold', marginBottom: 10 },
+            h4: { fontSize: 18, fontWeight: 'bold', marginBottom: 8 },
+            h5: { fontSize: 16, fontWeight: 'bold', marginBottom: 6 },
+            h6: { fontSize: 14, fontWeight: 'bold', marginBottom: 4 },
+            u: { textDecorationLine: 'underline' },
+            a: { color: 'blue' },
+            img: { width: '100%', height: undefined, aspectRatio: 1 },
+            table: { borderWidth: 1, borderColor: '#ddd', marginBottom: 10 },
+            th: { padding: 5, backgroundColor: '#f0f0f0' },
+            td: { padding: 5, borderBottomWidth: 1, borderBottomColor: '#ddd' },
+            pre: { backgroundColor: '#f4f4f4', padding: 10, marginBottom: 10 },
+            code: { fontFamily: 'monospace', backgroundColor: '#f4f4f4', padding: 5 },
+          }}
+   renderers={{
+      
+          // Make sure src is defined and valid
+  img: ({ width, height, ...props }) => {
+    //  console.log('Image props:', props); 
+      const { tnode } = props;
+  console.log('Full tnode:', tnode);
+  // Log the src to debug the value
+  const src = tnode?.domNode?.attribs?.src;
 
-      <View style={styles.profileContainer}>
-        <Image
-          source={{ uri: isAdmin ? Image.resolveAssetSource(adminCapImg).uri : studentProfile || defaultImage }}
-          style={styles.profileImage}
-          defaultSource={defaultImage}
+  console.log('Image src:', src);
+
+  if (!src) {
+    console.warn('Image src is missing or undefined');
+    return null;
+  }
+
+  const isBase64 = src.startsWith('data:image/');
+  return isBase64 ? (
+    <Image
+      style={[styles.image, { width: width || 100, height: height || 100 }]}
+      source={{ uri: src }}
+      {...props}
+    />
+  ) : (
+    <Image
+      style={[styles.image, { width: width || 100, height: height || 100 }]}
+      source={{ uri: src }}
+      {...props}
+    />
+  );
+},
+
+        
+      }}
         />
-        <Text style={styles.studentName}>{isAdmin ? 'Admin' : studentName}</Text>
-      </View>
+   
 
+
+</ScrollView>
       <View style={styles.checkboxContainer}>
         <CheckBox
           value={acceptedTerms}

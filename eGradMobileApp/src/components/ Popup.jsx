@@ -243,6 +243,14 @@ const Popup = ({
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
       <View style={styles.container}>
+                     <View style={styles.navBtns}>
+
+   <TouchableOpacity
+          style={styles.navBtn}
+          onPress={previousLectureOrExercise}
+        >
+          <Text style={styles.navBtnText}>Previous</Text>
+        </TouchableOpacity>
                   <View style={styles.header}>
             <Text style={styles.title}>
               {exercise ? exercise.exercise_name : lecture?.orvl_lecture_name}
@@ -254,14 +262,7 @@ const Popup = ({
           </View>
      
         {/* Header */}
-        <View style={styles.navBtns}>
-
-   <TouchableOpacity
-          style={styles.navBtn}
-          onPress={previousLectureOrExercise}
-        >
-          <Text style={styles.navBtnText}>Previous</Text>
-        </TouchableOpacity>
+  
           <View style={styles.MainContainerExcercise}>
             {/* <View style={styles.header}>
               <Text style={styles.title}>
