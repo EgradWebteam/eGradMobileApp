@@ -9,9 +9,9 @@ import { useStudent } from "../hooks/StudentContext.jsx";
 import axios from "axios";
 import { backEndUrl } from "../apiConfig.js";
 import { decryptBatch } from "../utils/CryptoUtils.jsx";
-import PraticeQuestionSection from "./PraticeQuestionSection.jsx";
-import PraticeSummaryModal from "./PraticeSummaryModal.jsx";
-import PraticeQuestionSidebar from "./PraticeQuestionSidebar.jsx";
+import PraticeQuestionSection from "../components/PQBFolder/PraticeQuestionSection.jsx";
+import PraticeSummaryModal from "../components/PQBFolder/PraticeSummaryModal.jsx";
+import PraticeQuestionSidebar from "../components/PQBFolder/PraticeQuestionSidebar.jsx";
 import Icon from 'react-native-vector-icons/AntDesign'; // Adjust based on the icon you're using
 
 // import { useSession } from "../hooks/SessionContext.jsx";
@@ -510,58 +510,59 @@ const PracticeScreen = () => {
     </View>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         
-        <PraticeQuestionSection
-          practiceQuestionsData={practiceQuestionsData}
-          activeSubjectIdx={activeSubjectIdx}
-          activeSectionIdx={activeSectionIdx}
-          currentQuestionIdx={currentQuestionIdx}
-          selectedOption={selectedOption}
-          natAnswers={natAnswers}
-          answeredQuestions={answeredQuestions}
-          showSolution={showSolution}
-          showScientificCalc={showScientificCalc}
-          cursorPos={cursorPos}
-          onSubjectChange={handleSubjectChange}
-          onSectionChange={handleSectionChange}
-          onQuestionChange={goToQuestion}
-          onToggleCalculator={toggleCalculator}
-          onSetSelectedOption={setSelectedOption}
-          onSetNatAnswers={setNatAnswers}
-          onSetAnsweredQuestions={setAnsweredQuestions}
-          onSetShowSolution={setShowSolution}
-          onSetCursorPos={setCursorPos}
-          onSetCurrentQuestionIdx={setCurrentQuestionIdx}
-          OptionPatternId={practiceQuestionsData?.opt_pattern_id}
-          onFinalSubmit={handleFinalSubmit}
-          getCurrentSubjects={getCurrentSubjects}
-          getCurrentSections={getCurrentSections}
-          getCurrentSection={getCurrentSection}
-          getCurrentQuestion={getCurrentQuestion}
-          handleWithSession={handleWithSession}
-          storageKey={storageKey}
-          showSidebar={showSidebar}
-          showSolutionModal={showSolutionModal}
-          setShowSolutionModal={setShowSolutionModal}
-        />
-        <PraticeQuestionSidebar
-          showSidebar={showSidebar}
-          studentProfile={studentProfile}
-          studentName={studentName}
-          performance={perf}
-          currentSection={getCurrentSection()}
-          currentSubjects={getCurrentSubject()}
-          currentSections={getCurrentSections()}
-          currentQuestionIdx={currentQuestionIdx}
-          answeredQuestions={answeredQuestions}
-          onQuestionChange={goToQuestion}
-          onToggleSidebar={toggleSidebar}
-          timeSpent={timeSpent}
-          handleWithSession={handleWithSession}
-          storageKey={storageKey}
-        />
+ <PraticeQuestionSection
+              practiceQuestionsData={practiceQuestionsData}
+              activeSubjectIdx={activeSubjectIdx}
+              activeSectionIdx={activeSectionIdx}
+              currentQuestionIdx={currentQuestionIdx}
+              selectedOption={selectedOption}
+              natAnswers={natAnswers}
+              answeredQuestions={answeredQuestions}
+              showSolution={showSolution}
+              showScientificCalc={showScientificCalc}
+              cursorPos={cursorPos}
+              onSubjectChange={handleSubjectChange}
+              onSectionChange={handleSectionChange}
+              onQuestionChange={goToQuestion}
+              onToggleCalculator={toggleCalculator}
+              onSetSelectedOption={setSelectedOption}
+              onSetNatAnswers={setNatAnswers}
+              onSetAnsweredQuestions={setAnsweredQuestions}
+              onSetShowSolution={setShowSolution}
+              onSetCursorPos={setCursorPos}
+              onSetCurrentQuestionIdx={setCurrentQuestionIdx}
+              OptionPatternId={practiceQuestionsData?.opt_pattern_id}
+              onFinalSubmit={handleFinalSubmit}
+              getCurrentSubjects={getCurrentSubjects}
+              getCurrentSections={getCurrentSections}
+              getCurrentSection={getCurrentSection}
+              getCurrentQuestion={getCurrentQuestion}
+              handleWithSession={handleWithSession}
+              storageKey={storageKey}
+               showSidebar={showSidebar}
+               showSolutionModal={showSolutionModal}
+               setShowSolutionModal={setShowSolutionModal}
+            />
+
+            <PraticeQuestionSidebar
+              showSidebar={showSidebar}
+              studentProfile={studentProfile}
+              studentName={studentName}
+              performance={perf}
+              currentSection={getCurrentSection()}
+              currentSubjects={getCurrentSubject()}
+              currentSections={getCurrentSections()}
+              currentQuestionIdx={currentQuestionIdx}
+              answeredQuestions={answeredQuestions}
+              onQuestionChange={goToQuestion}
+              onToggleSidebar={toggleSidebar}
+              timeSpent={timeSpent}
+              handleWithSession={handleWithSession}
+              storageKey={storageKey}
+            />
         {isSubmitted && (
           <PraticeSummaryModal
-            summary={summary}
+          summary={summary}
             currentSection={getCurrentSection()}
             answeredQuestions={answeredQuestions}
             onAttemptNow={() => {
@@ -583,9 +584,7 @@ const PracticeScreen = () => {
                 setCurrentQuestionIdx(firstIdx);
               }
             }}
-            onClose={() => {
-              // Close modal or navigate away
-            }}
+            onClose={() => window.close()}
             storageKey={storageKey}
           />
         )}
