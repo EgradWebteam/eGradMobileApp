@@ -18,7 +18,8 @@ import StudyMaterial from './src/components/StudyMaterial';
 import {
   
   ActivityIndicator,
-  Alert
+  Alert,
+  View
 } from 'react-native';
 import { backEndUrl, frontEndUrl,backEndPort } from "./src/apiConfig";
 import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native';
@@ -38,101 +39,83 @@ const navigateTo = (name, params) => {
 const Stack = createNativeStackNavigator();
 
 const App = () => {
-const [loading, setLoading] = React.useState(false);
+  const [initialRoute, setInitialRoute] = React.useState(null); // null = still loading
 
+const verifySession = async (sessionId) => {
+  try {
+    const response = await fetch(`${backEndUrl}/login/verifySession`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionId }),
+    });
 
-  const checkStudentData = async () => {
-  
-    console.log("hgdhasjdgjhsagdhjsad")
-    await new Promise(resolve => setTimeout(resolve, 200));
+    const data = await response.json();
+    return data.success === true; // make sure it always returns true/false
+  } catch (error) {
+    console.error('Error verifying session:', error);
+    return false; // **important**: always return false on error
+  }
+};
 
+const determineInitialRoute = async () => {
+  try {
     const keys = ['accessToken', 'decryptedId', 'sessionId', 'userId', 'studentData'];
     const values = await AsyncStorage.multiGet(keys);
-
-    console.log('Fetched values:', values);
-
     const hasAllKeys = values.every(([_, value]) => value !== null && value !== '');
 
     if (hasAllKeys) {
-      console.log("hi")
       const sessionId = values.find(([key]) => key === 'sessionId')[1];
-      const userId = values.find(([key]) => key === 'userId')[1];
-
       const sessionValid = await verifySession(sessionId);
-
       if (sessionValid) {
-        navigateTo('studentDashboard', { userId });
+        setInitialRoute('studentDashboard');
       } else {
         await AsyncStorage.clear();
         Alert.alert('Session Expired', 'You have been logged out.');
-        navigateTo('login');
+        setInitialRoute('login');
       }
     } else {
       await AsyncStorage.clear();
-      navigateTo('Home');
+      setInitialRoute('Home');
     }
+  } catch (err) {
+    console.error('Error checking student data:', err);
+    setInitialRoute('Home'); // fallback route if anything fails
+  }
+};
 
-    setLoading(false);
-  };
+  useEffect(() => {
+    determineInitialRoute();
+  }, []);
 
+  if (!initialRoute) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#3399cc" />
+      </View>
+    );
+  }
 
-
-
-
-  const verifySession = async (sessionId) => {
-    try {
-      const response = await fetch(`${backEndUrl}/login/verifySession`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ sessionId }),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        console.log('Session is valid');
-        return true;
-      } else {
-        console.log('Session is invalid');
-        return false;
-      }
-    } catch (error) {
-      console.error('Error verifying session:', error);
-      return false;
-    }
-  };
-  if(loading) return <ActivityIndicator size="large" color="#000080" />
   return (
     <StudentProvider>
-      <NavigationContainer ref={navigationRef} onReady={() => {
-          checkStudentData();
-        }}>
-        <Stack.Navigator
-          initialRouteName="Home"
-          screenOptions={{
-            headerShown: false,
-          }}
-        >
-
-          
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName={initialRoute} screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="ExamInstructions" component={ExamInstructionsScreen} />
-          <Stack.Screen name="GeneralInstructions" component={GeneralInstructionsScreen} />
           <Stack.Screen name="login" component={LoginScreen} />
-          <Stack.Screen name="TestScreen" component={TestScreen} />
           <Stack.Screen name="register" component={RegisterationPage} />
           <Stack.Screen name="QBScreen" component={QBScreen} />
           <Stack.Screen name="studentDashboard" component={StudentDashboard} />
           <Stack.Screen name="StudentReport" component={StudentReportMain} />
+          <Stack.Screen name="ExamInstructions" component={ExamInstructionsScreen} />
+          <Stack.Screen name="GeneralInstructions" component={GeneralInstructionsScreen} />
           <Stack.Screen name="TermsAndConditions" component={TermsAndConditions} />
-          <Stack.Screen name="StudyMaterial" component={StudyMaterial}/>
+          <Stack.Screen name="StudyMaterial" component={StudyMaterial} />
+          <Stack.Screen name="TestScreen" component={TestScreen} />
         </Stack.Navigator>
       </NavigationContainer>
       <Toast />
     </StudentProvider>
   );
 };
+
 
 export default App;

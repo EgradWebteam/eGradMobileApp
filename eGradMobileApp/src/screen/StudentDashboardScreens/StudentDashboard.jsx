@@ -26,6 +26,7 @@ import StudentDashboardBuyCourses from '../../components/StudentDashboardBuyCour
 import StudentDashboardBookMarks from '../../components/StudentDashboardBookMarks';
 import StudentDashboardMyResults from '../../components/StudentDashboardMyResults';
 import StudentDashboard_AccountSettings from '../../components/StudentDashboard_AccountSettings';
+import { ActivityIndicator } from 'react-native-paper';
 
 export const StudentDashboard = () => {
   const [activeSection, setActiveSection] = useState('dashboard');
@@ -61,27 +62,49 @@ const handleSectionChange = useCallback(
   []
 );
 
+// useEffect(() => {
+//   const restoreDashboardState = async () => {
+//     try {
+//       const savedState = await AsyncStorage.getItem("studentDashboardState");
+//       if (savedState) {
+//         const { activeSection, preselectedPortalId } = JSON.parse(savedState);
+//         if (activeSection) setActiveSection(activeSection);
+//         if (preselectedPortalId) {
+//           // setPreselectedPortalId(preselectedPortalId);
+//         }
+//       }
+//     } catch (err) {
+//       console.error("Failed to restore dashboard state:", err);
+//     }
+//   };
+
+
+//   fetchPortalData();
+//   restoreDashboardState();
+//   setIsLoading(false);
+// }, []);
 useEffect(() => {
-  const restoreDashboardState = async () => {
-    try {
-      const savedState = await AsyncStorage.getItem("studentDashboardState");
-      if (savedState) {
-        const { activeSection, preselectedPortalId } = JSON.parse(savedState);
-        if (activeSection) setActiveSection(activeSection);
-        if (preselectedPortalId) {
-          // setPreselectedPortalId(preselectedPortalId);
+    const restoreDashboardState = async () => {
+      try {
+        const savedState = await AsyncStorage.getItem("studentDashboardState");
+        if (savedState) {
+          const { activeSection } = JSON.parse(savedState);
+          setActiveSection(activeSection || "dashboard"); // restore or default
+        } else {
+          setActiveSection("dashboard");
         }
+      } catch (err) {
+        console.error("Failed to restore dashboard state:", err);
+        setActiveSection("dashboard"); // fallback
+      } finally {
+        setIsLoading(false);
       }
-    } catch (err) {
-      console.error("Failed to restore dashboard state:", err);
-    }
-  };
+    };
 
+    fetchPortalData();
+    restoreDashboardState();
+  }, []);
 
-  fetchPortalData();
-  restoreDashboardState();
-  setIsLoading(false);
-}, []);
 
 
   const handleLogout = async () => {
@@ -174,6 +197,15 @@ useEffect(() => {
   };
 
   // if (isLoading) return <LoadingSpinner />;
+  // ⛔️ Don’t render until state restored
+if (isLoading || !activeSection) {
+  return (
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <ActivityIndicator size="large" color="#3399cc" />
+    </View>
+  );
+}
+
 
   return (
     <View style={styles.container}>
