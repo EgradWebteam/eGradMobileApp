@@ -71,21 +71,19 @@ const Popup = ({
     return undefined;
   };
   const backgroundImages = {
-  answered: require('../images/Answered.png'),
-  unanswered: require('../images/NotAnswered.png'),
-  unvisited: require('../images/Visited.png'),
-};
-console.log( solutionVideo,
-  solutionImage,solutionTypes)
-// useEffect(() => {
-//   const update = () => {
-//     const mobile = Dimensions.get("window").width <= 768;
-//     setIsMobile(mobile);
-//     setShowPalette(!mobile);
-//   };
+    answered: require('../images/Answered.png'),
+    unanswered: require('../images/NotAnswered.png'),
+    unvisited: require('../images/Visited.png'),
+  };
+  // useEffect(() => {
+  //   const update = () => {
+  //     const mobile = Dimensions.get("window").width <= 768;
+  //     setIsMobile(mobile);
+  //     setShowPalette(!mobile);
+  //   };
 
-//   // subscribe
-//   const subscription = Dimensions.addEventListener("change", update);
+  //   // subscribe
+  //   const subscription = Dimensions.addEventListener("change", update);
 
 //   // cleanup
 //   return () => {
