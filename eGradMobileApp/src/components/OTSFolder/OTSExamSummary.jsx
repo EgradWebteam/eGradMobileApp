@@ -223,7 +223,7 @@ const handleViewReport = async () => {
                 Your test is automatically submitted successfully.
               </Text>
               <TouchableOpacity
-                style={styles.button}
+                style={styles.viewreportbtn}
                 onPress={handleConfirmSubmit}
                 disabled={isSubmittingRef.current}
               >
@@ -259,11 +259,15 @@ const handleViewReport = async () => {
         </ScrollView>
       ) : (
         <Modal>
+          <View style={styles.modalContainer}>
+    <View style={styles.modalContent}>
           <Text style={styles.submissionTitle}>Your Test has been Submitted!</Text>
           <Text style={styles.submissionText}>You can now view your report.</Text>
-          <TouchableOpacity style={styles.button} onPress={handleViewReport}>
+          <TouchableOpacity style={styles.viewreportbtn} onPress={handleViewReport}>
             <Text style={styles.buttonText}>View Report</Text>
           </TouchableOpacity>
+       </View>
+       </View>
         </Modal>
       )}
     </View>

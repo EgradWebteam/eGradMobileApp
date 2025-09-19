@@ -32,7 +32,7 @@ export const styles = StyleSheet.create({
      alignItems: 'center', 
    justifyContent:'center'
   },
-  activeButton: {    backgroundColor: "#6c5ce7",
+  activeButton: {    backgroundColor: "#09bffc",
     color:'#fff',}, // darker blue
   buttonText: { color: "#fff", fontWeight: "bold" },
   detailsContainer: {

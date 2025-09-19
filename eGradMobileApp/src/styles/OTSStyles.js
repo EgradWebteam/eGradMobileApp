@@ -24,6 +24,19 @@ export const styles = StyleSheet.create({
 
  
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center", // vertically center
+    alignItems: "center",     // horizontally center
+    // backgroundColor: "rgba(0,0,0,0.5)", // optional: dim background
+  },
+  modalContent: {
+    // backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+    width: "80%", // optional
+  },
    timersection: {
     paddingVertical: 4,         // very small vertical padding
     paddingHorizontal: 8,
@@ -129,6 +142,7 @@ height: 45,
   buttonText: {
     color: '#fff',
     textAlign: 'center',
+    fontWeight:90
   },
   centered: {
     flex: 1,
@@ -477,7 +491,13 @@ height: 45,
     borderRadius: 5,
   },
   activeBtn: {
-    backgroundColor: '#6c5ce7',
+    backgroundColor: '#09bffc',
+   
+  },
+  viewreportbtn :{ 
+     backgroundColor: '#09bffc',
+    padding:10,
+    borderRadius:5
   },
   questionBtnText: {
   

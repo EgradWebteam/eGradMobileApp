@@ -243,6 +243,12 @@ useEffect(() => {
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
       <View style={styles.container}>
+        <TouchableOpacity
+            style={styles.navBtn}
+            onPress={previousLectureOrExercise}
+          >
+            <Text style={styles.navBtnText}>Previous</Text>
+          </TouchableOpacity>
         {/* Header */}
         <View style={styles.navBtns}>
            <View style={styles.header}>
@@ -266,12 +272,7 @@ useEffect(() => {
 
             </View> */}
 
-<TouchableOpacity
-            style={styles.navBtn}
-            onPress={previousLectureOrExercise}
-          >
-            <Text style={styles.navBtnText}>Previous</Text>
-          </TouchableOpacity>
+
             {/* Content */}
             {exercise && exercise.questions?.length > 0 ? (
               <View style={styles.slideshow}>
@@ -436,6 +437,7 @@ useEffect(() => {
                                   .map((option) => (
                                     <View key={option.option_id} style={styles.optionLabel}>
                                       {/* For MSQ / MSQN → CheckBox */}
+                                       <Text>{option.option_index}</Text>
                                       {(currentQuestion.qtype_text === "MSQ" ||
                                         currentQuestion.qtype_text === "MSQN") ? (
                                         <CheckBox
@@ -458,7 +460,7 @@ useEffect(() => {
                                           disabled={answerDisabled}
                                         />
                                       )}
-
+                                     
                                       {option.option_img_name ? (
                                         <ResponsiveImage uri={option.option_img_name} />
                                       ) : (
@@ -709,6 +711,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     width: '90%',
     height: 40,
+  },
+  optionLabel:{
+flexDirection:"row",
+gap:2,
   },
   feedback: { color: "red", textAlign: "center" },
   image: { width: "100%", height: 200, marginVertical: 10 },
