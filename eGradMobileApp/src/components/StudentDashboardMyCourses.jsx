@@ -111,11 +111,22 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
     }
   };
 
-  const handleBackToCourses = () => {
+  const handleBackToCourses = async () => {
     setSelectedTestCourse(null);
     setShowQuizContainer(true);
     setShowTestContainer(false);
     setCourseContainer(false);
+    await AsyncStorage.setItem(
+      "studentDashboardState",
+      JSON.stringify({
+        activeSection: "myCourses",
+        selectedTestCourse: null,
+        showQuizContainer: true,
+        showTestContainer: false,
+        selectedExam,
+        courseContainer: false,
+      })
+    );
   };
 
   return (
@@ -127,7 +138,23 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
           {selectedExam && (
             <>
               <Text> <Icon name="chevron-right" size={16} color="#000" /> </Text>
-              <TouchableOpacity onPress={handleBackToCourses}>
+              <TouchableOpacity onPress={async () => {
+                  setSelectedTestCourse(null);
+                  setChapterdetails(null);
+                  setShowTestContainer(false);
+                  setShowQuizContainer(true);
+                  await AsyncStorage.setItem(
+                    "studentDashboardState",
+                    JSON.stringify({
+                      activeSection: "myCourses",
+                      selectedTestCourse: null,
+                      showQuizContainer: true,
+                      showTestContainer: false,
+                      selectedExam,
+                      courseContainer: false,
+                    })
+                  );
+                }}>
                 <Text style={styles.breadcrumbText}>{selectedExam.exam_name}</Text>
               </TouchableOpacity>
             </>
@@ -135,7 +162,29 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
           {selectedTestCourse && (
             <>
               <Text> <Icon name="chevron-right" size={16} color="#000" /> </Text>
-              <Text style={styles.breadcrumbText}>{selectedTestCourse.course_name || 'MINI / MICRO COURSES'}</Text>
+              <TouchableOpacity onPress={async () => {
+                if (!selectedTestCourse.course_name) {
+                  setShowTestContainer(false);
+                  setCourseContainer(true);
+                  setChapterdetails(null);
+                  await AsyncStorage.setItem(
+                    "studentDashboardState",
+                    JSON.stringify({
+                      activeSection: "myCourses",
+                      // selectedTestCourse: course,
+                      selectedPortalId: 2,
+                      showQuizContainer: false,
+                      showTestContainer: false,
+                      courseContainer: true,
+                      selectedTestCourse: selectedTestCourse,
+                      selectedExam,
+                    })
+                  );
+                }
+              }}>
+                <Text style={styles.breadcrumbText}>{selectedTestCourse.course_name || 'MINI / MICRO COURSES'}</Text>
+              </TouchableOpacity>
+              
             </>
           )}
         </View>
