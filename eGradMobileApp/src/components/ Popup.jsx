@@ -15,7 +15,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { WebView } from "react-native-webview";
 import CheckBox from "@react-native-community/checkbox";
-import { RadioButton } from "react-native-paper"; 
+import { RadioButton } from "react-native-paper";
 // const { width } = Dimensions.get("window");
 import ResponsiveImage from './OTSFolder/ResponsiveImage';
 import { backEndUrl } from "../apiConfig";
@@ -42,24 +42,24 @@ const Popup = ({
   setAnswerDisabled,
   feedback,
   setFeedback,
-   solutionVideo,
+  solutionVideo,
   solutionImage,
   previousLectureOrExercise,
   nextLectureOrExercise,
 }) => {
   // const [isMobile, setIsMobile] = useState(width <= 768);
   // const [showPalette, setShowPalette] = useState(width > 768);
- const [solutionTypes, setSolutionTypes] = useState({});
+  const [solutionTypes, setSolutionTypes] = useState({});
   const [solutionVisibility, setSolutionVisibility] = useState(null);
-   const [cursorPosition, setCursorPosition] = useState(0);
+  const [cursorPosition, setCursorPosition] = useState(0);
   const inputRef = useRef(null);
   const submitLock = useRef(false);
- const togglePalette = async () => {
+  const togglePalette = async () => {
     // const isValid = await validateSession();
     // if (!isValid) return;
     setShowPalette(prev => !prev);
   };
-    const getStatus = (questionId) => {
+  const getStatus = (questionId) => {
     if (
       exerciseMeta &&
       typeof exerciseMeta === "object" &&
@@ -146,7 +146,7 @@ const Popup = ({
   };
 
   const handleArrowClick = (direction) => {
-     if (answerDisabled || submitLock.current) return;
+    if (answerDisabled || submitLock.current) return;
     let newPos = cursorPosition;
     if (direction === "left" && cursorPosition > 0) {
       newPos -= 1;
@@ -171,56 +171,56 @@ const Popup = ({
       }
     }
   };
-useEffect(() => {
-  submitLock.current = false;
-  
-}, [questionId]);
- const handleSubmitAnswer = async () => {
-  // Prevent double submission
-  if (submitLock.current) return;
-  submitLock.current = true;
+  useEffect(() => {
+    submitLock.current = false;
 
-  let submittedAnswer = "";
+  }, [questionId]);
+  const handleSubmitAnswer = async () => {
+    // Prevent double submission
+    if (submitLock.current) return;
+    submitLock.current = true;
 
-  // Handling different question types
-  if (["NATD", "NATI", "MCQ4", "MCQ5", "CTQ"].includes(currentQuestion.qtype_text)) {
-    if (!userAnswer) {
-      Alert.alert("Error", "Please submit an answer before proceeding.");
-      submitLock.current = false;
-      return;
+    let submittedAnswer = "";
+
+    // Handling different question types
+    if (["NATD", "NATI", "MCQ4", "MCQ5", "CTQ"].includes(currentQuestion.qtype_text)) {
+      if (!userAnswer) {
+        Alert.alert("Error", "Please submit an answer before proceeding.");
+        submitLock.current = false;
+        return;
+      }
+      submittedAnswer = userAnswer;
+    } else if (["MSQ", "MSQN"].includes(currentQuestion.qtype_text)) {
+      if (!selectedOptions.length) {
+        Alert.alert("Error", "Please select at least one option.");
+        submitLock.current = false;
+        return;
+      }
+      submittedAnswer = selectedOptions.sort().join(",");
     }
-    submittedAnswer = userAnswer;
-  } else if (["MSQ", "MSQN"].includes(currentQuestion.qtype_text)) {
-    if (!selectedOptions.length) {
-      Alert.alert("Error", "Please select at least one option.");
-      submitLock.current = false;
-      return;
-    }
-    submittedAnswer = selectedOptions.sort().join(",");
-  }
 
-  // Payload to send in the request
-  const payload = {
-    question_status: 1,
-    topic_id,
-    subject_id,
-    chapter_id,
-    exercise_question_id: currentQuestion.exercise_question_id,
-    exercise_name_id: exercise.exercise_name_id,
-    student_registration_id: studentId,
-    course_id,
-    exercise_userresponse: submittedAnswer,
-  };
+    // Payload to send in the request
+    const payload = {
+      question_status: 1,
+      topic_id,
+      subject_id,
+      chapter_id,
+      exercise_question_id: currentQuestion.exercise_question_id,
+      exercise_name_id: exercise.exercise_name_id,
+      student_registration_id: studentId,
+      course_id,
+      exercise_userresponse: submittedAnswer,
+    };
 
-  try {
-    // API request to submit the answer
-    const res = await fetch(`${backEndUrl}/studentmycourses/SubmitUserAnswer`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+    try {
+      // API request to submit the answer
+      const res = await fetch(`${backEndUrl}/studentmycourses/SubmitUserAnswer`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-    if (!res.ok) throw new Error("Failed to submit");
+      if (!res.ok) throw new Error("Failed to submit");
 
       // Disable further submission and update state
       setAnswerDisabled(true);
@@ -243,24 +243,25 @@ useEffect(() => {
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
       <View style={styles.container}>
-        <TouchableOpacity
-            style={styles.navBtn}
-            onPress={previousLectureOrExercise}
-          >
-            <Text style={styles.navBtnText}>Previous</Text>
-          </TouchableOpacity>
+                  <View style={styles.header}>
+            <Text style={styles.title}>
+              {exercise ? exercise.exercise_name : lecture?.orvl_lecture_name}
+            </Text>
+            <TouchableOpacity onPress={onClose}>
+              <Text style={styles.closeBtn}>✕</Text>
+            </TouchableOpacity>
+
+          </View>
+     
         {/* Header */}
         <View style={styles.navBtns}>
-           <View style={styles.header}>
-              <Text style={styles.title}>
-                {exercise ? exercise.exercise_name : lecture?.orvl_lecture_name}
-              </Text>
-              <TouchableOpacity onPress={onClose}>
-                <Text style={styles.closeBtn}>✕</Text>
-              </TouchableOpacity>
 
-            </View>
-          
+   <TouchableOpacity
+          style={styles.navBtn}
+          onPress={previousLectureOrExercise}
+        >
+          <Text style={styles.navBtnText}>Previous</Text>
+        </TouchableOpacity>
           <View style={styles.MainContainerExcercise}>
             {/* <View style={styles.header}>
               <Text style={styles.title}>
@@ -437,7 +438,7 @@ useEffect(() => {
                                   .map((option) => (
                                     <View key={option.option_id} style={styles.optionLabel}>
                                       {/* For MSQ / MSQN → CheckBox */}
-                                       <Text>{option.option_index}</Text>
+                                      <Text>{option.option_index}</Text>
                                       {(currentQuestion.qtype_text === "MSQ" ||
                                         currentQuestion.qtype_text === "MSQN") ? (
                                         <CheckBox
@@ -460,7 +461,7 @@ useEffect(() => {
                                           disabled={answerDisabled}
                                         />
                                       )}
-                                     
+
                                       {option.option_img_name ? (
                                         <ResponsiveImage uri={option.option_img_name} />
                                       ) : (
@@ -513,26 +514,26 @@ useEffect(() => {
                             [currentQuestion.exercise_question_id]:
                               solutionVideo ? "video" : "image",
                           }));
-      }}
-    >
-      <Text style={styles.btnText}>View Solution</Text>
-    </TouchableOpacity>
-  )}
+                        }}
+                      >
+                        <Text style={styles.btnText}>View Solution</Text>
+                      </TouchableOpacity>
+                    )}
 
-  {currentQuestionIndex < exercise.questions.length - 1 && (
-    <TouchableOpacity
-      style={styles.btn}
-      onPress={() => setCurrentQuestionIndex(currentQuestionIndex + 1)}
-    >
-      <Text style={styles.btnText}>Next</Text>
-    </TouchableOpacity>
-  )}
-</View>
+                    {currentQuestionIndex < exercise.questions.length - 1 && (
+                      <TouchableOpacity
+                        style={styles.btn}
+                        onPress={() => setCurrentQuestionIndex(currentQuestionIndex + 1)}
+                      >
+                        <Text style={styles.btnText}>Next</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
 
-        </View>
+                </View>
 
-      
-     {/* {showPalette && (
+
+                {/* {showPalette && (
           <View style={[styles.statusPalette, showPalette ? styles.showPaletteMobile : null]}>
             <View style={styles.statusPaletteContainer}>
               {exercise.questions.map((question, index) => {
@@ -554,93 +555,95 @@ useEffect(() => {
             </View>
           </View>
         )}  */}
-      </View>
-        ) : lecture ? (
-          // <WebView
-          //   source={{ uri: getVideoEmbedUrl(lecture.lecture_video_link) }}
-          //   style={{ flex: 1 }}
-          //   allowsFullscreenVideo
-          // />
-          renderVideo(lecture.lecture_video_link)
-        ) : (
-          <Text>No Data Available</Text>
-        )}
+              </View>
+            ) : lecture ? (
+              // <WebView
+              //   source={{ uri: getVideoEmbedUrl(lecture.lecture_video_link) }}
+              //   style={{ flex: 1 }}
+              //   allowsFullscreenVideo
+              // />
+              <View style={{ width: SCREEN_WIDTH , height: SCREEN_HEIGHT * 0.75 }}>
+                {renderVideo(lecture.lecture_video_link)}
+              </View>
+            ) : (
+              <Text>No Data Available</Text>
+            )}
 
-        </View>
-         <TouchableOpacity
-          style={styles.navBtn}
-          onPress={nextLectureOrExercise}
-        >
-          <Text style={styles.navBtnText}>Next</Text>
-        </TouchableOpacity>
+          </View>
+          <TouchableOpacity
+            style={styles.navBtn}
+            onPress={nextLectureOrExercise}
+          >
+            <Text style={styles.navBtnText}>Next</Text>
+          </TouchableOpacity>
         </View>
         {/* Solution Modal */}
 
         {exercise &&
-        currentQuestion &&
-        solutionVisibility === currentQuestion.exercise_question_id  &&  (
-  <Modal visible transparent animationType="fade">
-    <View style={styles.solutionOverlay}>
-      <View style={styles.solutionContent}>
-        <TouchableOpacity onPress={() => setSolutionVisibility(null)}>
-          <Text style={styles.closeBtn}>✕</Text>
-        </TouchableOpacity>
-<View style={styles.solutionButtons}>
-  
-  {solutionVideo && (
-    <TouchableOpacity
-      style={[
-        styles.button,
-        solutionTypes[currentQuestion.exercise_question_id] === "video" &&
-          styles.activeButton,
-      ]}
-      onPress={() =>
-        setSolutionTypes((prev) => ({
-          ...prev,
-          [currentQuestion.exercise_question_id]: "video",
-        }))
-      }
-    >
-      <Text style={[styles.buttonText,  solutionTypes[currentQuestion.exercise_question_id] ==='video' &&
-          styles.activeButtontext]}>Video Solution</Text>
-    </TouchableOpacity>
-   
-  )}
+          currentQuestion &&
+          solutionVisibility === currentQuestion.exercise_question_id && (
+            <Modal visible transparent animationType="fade">
+              <View style={styles.solutionOverlay}>
+                <View style={styles.solutionContent}>
+                  <TouchableOpacity onPress={() => setSolutionVisibility(null)}>
+                    <Text style={styles.closeBtn}>✕</Text>
+                  </TouchableOpacity>
+                  <View style={styles.solutionButtons}>
 
-  {solutionImage && (
-    <TouchableOpacity
-      style={[
-        styles.button,
-        solutionTypes[currentQuestion.exercise_question_id] === "image" &&
-          styles.activeButton,
-      ]}
-      onPress={() =>
-        setSolutionTypes((prev) => ({
-          ...prev,
-          [currentQuestion.exercise_question_id]: "image",
-        }))
-      }
-    >
-      <Text style={[styles.buttonText,  solutionTypes[currentQuestion.exercise_question_id] === "image" &&
-          styles.activeButtontext]}>Image Solution</Text>
-    </TouchableOpacity>
-  )}
-</View>
-<ScrollView>
+                    {solutionVideo && (
+                      <TouchableOpacity
+                        style={[
+                          styles.button,
+                          solutionTypes[currentQuestion.exercise_question_id] === "video" &&
+                          styles.activeButton,
+                        ]}
+                        onPress={() =>
+                          setSolutionTypes((prev) => ({
+                            ...prev,
+                            [currentQuestion.exercise_question_id]: "video",
+                          }))
+                        }
+                      >
+                        <Text style={[styles.buttonText, solutionTypes[currentQuestion.exercise_question_id] === 'video' &&
+                          styles.activeButtontext]}>Video Solution</Text>
+                      </TouchableOpacity>
 
-        {/* Use shared renderVideo utility */}
-        {solutionTypes[currentQuestion.exercise_question_id] ===
-                    "video" && solutionVideo && renderVideo(solutionVideo)}
+                    )}
 
-        {solutionTypes[currentQuestion.exercise_question_id] ===
-                    "image" && solutionImage &&  (
-          <ResponsiveImage uri={solutionImage} />
-        )}</ScrollView>
-       
-      </View>
-    </View>
-  </Modal>
-)}
+                    {solutionImage && (
+                      <TouchableOpacity
+                        style={[
+                          styles.button,
+                          solutionTypes[currentQuestion.exercise_question_id] === "image" &&
+                          styles.activeButton,
+                        ]}
+                        onPress={() =>
+                          setSolutionTypes((prev) => ({
+                            ...prev,
+                            [currentQuestion.exercise_question_id]: "image",
+                          }))
+                        }
+                      >
+                        <Text style={[styles.buttonText, solutionTypes[currentQuestion.exercise_question_id] === "image" &&
+                          styles.activeButtontext]}>Image Solution</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                  <ScrollView>
+
+                    {/* Use shared renderVideo utility */}
+                    {solutionTypes[currentQuestion.exercise_question_id] ===
+                      "video" && solutionVideo && renderVideo(solutionVideo)}
+
+                    {solutionTypes[currentQuestion.exercise_question_id] ===
+                      "image" && solutionImage && (
+                        <ResponsiveImage uri={solutionImage} />
+                      )}</ScrollView>
+
+                </View>
+              </View>
+            </Modal>
+          )}
 
       </View>
     </Modal>
@@ -712,9 +715,9 @@ const styles = StyleSheet.create({
     width: '90%',
     height: 40,
   },
-  optionLabel:{
-flexDirection:"row",
-gap:2,
+  optionLabel: {
+    flexDirection: "row",
+    gap: 2,
   },
   feedback: { color: "red", textAlign: "center" },
   image: { width: "100%", height: 200, marginVertical: 10 },
@@ -793,7 +796,7 @@ gap:2,
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10, 
+    gap: 10,
     justifyContent: 'center',
     padding: 10,
   },
@@ -819,18 +822,18 @@ gap:2,
     alignItems: 'center',
   },
   questionBtnText: {
-  fontWeight:90,
-textAlign: 'center'
+    fontWeight: 90,
+    textAlign: 'center'
   },
   imageBackground: {
-  width: 45,
-  height: 45,
-  justifyContent: "center",
-  alignItems: "center", // ensure text is centered inside
-},
-imageStyle: {
-  resizeMode: "contain",
-},
+    width: 45,
+    height: 45,
+    justifyContent: "center",
+    alignItems: "center", // ensure text is centered inside
+  },
+  imageStyle: {
+    resizeMode: "contain",
+  },
 
 
   arrowBtns: {
@@ -844,14 +847,14 @@ imageStyle: {
   solutionButtons: {
     flexDirection: 'row',
     justifyContent: 'center',
-   
-    minHeight:50,
+
+    minHeight: 50,
     padding: 10,
   },
   button: {
     paddingVertical: 10,
     paddingHorizontal: 20,
-    maxWidth:100,
+    maxWidth: 100,
     borderRadius: 5,
     marginHorizontal: 5,
     backgroundColor: '#e0e0e0', // Inactive button background
@@ -859,8 +862,8 @@ imageStyle: {
   activeButton: {
     backgroundColor: '#007bff', // Active button background
   },
-  activeButtontext:{
-color:'#fff',
+  activeButtontext: {
+    color: '#fff',
   },
   buttonText: {
     color: 'black',
@@ -885,23 +888,23 @@ color:'#fff',
     elevation: 3,
     color: 'black',
   },
-unvisited: { color: "#000" },
+  unvisited: { color: "#000" },
   unanswered: { color: "#fff" },
   answered: { color: "#fff" },
-      questionNumberRow: {
-         flexDirection: 'row',
-         gap:'10',
-         Height: 30,
-        
-         },
+  questionNumberRow: {
+    flexDirection: 'row',
+    gap: '10',
+    Height: 30,
+
+  },
   questionBtn: {
     marginRight: 5,
     padding: 10,
     backgroundColor: '#eee',
     borderRadius: 5,
   },
-    questionBtnSNMR:{
-height: 45,
+  questionBtnSNMR: {
+    height: 45,
     width: 45,
     alignItems: 'center',
     justifyContent: 'center',
