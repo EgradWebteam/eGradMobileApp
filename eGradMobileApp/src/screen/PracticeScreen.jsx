@@ -39,7 +39,7 @@ const PracticeScreen = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showCustomPopup, setShowCustomPopup] = useState(false);
   const [showSolutionModal, setShowSolutionModal] = useState(false);
-
+console.log(answeredQuestions)
 //   const pressedKeys = useRef(new Set());
   const [summary, setSummary] = useState({
     correct: 0,

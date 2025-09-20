@@ -55,9 +55,11 @@ const PracticeQuestionRender = ({
 
   const qId = question.question_id;
   const qtype = question?.questionType?.qtype_text;
+  
+  
   const isAnswered = answeredQuestions[qId];
   const showSol = showSolution[qId];
-
+console.log(isAnswered,qId,answeredQuestions)
   useEffect(() => {
     const scrollTarget = questionScrollRefMobile.current;
 
