@@ -8,6 +8,7 @@ import { RadioButton } from 'react-native-paper';
 import CheckBox from '@react-native-community/checkbox';
 import {styles} from "../../styles/OTSStyles.js"; 
 import ResponsiveImage from '../OTSFolder/ResponsiveImage.js';
+import renderVideo from "../renderVideo.js"
 const { width, height } = Dimensions.get('window');
 
 const PracticeQuestionRender = ({
@@ -336,13 +337,9 @@ console.log(isAnswered,qId,answeredQuestions)
 
       {/* Solution Modal */}
     {isAnswered !== null && showSolutionModal && (
-      <Modal
-          transparent={true}
-          animationType="fade"
-          visible={showSolutionModal}
-          onRequestClose={() => setShowSolutionModal(false)}
-        >
-
+    <Modal visible transparent animationType="fade">
+                  <View style={styles.solutionOverlay}>
+  <View style={styles.solutionContent}>
    
         <TouchableOpacity
           style={styles.modalCloseBtn}
@@ -351,7 +348,7 @@ console.log(isAnswered,qId,answeredQuestions)
           <Text style={{ fontSize: 20 }}>×</Text>
         </TouchableOpacity>
 
-        <View style={styles.solutionContainer}>
+       <View style={styles.solutionButtons}>
           {/* Display solution based on tabs */}
           {hasImage || hasVideo ? (
             <>
@@ -360,9 +357,12 @@ console.log(isAnswered,qId,answeredQuestions)
                   <TouchableOpacity
                     onPress={() => setActiveSolutionTab('image')}
                     style={
+                      [
+                         styles.buttonsol,
                       activeSolutionTab === 'image'
-                        ? styles.activeSolutionTab
-                        : styles.solutionTab
+                        && styles.activeButtonsol
+                      
+                      ]
                     }
                   >
                     <Text>View Image Solution</Text>
@@ -371,11 +371,11 @@ console.log(isAnswered,qId,answeredQuestions)
                 {hasVideo && (
                   <TouchableOpacity
                     onPress={() => setActiveSolutionTab('video')}
-                    style={
+                    style={[
+                         styles.buttonsol,
                       activeSolutionTab === 'video'
-                        ? styles.activeSolutionTab
-                        : styles.solutionTab
-                    }
+                        && styles.activeButtonsol
+                    ]}
                   >
                     <Text>View Video Solution</Text>
                   </TouchableOpacity>
@@ -387,27 +387,21 @@ console.log(isAnswered,qId,answeredQuestions)
               {/* Display Image or Video based on active tab */}
               {activeSolutionTab === 'image' && hasImage && (
                 <View style={styles.solutionImage}>
-                  <Image
-                    source={{ uri: imageSolution }}
-                    style={styles.imageSolution}
-                  />
+                 
+                   <ResponsiveImage uri={imageSolution} />
                 </View>
               )}
 
               {activeSolutionTab === 'video' && hasVideo && (
-                <View style={styles.videoContainer}>
-                  <WebView
-                    source={{ uri: videoSolution }}
-                    style={{ width: '100%', height: 315 }}
-                  />
-                </View>
+                  renderVideo(solutionVideo)
+              
               )}
             </>
           ) : (
             <Text>No solution available.</Text>
           )}
-        </View>
-   
+        </View></View>
+     </View>
  </Modal>
 )}
 

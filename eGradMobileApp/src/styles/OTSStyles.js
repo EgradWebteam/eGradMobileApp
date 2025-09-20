@@ -14,6 +14,39 @@ export const styles = StyleSheet.create({
   btnsSubContainer:{
 flexDirection:'row',
   },
+    buttonsol: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    maxWidth: 150,
+    borderRadius: 5,
+    marginHorizontal: 5,
+    backgroundColor: '#e0e0e0', // Inactive button background
+  },
+  activeButtonsol: {
+    backgroundColor: '#007bff', // Active button background
+  },
+    solutionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+
+    minHeight: 20,
+    padding: 10,
+  },
+  solutionOverlay: {
+    flex: 1,
+    width:width,
+    height:height,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  solutionContent: {
+    width: "100%",
+    height: "90%",
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 10,
+  },
   optIcon:{
     width:25,
     height:25,
