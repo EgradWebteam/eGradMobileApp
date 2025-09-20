@@ -241,6 +241,16 @@ console.log(answeredQuestions)
     summary,
     storageKey,
   ]);
+useEffect(() => {
+  if (!startTime || isSubmitted) return;
+
+  const timer = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    setTimeSpent(elapsed);
+  }, 1000);
+
+  return () => clearInterval(timer);
+}, [startTime, isSubmitted]);
 
   const getCurrentTest = () => practiceQuestionsData || {};
   const getCurrentSubject = () =>
