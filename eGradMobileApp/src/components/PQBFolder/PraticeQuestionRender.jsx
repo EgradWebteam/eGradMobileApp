@@ -433,31 +433,35 @@ const PracticeQuestionRender = ({
           <View style={styles.solutionToggle}>
             {/* Previous Button */}
             <TouchableOpacity
-              style={styles.previousPracticeBtn}
+              style={styles.NavigationButton}
               onPress={handleWithSession(onPrevQuestion)}
             >
-              <Text style={styles.buttonText}>Previous</Text>
+              <Text 
+              // style={styles.buttonText}
+              >Previous</Text>
             </TouchableOpacity>
 
             {/* Save Answer Button */}
-            <View style={styles.saveAnswerButtonContainer}>
+            
               <TouchableOpacity
                 style={[
-                  styles.saveandnextNavigationBtn,
+                  styles.NavigationButton,
                   saveDisabled ? styles.disabledButton : null,
                 ]}
                 disabled={saveDisabled}
                 onPress={handleWithSession(() => onSaveAnswer(question))}
               >
-                <Text style={styles.buttonText}>Check Answer</Text>
+                <Text 
+                // style={styles.buttonText}
+                >Check Answer</Text>
               </TouchableOpacity>
-            </View>
+           
 
             {/* View/Hide Solution Button */}
-            <View>
+           
               <TouchableOpacity
                 style={[
-                  styles.previousPracticeBtn,
+                  styles.NavigationButton,
                   !isAnswered ? styles.disabledButton : null,
                 ]}
                 disabled={!isAnswered}
@@ -468,9 +472,11 @@ const PracticeQuestionRender = ({
                   setShowSolutionModal(true);
                 })}
               >
-                <Text style={styles.buttonText}>View Solution</Text>
+                <Text 
+                // style={styles.buttonText}
+                >View Solution</Text>
               </TouchableOpacity>
-            </View>
+          
           </View>
 
           {/* Question Counter */}
@@ -480,30 +486,21 @@ const PracticeQuestionRender = ({
 
           {/* Next Button */}
           <TouchableOpacity
-            style={styles.previousPracticeBtn}
+            style={styles.NavigationButton}
             onPress={handleWithSession(onNextQuestion)}
           >
-            <Text style={styles.buttonText}>Next</Text>
+            <Text>Next</Text>
           </TouchableOpacity>
         </View>
 
         {/* Submit Button */}
         <View style={styles.submitBtnCls}>
-          <TouchableOpacity
-            style={[
-              styles.saveandnextNavigationBtn,
-              saveDisabled ? styles.disabledButton : null,
-            ]}
-            disabled={saveDisabled}
-            onPress={() => !saveDisabled && handleWithSession(onSaveAnswer(question))}
-          >
-            <Text style={styles.buttonText}>Check Answer</Text>
-          </TouchableOpacity>
+         
           <TouchableOpacity
             onPress={handleWithSession(onFinalSubmit)}
-            style={styles.submitNavigationBtn}
+            style={styles.NavigationButton}
           >
-            <Text style={styles.buttonText}>Submit</Text>
+            <Text>Submit</Text>
           </TouchableOpacity>
         </View>
       </View>

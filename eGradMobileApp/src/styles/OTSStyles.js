@@ -11,6 +11,9 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
   flex: 1,
   },
+  btnsSubContainer:{
+flexDirection:'row',
+  },
   testcontainer:{  
     backgroundColor: '#fff',
     flexGrow: 1,
@@ -58,7 +61,7 @@ flexWrap:'wrap',
 gap:'10',
     borderTopWidth: 1,
     borderTopColor: '#eee',
-    height: 295
+    height: 200
    
   },
   footerContainer: {
