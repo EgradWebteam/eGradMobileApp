@@ -10,7 +10,7 @@ import axios from "axios";
 import { backEndUrl } from "../apiConfig.js";
 import { decryptBatch } from "../utils/CryptoUtils.jsx";
 import PraticeQuestionSection from "../components/PQBFolder/PraticeQuestionSection.jsx";
-// import PraticeSummaryModal from "../components/PQBFolder/PraticeSummaryModal.jsx";
+import PraticeSummaryModal from "../components/PQBFolder/PraticeSummaryModal.jsx";
 // import PraticeQuestionSidebar from "../components/PQBFolder/PraticeQuestionSidebar.jsx";
 import Icon from 'react-native-vector-icons/AntDesign'; // Adjust based on the icon you're using
 
@@ -363,12 +363,12 @@ useEffect(() => {
 
   const handleWithSession = (callback) => {
     return async (...args) => {
-      if (isSessionCheckInProgress.current) {
-        console.log("Session validation in progress, ignoring duplicate click...");
-        return;
-      }
+      // if (isSessionCheckInProgress.current) {
+      //   console.log("Session validation in progress, ignoring duplicate click...");
+      //   return;
+      // }
 
-      isSessionCheckInProgress.current = true;
+      // isSessionCheckInProgress.current = true;
 
       try {
         // const isValid = await validateSessionWithoutNavigation();
@@ -570,8 +570,9 @@ useEffect(() => {
               handleWithSession={handleWithSession}
               storageKey={storageKey}
             /> */}
-        {/* {isSubmitted && (
+        {isSubmitted && (
           <PraticeSummaryModal
+          visible={isSubmitted}
           summary={summary}
             currentSection={getCurrentSection()}
             answeredQuestions={answeredQuestions}
@@ -597,7 +598,7 @@ useEffect(() => {
             onClose={() => window.close()}
             storageKey={storageKey}
           />
-        )} */}
+        )}
         {showCustomPopup && (
           <View style={styles.popup}>
             <Text style={styles.warningTitle}>Warning!</Text>

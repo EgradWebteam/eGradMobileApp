@@ -133,101 +133,101 @@ useEffect(() => {
     fetchInstructions();
   }, [testId, studentId, courseId]);
 
-  // const handlePractice = async () => {
-  //   // const isValid = await validateSessionWithoutNavigation();
-  //   // if (isValid) {
-  //     setIsSaving(true);
-  //     // await AsyncStorage.setItem('navigationToken', 'valid');
-  //     try {
-  //       const encrypted = studentId
-  //         ? await encryptBatch([realTestId, realStudentId, realCourseId])
-  //         : await encryptBatch([realTestId]);
-
-  //       navigation.navigate('PracticeScreen', {
-  //         testId: encodeURIComponent(encrypted[0]),
-  //         studentId: studentId ? encodeURIComponent(encrypted[1]) : null,
-  //         courseId: courseId ? encodeURIComponent(encrypted[2]) : null,
-  //       });
-  //     } catch (error) {
-  //       console.error('Encryption failed:', error);
-  //       navigation.navigate('ErrorScreen');
-  //     } finally {
-  //       setIsSaving(false);
-  //     }
-  //   // } else {
-  //   //   Alert.alert('Session expired', 'Your session is no longer valid.');
-  //   // }
-  // };
-
-
   const handlePractice = async () => {
-  if (isSaving) return; // prevent multiple clicks
-  setIsSaving(true);
-
-  try {
-    // 1️⃣ Optional: Validate session if you have that logic
     // const isValid = await validateSessionWithoutNavigation();
-    // if (!isValid) {
-    //   Alert.alert('Session expired', 'Your session is no longer valid.');
-    //   setIsSaving(false);
-    //   return;
-    // }
+    // if (isValid) {
+      setIsSaving(true);
+      // await AsyncStorage.setItem('navigationToken', 'valid');
+      try {
+        const encrypted = studentId
+          ? await encryptBatch([realTestId, realStudentId, realCourseId])
+          : await encryptBatch([realTestId]);
 
-    // 2️⃣ Get auth token
-    const token = isAdmin
-      ? await AsyncStorage.getItem('adminToken')
-      : await AsyncStorage.getItem('accessToken');
-
-    // 3️⃣ Prepare payload for backend
-    const payload = {
-      studentregistrationId: realStudentId,
-      courseCreationId: realCourseId,
-      testCreationTableId: realTestId,
-      studentTestStartTime: new Date()
-        .toISOString()
-        .slice(0, 19)
-        .replace('T', ' '),
-      testAttemptStatus: 'started',
-      testConnectionStatus: 'connected',
-      testConnectionTime: new Date()
-        .toISOString()
-        .slice(0, 19)
-        .replace('T', ' '),
-    };
-
-    // 4️⃣ Call backend API to insert/update practice test status
-    const response = await axios.post(
-      `${backEndUrl}/studentmycourses/InsertOrUpdatePracticeTestAttemptStatus`,
-      payload,
-      {
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        navigation.navigate('PracticeScreen', {
+          testId: encodeURIComponent(encrypted[0]),
+          studentId: studentId ? encodeURIComponent(encrypted[1]) : null,
+          courseId: courseId ? encodeURIComponent(encrypted[2]) : null,
+        });
+      } catch (error) {
+        console.error('Encryption failed:', error);
+        navigation.navigate('ErrorScreen');
+      } finally {
+        setIsSaving(false);
       }
-    );
+    // } else {
+    //   Alert.alert('Session expired', 'Your session is no longer valid.');
+    // }
+  };
 
-    if (response.status !== 200) {
-      throw new Error('Failed to start practice test');
-    }
 
-    // 5️⃣ Encrypt IDs for navigation
-    const encryptedArray = studentId
-      ? await encryptBatch([realTestId, realStudentId, realCourseId])
-      : await encryptBatch([realTestId]);
+//   const handlePractice = async () => {
+//   if (isSaving) return; // prevent multiple clicks
+//   setIsSaving(true);
 
-    // 6️⃣ Navigate to PracticeScreen with encrypted params
-    navigation.navigate('PracticeScreen', {
-      testId: encodeURIComponent(encryptedArray[0]),
-      studentId: studentId ? encodeURIComponent(encryptedArray[1]) : null,
-      courseId: courseId ? encodeURIComponent(encryptedArray[2]) : null,
-    });
+//   try {
+//     // 1️⃣ Optional: Validate session if you have that logic
+//     // const isValid = await validateSessionWithoutNavigation();
+//     // if (!isValid) {
+//     //   Alert.alert('Session expired', 'Your session is no longer valid.');
+//     //   setIsSaving(false);
+//     //   return;
+//     // }
 
-  } catch (error) {
-    console.error('Error starting practice test:', error);
-    Alert.alert('Error', 'Unable to start the practice test.');
-    navigation.navigate('ErrorScreen');
-  } finally {
-    setIsSaving(false);
-  }
-};
+//     // 2️⃣ Get auth token
+//     const token = isAdmin
+//       ? await AsyncStorage.getItem('adminToken')
+//       : await AsyncStorage.getItem('accessToken');
+
+//     // 3️⃣ Prepare payload for backend
+//     const payload = {
+//       studentregistrationId: realStudentId,
+//       courseCreationId: realCourseId,
+//       testCreationTableId: realTestId,
+//       studentTestStartTime: new Date()
+//         .toISOString()
+//         .slice(0, 19)
+//         .replace('T', ' '),
+//       testAttemptStatus: 'started',
+//       testConnectionStatus: 'connected',
+//       testConnectionTime: new Date()
+//         .toISOString()
+//         .slice(0, 19)
+//         .replace('T', ' '),
+//     };
+
+//     // 4️⃣ Call backend API to insert/update practice test status
+//     const response = await axios.post(
+//       `${backEndUrl}/studentmycourses/InsertOrUpdatePracticeTestAttemptStatus`,
+//       payload,
+//       {
+//         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+//       }
+//     );
+
+//     if (response.status !== 200) {
+//       throw new Error('Failed to start practice test');
+//     }
+
+//     // 5️⃣ Encrypt IDs for navigation
+//     const encryptedArray = studentId
+//       ? await encryptBatch([realTestId, realStudentId, realCourseId])
+//       : await encryptBatch([realTestId]);
+
+//     // 6️⃣ Navigate to PracticeScreen with encrypted params
+//     navigation.navigate('PracticeScreen', {
+//       testId: encodeURIComponent(encryptedArray[0]),
+//       studentId: studentId ? encodeURIComponent(encryptedArray[1]) : null,
+//       courseId: courseId ? encodeURIComponent(encryptedArray[2]) : null,
+//     });
+
+//   } catch (error) {
+//     console.error('Error starting practice test:', error);
+//     Alert.alert('Error', 'Unable to start the practice test.');
+//     navigation.navigate('ErrorScreen');
+//   } finally {
+//     setIsSaving(false);
+//   }
+// };
 
 
   if (isLoading) {
