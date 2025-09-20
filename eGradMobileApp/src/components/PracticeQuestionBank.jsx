@@ -12,9 +12,9 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig";
-import { encryptBatch } from "../../utils/CryptoUtils";
+import { encryptBatch } from "../utils/CryptoUtils";
 // import { useSession } from "./hooks/SessionContext.jsx";
-
+import { useNavigation } from "@react-navigation/native";
 import CompletedPractice from "../assets/CompletedPractice.png";
 import ReAttemptedPratice from "../assets/ReAttemptedPratice.png";
 import PracticeImg from "../assets/PracticeImg.png";
@@ -31,7 +31,7 @@ const PracticeQuestionBank = ({ onBack, course_name, course, studentId ,userData
   const [pendingTest, setPendingTest] = useState(null);
   const [Popup, setPopup] = useState(false);
   // const { validateSession } = useSession();
-
+const navigation = useNavigation();
 const fetchPracticeData = async () => {
   try {
     const token = await AsyncStorage.getItem("accessToken");
@@ -151,6 +151,57 @@ const fetchPracticeData = async () => {
 
 const getBackgroundClass = (id) => backgroundColors[id] || "#f0f0f0";
 
+const handleStartPracticeWithSession = async (testId, studentId, courseId) => {
+  console.log("dataaaa",testId,studentId,courseId);
+  try {
+    const navigationToken = await AsyncStorage.getItem("navigationToken");
+    if (navigationToken === "valid") {
+      setPopup(true);
+      return;
+    }
+
+    const isActive = (await AsyncStorage.getItem("practiceTestActive")) === "true";
+    if (isActive) {
+      setShowPopup(true);
+      setPendingTest({ testId, studentId, courseId });
+      return;
+    }
+
+    const keys = await AsyncStorage.getAllKeys();
+    const practiceKeys = keys.filter((key) => key.startsWith("practiceTest_"));
+    if (practiceKeys.length > 0) {
+      await AsyncStorage.multiRemove(practiceKeys);
+    }
+
+    handleStartPractice(testId, studentId, courseId);
+  } catch (err) {
+    console.error("Error in handleStartPracticeWithSession:", err);
+  }
+};
+
+const handleStartPractice = async (testId, studentId, courseId) => {
+  try {
+    await AsyncStorage.setItem("practiceTestActive", "true");
+    await AsyncStorage.setItem("practicenavigationToken", Date.now().toString());
+
+    const encryptedArray = await encryptBatch([testId, studentId, courseId]);
+    const encryptedTestId = encodeURIComponent(encryptedArray[0]);
+    const encryptedStudentId = encodeURIComponent(encryptedArray[1]);
+    const encryptedCourseId = encodeURIComponent(encryptedArray[2]);
+
+    // 🔹 Navigate to PracticeInstruction screen with params
+    navigation.navigate("PracticeInstruction", {
+      testId: encryptedTestId,
+      studentId: encryptedStudentId,
+      courseId: encryptedCourseId,
+    });
+  } catch (err) {
+    console.error("Encryption failed:", err);
+    await AsyncStorage.removeItem("practiceTestActive");
+    await AsyncStorage.removeItem("practicenavigationToken");
+  }
+};
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -260,7 +311,10 @@ const getBackgroundClass = (id) => backgroundColors[id] || "#f0f0f0";
       : null,
   ]}
   disabled={isCompleted}
-  
+  onPress={() =>
+    !isCompleted &&
+    handleStartPracticeWithSession(test.test_id, studentId, course.course_id)
+  }
 >
   <Text style={styles.btnText}>
     {isCompleted
