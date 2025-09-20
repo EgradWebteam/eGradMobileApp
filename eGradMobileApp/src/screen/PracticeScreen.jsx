@@ -243,7 +243,7 @@ console.log(answeredQuestions)
   ]);
 useEffect(() => {
   if (!startTime || isSubmitted) return;
-
+console.log(answeredQuestions)
   const timer = setInterval(() => {
     const elapsed = Math.floor((Date.now() - startTime) / 1000);
     setTimeSpent(elapsed);
