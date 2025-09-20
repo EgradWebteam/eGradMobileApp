@@ -17,10 +17,10 @@ const MainPageCourseCards = memo(({ CardsportalId, LandingPage = false, onCourse
     const isOnStudentDashboard = route.name === "studentDashboard";
 console.log("studnt dashhhhhboarddddd",isOnStudentDashboard)
   const handleExploreClick = (course) => {
-    if (course.title === "PRACTICE QUESTION BANK") {
-      setShowComingSoonPopup(true);
-      return;
-    }
+    // if (course.title === "PRACTICE QUESTION BANK") {
+    //   setShowComingSoonPopup(true);
+    //   return;
+    // }
 
     if (LandingPage && typeof onCourseClick === "function") {
       onCourseClick(course.portalId);
