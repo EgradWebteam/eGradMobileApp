@@ -10,7 +10,7 @@ import axios from "axios";
 import { backEndUrl } from "../apiConfig.js";
 import { decryptBatch } from "../utils/CryptoUtils.jsx";
 import PraticeQuestionSection from "../components/PQBFolder/PraticeQuestionSection.jsx";
-// import PraticeSummaryModal from "../components/PQBFolder/PraticeSummaryModal.jsx";
+import PraticeSummaryModal from "../components/PQBFolder/PraticeSummaryModal.jsx";
 // import PraticeQuestionSidebar from "../components/PQBFolder/PraticeQuestionSidebar.jsx";
 import Icon from 'react-native-vector-icons/AntDesign'; // Adjust based on the icon you're using
 
@@ -19,7 +19,7 @@ import Icon from 'react-native-vector-icons/AntDesign'; // Adjust based on the i
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const PracticeScreen = () => {
-//   DisableKeysAndMouseInteractions();
+  //   DisableKeysAndMouseInteractions();
   const navigation = useNavigation();
   const route = useRoute();
   const { testId, studentId, courseId } = route.params || {};
@@ -39,8 +39,8 @@ const PracticeScreen = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showCustomPopup, setShowCustomPopup] = useState(false);
   const [showSolutionModal, setShowSolutionModal] = useState(false);
-console.log(answeredQuestions)
-//   const pressedKeys = useRef(new Set());
+  console.log(answeredQuestions)
+  //   const pressedKeys = useRef(new Set());
   const [summary, setSummary] = useState({
     correct: 0,
     incorrect: 0,
@@ -51,12 +51,12 @@ console.log(answeredQuestions)
   const isSessionCheckInProgress = useRef(false);
   const [startTime, setStartTime] = useState(null);
   const [timeSpent, setTimeSpent] = useState(0);
-//   const logoutHandledRef = useRef(false);
+  //   const logoutHandledRef = useRef(false);
   const { studentData } = useStudent();
   const userData = studentData?.userDetails;
   const studentProfile = userData?.uploaded_photo;
   const studentName = userData?.candidate_name;
-//   const { validateSessionWithoutNavigation } = useSession();
+  //   const { validateSessionWithoutNavigation } = useSession();
   const storageKey = `practiceTest_${testId}_${studentId}`;
 
   const formatTime = (seconds) => {
@@ -241,16 +241,16 @@ console.log(answeredQuestions)
     summary,
     storageKey,
   ]);
-useEffect(() => {
-  if (!startTime || isSubmitted) return;
-console.log(answeredQuestions)
-  const timer = setInterval(() => {
-    const elapsed = Math.floor((Date.now() - startTime) / 1000);
-    setTimeSpent(elapsed);
-  }, 1000);
+  useEffect(() => {
+    if (!startTime || isSubmitted) return;
+    console.log(answeredQuestions)
+    const timer = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      setTimeSpent(elapsed);
+    }, 1000);
 
-  return () => clearInterval(timer);
-}, [startTime, isSubmitted]);
+    return () => clearInterval(timer);
+  }, [startTime, isSubmitted]);
 
   const getCurrentTest = () => practiceQuestionsData || {};
   const getCurrentSubject = () =>
@@ -363,12 +363,12 @@ console.log(answeredQuestions)
 
   const handleWithSession = (callback) => {
     return async (...args) => {
-      if (isSessionCheckInProgress.current) {
-        console.log("Session validation in progress, ignoring duplicate click...");
-        return;
-      }
+      // if (isSessionCheckInProgress.current) {
+      //   console.log("Session validation in progress, ignoring duplicate click...");
+      //   return;
+      // }
 
-      isSessionCheckInProgress.current = true;
+      // isSessionCheckInProgress.current = true;
 
       try {
         // const isValid = await validateSessionWithoutNavigation();
@@ -509,52 +509,52 @@ console.log(answeredQuestions)
   return (
     <View style={styles.container}>
       <OTSHeader />
-          <View style={styles.OTSNavbarMainContainer}>
-      <View style={styles.OTSTestNameHolder}>
-        <Text style={styles.testNameText}>{getCurrentTest()?.TestName}</Text>
+      <View style={styles.OTSNavbarMainContainer}>
+        <View style={styles.OTSTestNameHolder}>
+          <Text style={styles.testNameText}>{getCurrentTest()?.TestName}</Text>
+        </View>
+        <View style={styles.timerWrapper}>
+          <Icon name="clockcircle" style={styles.clockIcon} />
+          <Text style={styles.timerText}>{formatTime(timeSpent)}</Text>
+        </View>
       </View>
-      <View style={styles.timerWrapper}>
-        <Icon name="clockcircle" style={styles.clockIcon} />
-        <Text style={styles.timerText}>{formatTime(timeSpent)}</Text>
-      </View>
-    </View>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        
- <PraticeQuestionSection
-              practiceQuestionsData={practiceQuestionsData}
-              activeSubjectIdx={activeSubjectIdx}
-              activeSectionIdx={activeSectionIdx}
-              currentQuestionIdx={currentQuestionIdx}
-              selectedOption={selectedOption}
-              natAnswers={natAnswers}
-              answeredQuestions={answeredQuestions}
-              showSolution={showSolution}
-              showScientificCalc={showScientificCalc}
-              cursorPos={cursorPos}
-              onSubjectChange={handleSubjectChange}
-              onSectionChange={handleSectionChange}
-              onQuestionChange={goToQuestion}
-              onToggleCalculator={toggleCalculator}
-              onSetSelectedOption={setSelectedOption}
-              onSetNatAnswers={setNatAnswers}
-              onSetAnsweredQuestions={setAnsweredQuestions}
-              onSetShowSolution={setShowSolution}
-              onSetCursorPos={setCursorPos}
-              onSetCurrentQuestionIdx={setCurrentQuestionIdx}
-              OptionPatternId={practiceQuestionsData?.opt_pattern_id}
-              onFinalSubmit={handleFinalSubmit}
-              getCurrentSubjects={getCurrentSubjects}
-              getCurrentSections={getCurrentSections}
-              getCurrentSection={getCurrentSection}
-              getCurrentQuestion={getCurrentQuestion}
-              handleWithSession={handleWithSession}
-              storageKey={storageKey}
-               showSidebar={showSidebar}
-               showSolutionModal={showSolutionModal}
-               setShowSolutionModal={setShowSolutionModal}
-            />
 
-            {/* <PraticeQuestionSidebar
+        <PraticeQuestionSection
+          practiceQuestionsData={practiceQuestionsData}
+          activeSubjectIdx={activeSubjectIdx}
+          activeSectionIdx={activeSectionIdx}
+          currentQuestionIdx={currentQuestionIdx}
+          selectedOption={selectedOption}
+          natAnswers={natAnswers}
+          answeredQuestions={answeredQuestions}
+          showSolution={showSolution}
+          showScientificCalc={showScientificCalc}
+          cursorPos={cursorPos}
+          onSubjectChange={handleSubjectChange}
+          onSectionChange={handleSectionChange}
+          onQuestionChange={goToQuestion}
+          onToggleCalculator={toggleCalculator}
+          onSetSelectedOption={setSelectedOption}
+          onSetNatAnswers={setNatAnswers}
+          onSetAnsweredQuestions={setAnsweredQuestions}
+          onSetShowSolution={setShowSolution}
+          onSetCursorPos={setCursorPos}
+          onSetCurrentQuestionIdx={setCurrentQuestionIdx}
+          OptionPatternId={practiceQuestionsData?.opt_pattern_id}
+          onFinalSubmit={handleFinalSubmit}
+          getCurrentSubjects={getCurrentSubjects}
+          getCurrentSections={getCurrentSections}
+          getCurrentSection={getCurrentSection}
+          getCurrentQuestion={getCurrentQuestion}
+          handleWithSession={handleWithSession}
+          storageKey={storageKey}
+          showSidebar={showSidebar}
+          showSolutionModal={showSolutionModal}
+          setShowSolutionModal={setShowSolutionModal}
+        />
+
+        {/* <PraticeQuestionSidebar
               showSidebar={showSidebar}
               studentProfile={studentProfile}
               studentName={studentName}
@@ -570,9 +570,10 @@ console.log(answeredQuestions)
               handleWithSession={handleWithSession}
               storageKey={storageKey}
             /> */}
-        {/* {isSubmitted && (
+        {isSubmitted && (
           <PraticeSummaryModal
-          summary={summary}
+            visible={isSubmitted}
+            summary={summary}
             currentSection={getCurrentSection()}
             answeredQuestions={answeredQuestions}
             onAttemptNow={() => {
@@ -594,17 +595,23 @@ console.log(answeredQuestions)
                 setCurrentQuestionIdx(firstIdx);
               }
             }}
-            onClose={() => window.close()}
+            onClose={() =>
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "studentDashboard" }],
+              })
+            }
+
             storageKey={storageKey}
           />
-        )} */}
+        )}
         {showCustomPopup && (
           <View style={styles.popup}>
             <Text style={styles.warningTitle}>Warning!</Text>
             <Text style={styles.warningText}>
               Pressing any function keys or other keys are not allowed. Press OK to continue.
             </Text>
-            <Text onPress={() => setShowCustomPopup(false)} style={[styles.buttonText, {textAlign: 'center', padding: 10, backgroundColor: '#007AFF', borderRadius: 5}]}>OK</Text>
+            <Text onPress={() => setShowCustomPopup(false)} style={[styles.buttonText, { textAlign: 'center', padding: 10, backgroundColor: '#007AFF', borderRadius: 5 }]}>OK</Text>
           </View>
         )}
       </ScrollView>

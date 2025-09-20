@@ -196,17 +196,17 @@ useEffect(() => {
     };
 
     // 4️⃣ Call backend API to insert/update practice test status
-    // const response = await axios.post(
-    //   `${backEndUrl}/studentmycourses/InsertOrUpdatePracticeTestAttemptStatus`,
-    //   payload,
-    //   {
-    //     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    //   }
-    // );
+    const response = await axios.post(
+      `${backEndUrl}/studentmycourses/InsertOrUpdatePracticeTestAttemptStatus`,
+      payload,
+      {
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      }
+    );
 
-    // if (response.status !== 200) {
-    //   throw new Error('Failed to start practice test');
-    // }
+    if (response.status !== 200) {
+      throw new Error('Failed to start practice test');
+    }
 
     // 5️⃣ Encrypt IDs for navigation
     const encryptedArray = studentId
