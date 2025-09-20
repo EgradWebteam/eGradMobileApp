@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, ScrollView, Image, TouchableOpacity, Dimensions, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, Image, TouchableOpacity, Dimensions, StyleSheet ,Modal} from 'react-native';
 // import { FaCalculator } from 'react-icons/fa'; // React Native does not support this directly
 // import ScientificCalculator from './ScientificCalculator'; // Adjust this as per your needs
 import correctImg from '../../images/correctImg.png';
@@ -68,23 +68,19 @@ console.log(isAnswered,qId,answeredQuestions)
     }
   }, [currentQuestionIdx]);
 
-  useEffect(() => {
-    if (showSol) {
-      const solutionEl = solutionRefs.current[qId];
-      if (!solutionEl) return;
+  const scrollViewRef = useRef(null);
 
-      const img = solutionEl.querySelector('img');
-      if (img && !img.complete) {
-        img.onload = () => {
-          solutionEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        };
-      } else {
-        requestAnimationFrame(() => {
-          solutionEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-      }
-    }
-  }, [showSol, qId]);
+  // useEffect(() => {
+  //   if (showSol && solutionRefs.current[qId]) {
+  //     const solutionEl = solutionRefs.current[qId];
+      
+  //     // Get the position of the solution container
+  //     solutionEl.measureLayout(scrollViewRef.current, (x, y, width, height) => {
+  //       // Scroll to the position of the solution container
+  //       scrollViewRef.current.scrollTo({ y: y, animated: true });
+  //     });
+  //   }
+  // }, [showSol, qId]);
 
   const getLabel = (indexedDB, optionIndex) => {
     if (OptionPatternId === 1) return `(${optionIndex.toUpperCase()})`;
@@ -95,7 +91,7 @@ console.log(isAnswered,qId,answeredQuestions)
 
   // Check if Save Answer should be disabled
   const saveDisabled =
-    isAnswered ||
+     isAnswered !== null||
     (['MCQ4', 'MCQ5', 'TF', 'CTQ'].includes(qtype) && selectedOption[qId] === undefined) ||
     (['MSQ', 'MSQN'].includes(qtype) && (!selectedOption[qId] || selectedOption[qId].length === 0)) ||
     (['NATI', 'NATD'].includes(qtype) && (!natAnswers[qId] || natAnswers[qId].trim() === ''));
@@ -171,10 +167,10 @@ console.log(isAnswered,qId,answeredQuestions)
       {question.options.map((opt, idx) => {
         const isCorrectOption = opt.option_index === question.correctAnswer;
         const isSelected = selectedOption[qId] === opt.option_index;
-
+              const isAnswered = answeredQuestions[qId];
         return (
             <View key={opt.option_index} style={styles.optionRow}>
-            {isAnswered ? (
+            {isAnswered !==null ? (
               isCorrectOption ? (
                 <Image source={correctImg} style={styles.optIcon} />
               ) : isSelected ? (
@@ -217,7 +213,7 @@ console.log(isAnswered,qId,answeredQuestions)
 
             return (
               <View key={opt.option_index} style={styles.optionRow}>
-                {isAnswered ? (
+                {isAnswered !== null ? (
                   <>
                     {isCorrect && isSelected && (
                       <Image source={correctImg} style={styles.optIcon} />
@@ -324,7 +320,7 @@ console.log(isAnswered,qId,answeredQuestions)
            
           )}
 
-             {isAnswered && ["NATI", "NATD"].includes(qtype) && (
+             {isAnswered !== null && ["NATI", "NATD"].includes(qtype) && (
         <View style={styles.natFeedback}>
           {answeredQuestions[qId] === "correct" ? (
             <Text style={styles.correctText}>
@@ -339,88 +335,82 @@ console.log(isAnswered,qId,answeredQuestions)
       )}
 
       {/* Solution Modal */}
-     {isAnswered && showSolutionModal && (
-        <Modal
+    {isAnswered !== null && showSolutionModal && (
+      <Modal
           transparent={true}
           animationType="fade"
           visible={showSolutionModal}
           onRequestClose={() => setShowSolutionModal(false)}
         >
-          <TouchableOpacity
-            style={styles.modalOverlay}
-            onPress={() => setShowSolutionModal(false)}
-          >
-            <View style={styles.modalContent}>
-              <TouchableOpacity
-                style={styles.modalCloseBtn}
-                onPress={() => setShowSolutionModal(false)}
-              >
-                <Text style={{ fontSize: 20 }}>×</Text>
-              </TouchableOpacity>
 
-              <View
-                style={styles.solutionContainer}
-                ref={(el) => (solutionRefs.current[qId] = el)}
-              >
-                {/* Display solution based on tabs */}
-                {hasImage || hasVideo ? (
-                  <>
-                    <View style={styles.solutionTabs}>
-                      {hasImage && (
-                        <TouchableOpacity
-                          onPress={() => setActiveSolutionTab('image')}
-                          style={
-                            activeSolutionTab === 'image'
-                              ? styles.activeSolutionTab
-                              : styles.solutionTab
-                          }
-                        >
-                          <Text>View Image Solution</Text>
-                        </TouchableOpacity>
-                      )}
-                      {hasVideo && (
-                        <TouchableOpacity
-                          onPress={() => setActiveSolutionTab('video')}
-                          style={
-                            activeSolutionTab === 'video'
-                              ? styles.activeSolutionTab
-                              : styles.solutionTab
-                          }
-                        >
-                          <Text>View Video Solution</Text>
-                        </TouchableOpacity>
-                      )}
-                    </View>
+   
+        <TouchableOpacity
+          style={styles.modalCloseBtn}
+          onPress={() => setShowSolutionModal(false)}
+        >
+          <Text style={{ fontSize: 20 }}>×</Text>
+        </TouchableOpacity>
 
-                    <Text style={styles.solutionTitle}>Solution</Text>
-
-                    {/* Display Image or Video based on active tab */}
-                    {activeSolutionTab === 'image' && hasImage && (
-                      <View style={styles.solutionImage}>
-                        <Image
-                          source={{ uri: imageSolution }}
-                          style={styles.imageSolution}
-                        />
-                      </View>
-                    )}
-
-                    {activeSolutionTab === 'video' && hasVideo && (
-                      <View style={styles.videoContainer}>
-                        <WebView
-                          source={{ uri: videoSolution }}
-                          style={{ width: '100%', height: 315 }}
-                        />
-                      </View>
-                    )}
-                  </>
-                ) : (
-                  <Text>No solution available.</Text>
+        <View style={styles.solutionContainer}>
+          {/* Display solution based on tabs */}
+          {hasImage || hasVideo ? (
+            <>
+              <View style={styles.solutionTabs}>
+                {hasImage && (
+                  <TouchableOpacity
+                    onPress={() => setActiveSolutionTab('image')}
+                    style={
+                      activeSolutionTab === 'image'
+                        ? styles.activeSolutionTab
+                        : styles.solutionTab
+                    }
+                  >
+                    <Text>View Image Solution</Text>
+                  </TouchableOpacity>
+                )}
+                {hasVideo && (
+                  <TouchableOpacity
+                    onPress={() => setActiveSolutionTab('video')}
+                    style={
+                      activeSolutionTab === 'video'
+                        ? styles.activeSolutionTab
+                        : styles.solutionTab
+                    }
+                  >
+                    <Text>View Video Solution</Text>
+                  </TouchableOpacity>
                 )}
               </View>
-            </View>
-          </TouchableOpacity>
-        </Modal>
-      )}
+
+              <Text style={styles.solutionTitle}>Solution</Text>
+
+              {/* Display Image or Video based on active tab */}
+              {activeSolutionTab === 'image' && hasImage && (
+                <View style={styles.solutionImage}>
+                  <Image
+                    source={{ uri: imageSolution }}
+                    style={styles.imageSolution}
+                  />
+                </View>
+              )}
+
+              {activeSolutionTab === 'video' && hasVideo && (
+                <View style={styles.videoContainer}>
+                  <WebView
+                    source={{ uri: videoSolution }}
+                    style={{ width: '100%', height: 315 }}
+                  />
+                </View>
+              )}
+            </>
+          ) : (
+            <Text>No solution available.</Text>
+          )}
+        </View>
+   
+ </Modal>
+)}
+
 
 
           </ScrollView>
@@ -464,11 +454,11 @@ console.log(isAnswered,qId,answeredQuestions)
               <TouchableOpacity
                 style={[
                   styles.NavigationButton,
-                  !isAnswered ? styles.disabledButton : null,
+                  isAnswered ===null ? styles.disabledButton : null,
                 ]}
-                disabled={!isAnswered}
+                disabled={!isAnswered ===null}
                 onPress={handleWithSession(() => {
-                  if (!isAnswered) return;
+                  if (!isAnswered ===null) return;
                   onToggleSolution(qId);
                   setActiveSolutionTab("image");
                   setShowSolutionModal(true);

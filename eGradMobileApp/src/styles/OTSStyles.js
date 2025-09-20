@@ -14,6 +14,10 @@ export const styles = StyleSheet.create({
   btnsSubContainer:{
 flexDirection:'row',
   },
+  optIcon:{
+    width:25,
+    height:25,
+  },
   testcontainer:{  
     backgroundColor: '#fff',
     flexGrow: 1,

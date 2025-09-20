@@ -229,39 +229,212 @@ console.log(styles)
     setInputValue(currentValue);
   };
 
-  const handleSaveAnswer = (q) => {
+// const handleSaveAnswer = (q) => {
+//     const qId = q.question_id;
+//     const qtype = q.questionType?.qtype_text;
+//     let isCorrect = false;
+
+//     const userAnswerRaw = selectedOption[qId] || "";
+//     const correctAnswerRaw = q.correctAnswer?.toString()?.trim() || "";
+
+//     if (["MCQ", "MCQ4", "MCQ5", "TF", "CTQ"].includes(qtype)) {
+//       isCorrect = userAnswerRaw === correctAnswerRaw;
+
+//       onSetAnsweredQuestions((prev) => ({
+//         ...prev,
+//         [qId]: isCorrect ? "correct" : "incorrect",
+//       }));
+
+//     } else if (qtype === "MSQ") {
+//       const userAnswers = Array.isArray(selectedOption[qId])
+//         ? selectedOption[qId].map(String)
+//         : (selectedOption[qId] || "").toString().split(",").map(a => a.trim());
+
+//       const correctAnswers = Array.isArray(q.correctAnswer)
+//         ? q.correctAnswer.map(String)
+//         : correctAnswerRaw.split(",").map(a => a.trim());
+
+//       const correctSelected = userAnswers.filter(ans => correctAnswers.includes(ans));
+//       const wrongSelected = userAnswers.filter(ans => !correctAnswers.includes(ans));
+
+//       let status = "failed";
+//       if (correctSelected.length === correctAnswers.length && wrongSelected.length === 0) {
+//         status = "completed";
+//       }
+
+//       onSetAnsweredQuestions((prev) => ({
+//         ...prev,
+//         [qId]: {
+//           status,
+//           accuracy: status === "completed" ? 1 : 0,
+//           correctSelected,
+//           wrong: wrongSelected,
+//         },
+//       }));
+
+//     } else if (qtype === "MSQN") {
+//       const userAnswers = Array.isArray(selectedOption[qId])
+//         ? selectedOption[qId].map(String)
+//         : (selectedOption[qId] || "").toString().split(",").map(a => a.trim());
+
+//       const correctAnswers = Array.isArray(q.correctAnswer)
+//         ? q.correctAnswer.map(String)
+//         : correctAnswerRaw.split(",").map(a => a.trim());
+
+//       const correctSelected = userAnswers.filter(ans => correctAnswers.includes(ans));
+//       const wrongSelected = userAnswers.filter(ans => !correctAnswers.includes(ans));
+
+//       let status = "failed";
+//       if (correctSelected.length === correctAnswers.length && wrongSelected.length === 0) {
+//         status = "completed";
+//       } else if (correctSelected.length > 0 && wrongSelected.length === 0) {
+//         status = "partial";
+//       }
+
+//       const accuracy = correctAnswers.length > 0 ? correctSelected.length / correctAnswers.length : 0;
+
+//       onSetAnsweredQuestions((prev) => ({
+//         ...prev,
+//         [qId]: {
+//           status,
+//           accuracy,
+//           correctSelected,
+//           wrong: wrongSelected,
+//         },
+//       }));
+
+//     } else if (["NATI", "NATD"].includes(qtype)) {
+//       let userAnswer = natAnswers[qId]?.toString()?.trim() || "";
+
+//       if (qtype === "NATI") userAnswer = userAnswer.replace(/[^0-9]/g, "");
+//       if (qtype === "NATD") userAnswer = userAnswer.replace(/[^0-9.\-]/g, "");
+
+//       if (correctAnswerRaw.includes("-")) {
+//         const [minStr, maxStr] = correctAnswerRaw.split("-").map(s => s.trim());
+//         const min = parseFloat(minStr);
+//         const max = parseFloat(maxStr);
+//         const userNum = parseFloat(userAnswer);
+
+//         isCorrect = !isNaN(userNum) && !isNaN(min) && !isNaN(max) && userNum >= min && userNum <= max;
+//       } else {
+//         const userNum = parseFloat(userAnswer);
+//         const correctNum = parseFloat(correctAnswerRaw);
+//         isCorrect = !isNaN(userNum) && !isNaN(correctNum) && userNum === correctNum;
+//       }
+
+//       onSetAnsweredQuestions((prev) => ({
+//         ...prev,
+//         [qId]: isCorrect ? "correct" : "incorrect",
+//       }));
+
+//       onSetNatAnswers((prev) => ({ ...prev, [qId]: userAnswer }));
+//     }
+//   };
+const handleSaveAnswer = (q) => {
     const qId = q.question_id;
     const qtype = q.questionType?.qtype_text;
     let isCorrect = false;
 
-    const userAnswerRaw = natAnswers[qId] || "";
+    const userAnswerRaw = selectedOption[qId] || "";
     const correctAnswerRaw = q.correctAnswer?.toString()?.trim() || "";
 
     if (["MCQ", "MCQ4", "MCQ5", "TF", "CTQ"].includes(qtype)) {
       isCorrect = userAnswerRaw === correctAnswerRaw;
-    } else if (qtype === "MSQ" || qtype === "MSQN") {
-      const userAnswers = (selectedOption[qId] || "").toString().split(",");
-      const correctAnswers = correctAnswerRaw.split(",");
 
-      const correctSelected = userAnswers.filter(ans => correctAnswers.includes(ans));
-      const wrongSelected = userAnswers.filter(ans => !correctAnswers.includes(ans));
+      onSetAnsweredQuestions((prev) => ({
+        ...prev,
+        [qId]: isCorrect ? "correct" : "incorrect",
+      }));
 
-      if (correctSelected.length === correctAnswers.length && wrongSelected.length === 0) {
-        isCorrect = true;
-      }
+    } else if (qtype === "MSQ") {
+    // --- MSQ: no partial, only completed or failed ---
+    const userAnswers = Array.isArray(selectedOption[qId])
+      ? selectedOption[qId].map(String)
+      : (selectedOption[qId] || "").toString().split(",").map(a => a.trim());
+
+    const correctAnswers = Array.isArray(q.correctAnswer)
+      ? q.correctAnswer.map(String)
+      : correctAnswerRaw.split(",").map(a => a.trim());
+
+    const correctSelected = userAnswers.filter(ans => correctAnswers.includes(ans));
+    const wrongSelected = userAnswers.filter(ans => !correctAnswers.includes(ans));
+
+    let status = "failed";
+    if (correctSelected.length === correctAnswers.length && wrongSelected.length === 0) {
+      status = "completed";
+    } else {
+      status = "failed"; // ✅ no partial for MSQ
+    }
+
+    onSetAnsweredQuestions((prev) => ({
+      ...prev,
+      [qId]: {
+        status,
+        accuracy: status === "completed" ? 1 : 0,
+        correctSelected,
+        wrong: wrongSelected,
+      },
+    }));
+
+  } else if (qtype === "MSQN") {
+    // --- MSQN: allow partial ---
+    const userAnswers = Array.isArray(selectedOption[qId])
+      ? selectedOption[qId].map(String)
+      : (selectedOption[qId] || "").toString().split(",").map(a => a.trim());
+
+    const correctAnswers = Array.isArray(q.correctAnswer)
+      ? q.correctAnswer.map(String)
+      : correctAnswerRaw.split(",").map(a => a.trim());
+
+    const correctSelected = userAnswers.filter(ans => correctAnswers.includes(ans));
+    const wrongSelected = userAnswers.filter(ans => !correctAnswers.includes(ans));
+
+    let status = "failed";
+    if (correctSelected.length === correctAnswers.length && wrongSelected.length === 0) {
+      status = "completed";
+    } else if (correctSelected.length > 0 && wrongSelected.length === 0) {
+      status = "partial"; // ✅ only MSQN allows partial
+    } else {
+      status = "failed";
+    }
+
+    const accuracy = correctAnswers.length > 0 ? correctSelected.length / correctAnswers.length : 0;
+
+    onSetAnsweredQuestions((prev) => ({
+      ...prev,
+      [qId]: {
+        status,
+        accuracy,
+        correctSelected,
+        wrong: wrongSelected,
+      },
+    }));
     } else if (["NATI", "NATD"].includes(qtype)) {
       let userAnswer = natAnswers[qId]?.toString()?.trim() || "";
 
       if (qtype === "NATI") userAnswer = userAnswer.replace(/[^0-9]/g, "");
       if (qtype === "NATD") userAnswer = userAnswer.replace(/[^0-9.\-]/g, "");
 
-      const correctAnswer = parseFloat(correctAnswerRaw);
-      const userNum = parseFloat(userAnswer);
+      if (correctAnswerRaw.includes("-")) {
+        const [minStr, maxStr] = correctAnswerRaw.split("-").map(s => s.trim());
+        const min = parseFloat(minStr);
+        const max = parseFloat(maxStr);
+        const userNum = parseFloat(userAnswer);
 
-      isCorrect = !isNaN(userNum) && userNum === correctAnswer;
+        isCorrect = !isNaN(userNum) && !isNaN(min) && !isNaN(max) && userNum >= min && userNum <= max;
+      } else {
+        const userNum = parseFloat(userAnswer);
+        const correctNum = parseFloat(correctAnswerRaw);
+        isCorrect = !isNaN(userNum) && !isNaN(correctNum) && userNum === correctNum;
+      }
+
+      onSetAnsweredQuestions((prev) => ({
+        ...prev,
+        [qId]: isCorrect ? "correct" : "incorrect",
+      }));
+
+      onSetNatAnswers((prev) => ({ ...prev, [qId]: userAnswer }));
     }
-
-    Alert.alert(isCorrect ? "Correct!" : "Incorrect");
   };
    if (!practiceQuestionsData) {
     return <Text>Loading questions...</Text>;
