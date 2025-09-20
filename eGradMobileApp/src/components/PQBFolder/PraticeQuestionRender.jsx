@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity, Dimensions, StyleSheet } from 'react-native';
-import { FaCalculator } from 'react-icons/fa'; // React Native does not support this directly
-import ScientificCalculator from './ScientificCalculator'; // Adjust this as per your needs
-import correctImg from '../../../assets/OTSTestInterfaceImages/correctImg.png';
-import wrongImg from '../../../assets/OTSTestInterfaceImages/wrongImg.png';
+// import { FaCalculator } from 'react-icons/fa'; // React Native does not support this directly
+// import ScientificCalculator from './ScientificCalculator'; // Adjust this as per your needs
+import correctImg from '../../images/correctImg.png';
+import wrongImg from '../../images/wrongImg.png';
 
 const { width, height } = Dimensions.get('window');
 
@@ -103,6 +103,8 @@ const PracticeQuestionRender = ({
   //   setShowUp(contentOffset.y > 50);
   //   setShowDown(contentOffset.y + height < contentSize.height - 50);
   // };
+    const keys = ["7","8","9","4","5","6","1","2","3","0",".","-"];
+  
   return(
 <View style={styles.mainContainer}>
       <View style={showSidebar ? styles.mainContainer : styles.fullWidth}>
@@ -157,52 +159,96 @@ const PracticeQuestionRender = ({
     <ScrollView contentContainerStyle={styles.excercisecontainer}>
           {/* Example MCQ Options */}
           {["MCQ4", "MCQ5", "TF", "CTQ"].includes(qtype) && (
-            <View>
-              {question.options.map((opt, idx) => {
-                const isSelected = selectedOption[qId] === opt.option_index;
-                const isCorrectOption =
-                  opt.option_index === question.correctAnswer;
-                const isAnswered = answeredQuestions[qId];
+            <RadioButton.Group
+      onValueChange={(value) => onMCQSelection(qId, value)}
+      value={selectedOption[qId]}
+    >
+      {question.options.map((opt, idx) => {
+        const isCorrectOption = opt.option_index === question.correctAnswer;
+        const isSelected = selectedOption[qId] === opt.option_index;
 
-                return (
-                  <TouchableOpacity
-                    key={opt.option_index}
-                    style={styles.optionContainer}
-                    onPress={() => onMCQSelection(qId, opt.option_index)}
-                    disabled={isAnswered}
-                  >
-                    {isAnswered ? (
-                      isCorrectOption ? (
-                        <Image source={correctImg} style={styles.optIcon} />
-                      ) : isSelected ? (
-                        <Image source={wrongImg} style={styles.optIcon} />
-                      ) : (
-                        <View style={styles.radioCircle} />
-                      )
-                    ) : (
-                      <View
-                        style={[
-                          styles.radioCircle,
-                          isSelected && styles.radioCircleSelected,
-                        ]}
-                      />
+        return (
+            <View key={opt.option_index} style={styles.optionRow}>
+            {isAnswered ? (
+              isCorrectOption ? (
+                <Image source={correctImg} style={styles.optIcon} />
+              ) : isSelected ? (
+                <Image source={wrongImg} style={styles.optIcon} />
+              ) : (
+                <RadioButton.Item
+                  label={getLabel(idx, opt.option_index)}
+                  value={opt.option_index}
+                  disabled
+                 style={styles.radioItem}
+                 labelStyle={styles.optionLabel}
+                />
+              )
+            ) : (
+              <RadioButton.Item
+                label={getLabel(idx, opt.option_index)}
+                value={opt.option_index}
+                style={styles.radioItem}
+              />
+            )}
+            {opt.optionImgName && (
+
+               <ResponsiveImage uri={opt.optionImgName} />
+            )}
+          </View>
+        );
+      })}
+    </RadioButton.Group>
+          )}
+            {["MSQ", "MSQN"].includes(qtype) && (
+        <View style={styles.optionsContainer}>
+          {question.options.map((opt, idx) => {
+            const selectedList = selectedOption[qId] || [];
+            const correctAnswers = question.correctAnswer
+              ? question.correctAnswer.split(",").map((a) => a.trim())
+              : [];
+
+            const isCorrect = correctAnswers.includes(opt.option_index);
+            const isSelected = selectedList.includes(opt.option_index);
+
+            return (
+              <View key={opt.option_index} style={styles.optionRow}>
+                {isAnswered ? (
+                  <>
+                    {isCorrect && isSelected && (
+                      <Image source={correctImg} style={styles.optIcon} />
+                    )}
+                    {!isCorrect && isSelected && (
+                      <Image source={wrongImg} style={styles.optIcon} />
+                    )}
+                    {isCorrect && !isSelected && (
+                      <Image source={correctImg} style={styles.optIcon} />
+                    )}
+                    {!isCorrect && !isSelected && (
+                      <Checkbox status="unchecked" disabled />
                     )}
                     <Text style={styles.optionText}>
                       {getLabel(idx, opt.option_index)}
                     </Text>
-                    {opt.optionImgName && (
-                      <Image
-                        source={{ uri: opt.optionImgName }}
-                        style={styles.optionImage}
-                        resizeMode="contain"
-                      />
-                    )}
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          )}
-
+                  </>
+                ) : (
+                  <>
+                    <Checkbox
+                      status={isSelected ? "checked" : "unchecked"}
+                      onValueChange={() => onMSQSelection(qId, opt.option_index)}
+                    />
+                    <Text style={styles.optionText}>
+                      {getLabel(idx, opt.option_index)}
+                    </Text>
+                  </>
+                )}
+                {opt.optionImgName && (
+                  <ResponsiveImage uri={opt.optionImgName} />
+                )}
+              </View>
+            );
+          })}
+        </View>
+      )}
           {/* NAT Questions (TextInput + Keypad) */}
           {["NATI", "NATD"].includes(qtype) && (
             <View style={styles.natContainer}>
@@ -219,7 +265,58 @@ const PracticeQuestionRender = ({
                   {question.exercise_answer_unit}
                 </Text>
               )}
-            </View>
+                      <View style={styles.backSpaceBtn}>
+      {/* Backspace */}
+      <TouchableOpacity
+       style={styles.backSpaceButton}
+        onPress={() => onCalculatorInput(questionId, "BackSpace", qtype)}
+        disabled={isDisabled}
+      >
+        <Text style={styles.calcText}>BACK SPACE</Text>
+      </TouchableOpacity>
+ </View>
+      {/* Keypad */}
+      <View style={styles.CalculatorBox}>
+        {keys.map((key) => (
+          <TouchableOpacity
+            key={key}
+            style={styles.calcButton}
+            onPress={() => onCalculatorInput(questionId, key, qtype)}
+            disabled={!!answeredQuestions[questionId]}
+          >
+            <Text style={styles.calcText}>{key}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* Left / Right Arrows */}
+   <View style={styles.arrowBtns}>
+        <TouchableOpacity
+          style={styles.arrowButton}
+          onPress={() => onArrowInput(questionId, "left")}
+          disabled={!!answeredQuestions[questionId]}
+        >
+          <Text style={styles.arrowText}>←</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+        style={styles.arrowButton}
+          onPress={() => onArrowInput(questionId, "right")}
+          disabled={!!answeredQuestions[questionId]}
+        >
+          <Text style={styles.arrowText}>→</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.backSpaceBtn}>
+      {/* Clear All */}
+      <TouchableOpacity
+        style={styles.backSpaceButton}
+        onPress={() => onCalculatorInput(questionId, "ClearAll", qtype)}
+        disabled={!!answeredQuestions[questionId]}
+      >
+        <Text style={styles.calcText}>CLEAR ALL</Text>
+      </TouchableOpacity></View>
+    </View>
+           
           )}
 
           {/* Solution Modal Example */}
