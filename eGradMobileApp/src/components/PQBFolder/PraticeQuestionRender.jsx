@@ -322,41 +322,189 @@ const PracticeQuestionRender = ({
            
           )}
 
-          {/* Solution Modal Example */}
-          {isAnswered && showSolutionModal && (
-            <View style={styles.modalOverlay}>
-              <View style={styles.modalContent}>
-                <TouchableOpacity
-                  style={styles.modalCloseBtn}
-                  onPress={() => setShowSolutionModal(false)}
-                >
-                  <Text style={{ fontSize: 20 }}>×</Text>
-                </TouchableOpacity>
+             {isAnswered && ["NATI", "NATD"].includes(qtype) && (
+        <View style={styles.natFeedback}>
+          {answeredQuestions[qId] === "correct" ? (
+            <Text style={styles.correctText}>
+              ✅ Correct Answer: <Text style={{ fontWeight: 'bold' }}>{question.correctAnswer}</Text>
+            </Text>
+          ) : (
+            <Text style={styles.wrongText}>
+              ❌ Wrong Answer ✅ <Text style={{ fontWeight: 'bold' }}>Correct Answer:</Text> {question.correctAnswer}
+            </Text>
+          )}
+        </View>
+      )}
 
-                {hasImage && (
-                  <Image
-                    source={{ uri: imageSolution }}
-                    style={styles.solutionImage}
-                    resizeMode="contain"
-                  />
-                )}
+      {/* Solution Modal */}
+     {isAnswered && showSolutionModal && (
+        <Modal
+          transparent={true}
+          animationType="fade"
+          visible={showSolutionModal}
+          onRequestClose={() => setShowSolutionModal(false)}
+        >
+          <TouchableOpacity
+            style={styles.modalOverlay}
+            onPress={() => setShowSolutionModal(false)}
+          >
+            <View style={styles.modalContent}>
+              <TouchableOpacity
+                style={styles.modalCloseBtn}
+                onPress={() => setShowSolutionModal(false)}
+              >
+                <Text style={{ fontSize: 20 }}>×</Text>
+              </TouchableOpacity>
 
-                {hasVideo && (
-                  <View style={styles.videoContainer}>
-                    <WebView
-                      source={{ uri: videoSolution }}
-                      style={{ height: 300 }}
-                    />
-                  </View>
+              <View
+                style={styles.solutionContainer}
+                ref={(el) => (solutionRefs.current[qId] = el)}
+              >
+                {/* Display solution based on tabs */}
+                {hasImage || hasVideo ? (
+                  <>
+                    <View style={styles.solutionTabs}>
+                      {hasImage && (
+                        <TouchableOpacity
+                          onPress={() => setActiveSolutionTab('image')}
+                          style={
+                            activeSolutionTab === 'image'
+                              ? styles.activeSolutionTab
+                              : styles.solutionTab
+                          }
+                        >
+                          <Text>View Image Solution</Text>
+                        </TouchableOpacity>
+                      )}
+                      {hasVideo && (
+                        <TouchableOpacity
+                          onPress={() => setActiveSolutionTab('video')}
+                          style={
+                            activeSolutionTab === 'video'
+                              ? styles.activeSolutionTab
+                              : styles.solutionTab
+                          }
+                        >
+                          <Text>View Video Solution</Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
+
+                    <Text style={styles.solutionTitle}>Solution</Text>
+
+                    {/* Display Image or Video based on active tab */}
+                    {activeSolutionTab === 'image' && hasImage && (
+                      <View style={styles.solutionImage}>
+                        <Image
+                          source={{ uri: imageSolution }}
+                          style={styles.imageSolution}
+                        />
+                      </View>
+                    )}
+
+                    {activeSolutionTab === 'video' && hasVideo && (
+                      <View style={styles.videoContainer}>
+                        <WebView
+                          source={{ uri: videoSolution }}
+                          style={{ width: '100%', height: 315 }}
+                        />
+                      </View>
+                    )}
+                  </>
+                ) : (
+                  <Text>No solution available.</Text>
                 )}
               </View>
             </View>
-          )}
+          </TouchableOpacity>
+        </Modal>
+      )}
+
+
           </ScrollView>
         </View>
       </ScrollView>
     </ScrollView>
+
     </View>
+    <View style={styles.footerContainerpqb}>
+      <View style={styles.QuestionNavigationButtonsMainContainer}>
+        <View style={styles.btnsSubContainer}>
+          <View style={styles.solutionToggle}>
+            {/* Previous Button */}
+            <TouchableOpacity
+              style={styles.NavigationButton}
+              onPress={handleWithSession(onPrevQuestion)}
+            >
+              <Text 
+              // style={styles.buttonText}
+              >Previous</Text>
+            </TouchableOpacity>
+
+            {/* Save Answer Button */}
+            
+              <TouchableOpacity
+                style={[
+                  styles.NavigationButton,
+                  saveDisabled ? styles.disabledButton : null,
+                ]}
+                disabled={saveDisabled}
+                onPress={handleWithSession(() => onSaveAnswer(question))}
+              >
+                <Text 
+                // style={styles.buttonText}
+                >Check Answer</Text>
+              </TouchableOpacity>
+           
+
+            {/* View/Hide Solution Button */}
+           
+              <TouchableOpacity
+                style={[
+                  styles.NavigationButton,
+                  !isAnswered ? styles.disabledButton : null,
+                ]}
+                disabled={!isAnswered}
+                onPress={handleWithSession(() => {
+                  if (!isAnswered) return;
+                  onToggleSolution(qId);
+                  setActiveSolutionTab("image");
+                  setShowSolutionModal(true);
+                })}
+              >
+                <Text 
+                // style={styles.buttonText}
+                >View Solution</Text>
+              </TouchableOpacity>
+          
+          </View>
+
+          {/* Question Counter */}
+          <Text style={styles.questionCounter}>
+            Question {currentQuestionIdx + 1} of {totalQuestions}
+          </Text>
+
+          {/* Next Button */}
+          <TouchableOpacity
+            style={styles.NavigationButton}
+            onPress={handleWithSession(onNextQuestion)}
+          >
+            <Text>Next</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Submit Button */}
+        <View style={styles.submitBtnCls}>
+         
+          <TouchableOpacity
+            onPress={handleWithSession(onFinalSubmit)}
+            style={styles.NavigationButton}
+          >
+            <Text>Submit</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+         </View>
   </View>
   );
 };

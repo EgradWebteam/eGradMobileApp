@@ -11,6 +11,9 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
   flex: 1,
   },
+  btnsSubContainer:{
+flexDirection:'row',
+  },
   testcontainer:{  
     backgroundColor: '#fff',
     flexGrow: 1,
@@ -52,7 +55,15 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 8,
     backgroundColor: '#fff',
   },
-
+  footerContainerpqb: {
+    padding: 8,
+flexWrap:'wrap',
+gap:'10',
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
+    height: 200
+   
+  },
   footerContainer: {
     padding: 8,
 flexWrap:'wrap',
