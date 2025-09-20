@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, ScrollView, Image, TouchableOpacity, Dimensions, StyleSheet ,Modal} from 'react-native';
+import { View, Text, ScrollView, Image, TouchableOpacity, Dimensions, StyleSheet ,Modal,TextInput} from 'react-native';
 // import { FaCalculator } from 'react-icons/fa'; // React Native does not support this directly
 // import ScientificCalculator from './ScientificCalculator'; // Adjust this as per your needs
 import correctImg from '../../images/correctImg.png';
@@ -59,6 +59,7 @@ const PracticeQuestionRender = ({
   
   
   const isAnswered = answeredQuestions[qId];
+  const isDisabled = answeredQuestions[qId] !== null
   const showSol = showSolution[qId];
 console.log(isAnswered,qId,answeredQuestions)
   useEffect(() => {
@@ -173,9 +174,20 @@ console.log(isAnswered,qId,answeredQuestions)
             <View key={opt.option_index} style={styles.optionRow}>
             {isAnswered !==null ? (
               isCorrectOption ? (
+                <>
+                 <Text style={styles.optionText}>
+                      {getLabel(idx, opt.option_index)}
+                    </Text>
                 <Image source={correctImg} style={styles.optIcon} />
+                </>
               ) : isSelected ? (
+                  <>
+                 <Text style={styles.optionText}>
+                      {getLabel(idx, opt.option_index)}
+                    </Text>
+               
                 <Image source={wrongImg} style={styles.optIcon} />
+              </>
               ) : (
                 <RadioButton.Item
                   label={getLabel(idx, opt.option_index)}
@@ -226,7 +238,7 @@ console.log(isAnswered,qId,answeredQuestions)
                       <Image source={correctImg} style={styles.optIcon} />
                     )}
                     {!isCorrect && !isSelected && (
-                      <Checkbox status="unchecked" disabled />
+                      <CheckBox status="unchecked" disabled />
                     )}
                     <Text style={styles.optionText}>
                       {getLabel(idx, opt.option_index)}
@@ -234,8 +246,9 @@ console.log(isAnswered,qId,answeredQuestions)
                   </>
                 ) : (
                   <>
-                    <Checkbox
+                    <CheckBox
                       status={isSelected ? "checked" : "unchecked"}
+                      value ={isSelected} 
                       onValueChange={() => onMSQSelection(qId, opt.option_index)}
                     />
                     <Text style={styles.optionText}>
@@ -253,15 +266,17 @@ console.log(isAnswered,qId,answeredQuestions)
       )}
           {/* NAT Questions (TextInput + Keypad) */}
           {["NATI", "NATD"].includes(qtype) && (
-            <View style={styles.natContainer}>
+           <View style={styles.NATInputHolder}>
+               <View style={styles.NATLabel}>
               <TextInput
-                style={styles.natInput}
+               style={styles.natInput}
+                 ref={(el) => (inputRef.current[question.question_id] = el)}
                 value={natAnswers[question.question_id] || ""}
                 onChangeText={(val) =>
                   onNATInput(question.question_id, val)
                 }
                 editable={!answeredQuestions[question.question_id]}
-              />
+              /></View>
               {question.exercise_answer_unit && (
                 <Text style={styles.answerUnit}>
                   {question.exercise_answer_unit}
@@ -271,7 +286,7 @@ console.log(isAnswered,qId,answeredQuestions)
       {/* Backspace */}
       <TouchableOpacity
        style={styles.backSpaceButton}
-        onPress={() => onCalculatorInput(questionId, "BackSpace", qtype)}
+        onPress={() => onCalculatorInput(question.question_id, "BackSpace", qtype)}
         disabled={isDisabled}
       >
         <Text style={styles.calcText}>BACK SPACE</Text>
@@ -283,8 +298,8 @@ console.log(isAnswered,qId,answeredQuestions)
           <TouchableOpacity
             key={key}
             style={styles.calcButton}
-            onPress={() => onCalculatorInput(questionId, key, qtype)}
-            disabled={!!answeredQuestions[questionId]}
+            onPress={() => onCalculatorInput(question.question_id, key, qtype)}
+            disabled={isDisabled}
           >
             <Text style={styles.calcText}>{key}</Text>
           </TouchableOpacity>
@@ -295,15 +310,15 @@ console.log(isAnswered,qId,answeredQuestions)
    <View style={styles.arrowBtns}>
         <TouchableOpacity
           style={styles.arrowButton}
-          onPress={() => onArrowInput(questionId, "left")}
-          disabled={!!answeredQuestions[questionId]}
+          onPress={() => onArrowInput(question.question_id, "left")}
+          disabled={isDisabled}
         >
           <Text style={styles.arrowText}>←</Text>
         </TouchableOpacity>
         <TouchableOpacity
         style={styles.arrowButton}
-          onPress={() => onArrowInput(questionId, "right")}
-          disabled={!!answeredQuestions[questionId]}
+          onPress={() => onArrowInput(question.question_id, "right")}
+          disabled={isDisabled}
         >
           <Text style={styles.arrowText}>→</Text>
         </TouchableOpacity>
@@ -312,8 +327,8 @@ console.log(isAnswered,qId,answeredQuestions)
       {/* Clear All */}
       <TouchableOpacity
         style={styles.backSpaceButton}
-        onPress={() => onCalculatorInput(questionId, "ClearAll", qtype)}
-        disabled={!!answeredQuestions[questionId]}
+        onPress={() => onCalculatorInput(question.question_id, "ClearAll", qtype)}
+        disabled={isDisabled}
       >
         <Text style={styles.calcText}>CLEAR ALL</Text>
       </TouchableOpacity></View>
@@ -351,7 +366,8 @@ console.log(isAnswered,qId,answeredQuestions)
        <View style={styles.solutionButtons}>
           {/* Display solution based on tabs */}
           {hasImage || hasVideo ? (
-            <>
+           
+            <View  style={styles.solutionDisplayTab}>
               <View style={styles.solutionTabs}>
                 {hasImage && (
                   <TouchableOpacity
@@ -365,7 +381,11 @@ console.log(isAnswered,qId,answeredQuestions)
                       ]
                     }
                   >
-                    <Text>View Image Solution</Text>
+                    <Text style={[
+                         styles.solbtntext,
+                      activeSolutionTab === 'image'
+                        && styles.activeButtontext
+                    ]}>View Image Solution</Text>
                   </TouchableOpacity>
                 )}
                 {hasVideo && (
@@ -377,18 +397,21 @@ console.log(isAnswered,qId,answeredQuestions)
                         && styles.activeButtonsol
                     ]}
                   >
-                    <Text>View Video Solution</Text>
+                    <Text     style={[
+                         styles.solbtntext,
+                      activeSolutionTab === 'video'
+                        && styles.activeButtontext
+                    ]}>View Video Solution</Text>
                   </TouchableOpacity>
                 )}
               </View>
 
-              <Text style={styles.solutionTitle}>Solution</Text>
+             
 
               {/* Display Image or Video based on active tab */}
               {activeSolutionTab === 'image' && hasImage && (
                
-                 
-                   <ResponsiveImage uri={imageSolution} />
+                  <ResponsiveImage uri={imageSolution} />
            
               )}
 
@@ -396,7 +419,8 @@ console.log(isAnswered,qId,answeredQuestions)
                   renderVideo(solutionVideo)
               
               )}
-            </>
+              </View>
+        
           ) : (
             <Text>No solution available.</Text>
           )}

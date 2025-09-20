@@ -22,6 +22,10 @@ flexDirection:'row',
     marginHorizontal: 5,
     backgroundColor: '#e0e0e0', // Inactive button background
   },
+  solutionDisplayTab:{
+    flexDirection:"column",
+    gap:10,
+  },
   activeButtonsol: {
     backgroundColor: '#007bff', // Active button background
   },

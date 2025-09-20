@@ -40,7 +40,7 @@ const PraticeQuestionSection = ({
   const paletteRef = useRef(null);
   const solutionRefs = useRef({});
   const inputRef = useRef({});
-console.log(styles)
+
   const goToNextQuestion = useCallback(() => {
     const subjects = getCurrentSubjects();
     const currentSubject = subjects[activeSubjectIdx];
@@ -200,33 +200,66 @@ console.log(styles)
       inputElement.setSelectionRange(currentPosition + 1, currentPosition + 1);
     }
   }
-  const handleCalculatorInput = (val) => {
-    let currentValue = inputValue;
+  const handleCalculatorInput = (qId,val,qtype) => {
+    const inputElement = inputRef.current[qId];
+    if (!inputElement) return;
+
+    inputElement.focus(); // Focus the input
+
+    let currentValue = natAnswers[qId] || "";
+    let cursorPos = cursorRef.current;
+
     if (val === "ClearAll") {
-      currentValue = '';
-      onSetNatAnswers((prev) => ({ ...prev, [qId]: '' }));
-    } else if (val === "BackSpace") {
+      currentValue = "";
+      onSetNatAnswers((prev) => ({ ...prev, [qId]: "" }));
+      return;
+    }
+
+    if (val === "BackSpace") {
       if (cursorPos > 0) {
         currentValue = currentValue.slice(0, cursorPos - 1) + currentValue.slice(cursorPos);
         onSetNatAnswers((prev) => ({ ...prev, [qId]: currentValue }));
+
+        // Move cursor back by one after update
+        cursorRef.current = cursorPos - 1;
       }
-    } else if (val === "-") {
+      return;
+    }
+
+    if (val === "-") {
+      // Only allow "-" at the start
       if (!currentValue.includes("-") && cursorPos === 0) {
         currentValue = "-" + currentValue;
         onSetNatAnswers((prev) => ({ ...prev, [qId]: currentValue }));
+        cursorRef.current = cursorPos + 1; // Move cursor after the minus sign
       }
-    } else if (val === ".") {
-      const numericPart = currentValue.startsWith("-") ? currentValue.slice(1) : currentValue;
-      if (!numericPart.includes(".")) {
-        if (currentValue === "" || currentValue === "-") {
-          val = "0.";
-        }
-      }
-    } else {
-      currentValue = currentValue.slice(0, cursorPos) + val + currentValue.slice(cursorPos);
-      onSetNatAnswers((prev) => ({ ...prev, [qId]: currentValue }));
+      return;
     }
-    setInputValue(currentValue);
+
+    if (val === ".") {
+      const numericPart = currentValue.startsWith("-") ? currentValue.slice(1) : currentValue;
+      if (numericPart.includes(".")) return;
+
+      if (currentValue === "" || currentValue === "-") {
+        val = "0."; // Automatically prepend 0 before dot
+      }
+    }
+
+    // 🚫 Prevent inserting before the minus sign
+    if (currentValue.startsWith("-") && cursorPos === 0) {
+      return;
+    }
+
+    // Insert the value at the cursor position
+    const updatedValue = currentValue.slice(0, cursorPos) + val + currentValue.slice(cursorPos);
+    const newCursorPos = cursorPos + val.length; // Update cursor position
+
+    onSetNatAnswers((prev) => ({ ...prev, [qId]: updatedValue }));
+
+    // Move the cursor to the new position after a timeout to ensure the input updates first
+    setTimeout(() => {
+      inputElement.setSelectionRange(newCursorPos, newCursorPos);
+    }, 0);
   };
 
 // const handleSaveAnswer = (q) => {

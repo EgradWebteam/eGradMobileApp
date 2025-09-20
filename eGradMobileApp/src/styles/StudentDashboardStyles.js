@@ -270,6 +270,10 @@ activeButtontext:{
     color: "#333",
     fontWeight: "bold",
   },
+  solbtntext:{
+  color: "#000",
+    fontWeight: "bold",
+  },
   activeButtontext: {
     color: "#fff",
     fontWeight: "bold",
