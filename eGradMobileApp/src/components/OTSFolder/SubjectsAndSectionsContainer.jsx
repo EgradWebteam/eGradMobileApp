@@ -12,7 +12,7 @@ import {
 import { styles } from "../../styles/OTSStyles";
  import { backEndUrl, frontEndUrl,backEndPort } from "../../apiConfig.js";
 import { saveCurrentQuestionProgress } from "./saveCurrentQuestionProgress.jsx";
-console.log(styles)
+
 const SubjectsAndSectionsContainer = ({
   testData,
   activeSubject,

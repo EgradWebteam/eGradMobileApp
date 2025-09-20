@@ -4,7 +4,10 @@ import { View, Text, ScrollView, Image, TouchableOpacity, Dimensions, StyleSheet
 // import ScientificCalculator from './ScientificCalculator'; // Adjust this as per your needs
 import correctImg from '../../images/correctImg.png';
 import wrongImg from '../../images/wrongImg.png';
-
+import { RadioButton } from 'react-native-paper';
+import CheckBox from '@react-native-community/checkbox';
+import {styles} from "../../styles/OTSStyles.js"; 
+import ResponsiveImage from '../OTSFolder/ResponsiveImage.js';
 const { width, height } = Dimensions.get('window');
 
 const PracticeQuestionRender = ({

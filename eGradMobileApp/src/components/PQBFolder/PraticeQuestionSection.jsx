@@ -1,7 +1,8 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { View, Text, TouchableOpacity, TextInput, ScrollView, FlatList } from 'react-native';
-import { FaChevronLeft, FaChevronRight, FaCalculator } from 'react-icons/fa';
-import styles from "../../styles/OTSStyles"; // Custom styles should be redefined for React Native
+import Icon from 'react-native-vector-icons/FontAwesome'; // or AntDesign, MaterialIcons, etc.
+
+import {styles} from "../../styles/OTSStyles.js"; // Custom styles should be redefined for React Native
 import PraticeQuestionRender from "./PraticeQuestionRender.jsx";
 
 const PraticeQuestionSection = ({
@@ -39,7 +40,7 @@ const PraticeQuestionSection = ({
   const paletteRef = useRef(null);
   const solutionRefs = useRef({});
   const inputRef = useRef({});
-
+console.log(styles)
   const goToNextQuestion = useCallback(() => {
     const subjects = getCurrentSubjects();
     const currentSubject = subjects[activeSubjectIdx];
@@ -127,7 +128,9 @@ const PraticeQuestionSection = ({
       onSetCurrentQuestionIdx(lastQuestionIdx);
     }
   }, [activeSubjectIdx, activeSectionIdx, currentQuestionIdx, answeredQuestions, selectedOption, onSetSelectedOption, onSetNatAnswers, onSetCurrentQuestionIdx, onSectionChange, onSubjectChange]);
-
+  const toggleSolution = (qId) => {
+    onSetShowSolution((prev) => ({ ...prev, [qId]: !prev[qId] }));
+  };
   const scrollPalette = (direction) => {
     if (paletteRef.current) {
       paletteRef.current.scrollBy({
@@ -306,41 +309,47 @@ const PraticeQuestionSection = ({
           )}
         </ScrollView>)}
   </View>
-      {/* <View style={styles.questionPaletteWrapper}>
-        <View style={styles.questionPaletteContainer}>
-          <TouchableOpacity
-            style={styles.scrollBtn}
-            onPress={handleWithSession(() => scrollPalette('left'))}
-          >
-            <FaChevronLeft />
-          </TouchableOpacity>
-          <ScrollView
-            horizontal
-            contentContainerStyle={styles.questionPalette}
-            ref={paletteRef}
-            showsHorizontalScrollIndicator={false}
-          >
-            {getCurrentSection().questions.map((q, idx) => (
-              <TouchableOpacity
-                key={q.question_id}
-                style={[
-                  getQuestionButtonClass(q),
-                  idx === currentQuestionIdx && styles.activeQuestion,
-                ]}
-                onPress={handleWithSession(() => onQuestionChange(idx))}
-              >
-                <Text>{idx + 1}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-          <TouchableOpacity
-            style={styles.scrollBtn}
-            onPress={handleWithSession(() => scrollPalette('right'))}
-          >
-            <FaChevronRight />
-          </TouchableOpacity>
-        </View>
-      </View> */}
+     <ScrollView horizontal style={styles.questionNumberRow}>
+        
+            <ScrollView horizontal style={styles.questionNumberRow}>
+      <View style={styles.questionPaletteContainer}>
+        <TouchableOpacity
+          style={styles.scrollBtn}
+          onPress={handleWithSession(() => scrollPalette('left'))}
+        >
+          <Icon name="chevron-left" size={24} color="black" />
+        </TouchableOpacity>
+
+        <ScrollView
+          horizontal
+          contentContainerStyle={styles.questionPalette}
+          ref={paletteRef}
+          showsHorizontalScrollIndicator={false}
+        >
+          {getCurrentSection().questions.map((q, idx) => (
+            <TouchableOpacity
+              key={q.question_id}
+              style={[
+                getQuestionButtonClass(q), // should return a RN style object
+                idx === currentQuestionIdx && styles.activeQuestion,
+              ]}
+              onPress={handleWithSession(() => onQuestionChange(idx))}
+            >
+              <Text>{idx + 1}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        <TouchableOpacity
+          style={styles.scrollBtn}
+          onPress={handleWithSession(() => scrollPalette('right'))}
+        >
+          <Icon name="chevron-right" size={24} color="black" />
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
+      
+   </ScrollView>
 
       {/* <View style={styles.currentQuestionContainer}> */}
         <PraticeQuestionRender

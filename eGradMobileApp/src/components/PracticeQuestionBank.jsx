@@ -154,24 +154,24 @@ const getBackgroundClass = (id) => backgroundColors[id] || "#f0f0f0";
 const handleStartPracticeWithSession = async (testId, studentId, courseId) => {
   console.log("dataaaa",testId,studentId,courseId);
   try {
-    const navigationToken = await AsyncStorage.getItem("navigationToken");
-    if (navigationToken === "valid") {
-      setPopup(true);
-      return;
-    }
+    // const navigationToken = await AsyncStorage.getItem("navigationToken");
+    // if (navigationToken === "valid") {
+    //   setPopup(true);
+    //   return;
+    // }
 
-    const isActive = (await AsyncStorage.getItem("practiceTestActive")) === "true";
-    if (isActive) {
-      setShowPopup(true);
-      setPendingTest({ testId, studentId, courseId });
-      return;
-    }
+    // const isActive = (await AsyncStorage.getItem("practiceTestActive")) === "true";
+    // if (isActive) {
+    //   setShowPopup(true);
+    //   setPendingTest({ testId, studentId, courseId });
+    //   return;
+    // }
 
-    const keys = await AsyncStorage.getAllKeys();
-    const practiceKeys = keys.filter((key) => key.startsWith("practiceTest_"));
-    if (practiceKeys.length > 0) {
-      await AsyncStorage.multiRemove(practiceKeys);
-    }
+    // const keys = await AsyncStorage.getAllKeys();
+    // const practiceKeys = keys.filter((key) => key.startsWith("practiceTest_"));
+    // if (practiceKeys.length > 0) {
+    //   await AsyncStorage.multiRemove(practiceKeys);
+    // }
 
     handleStartPractice(testId, studentId, courseId);
   } catch (err) {
@@ -181,8 +181,8 @@ const handleStartPracticeWithSession = async (testId, studentId, courseId) => {
 
 const handleStartPractice = async (testId, studentId, courseId) => {
   try {
-    await AsyncStorage.setItem("practiceTestActive", "true");
-    await AsyncStorage.setItem("practicenavigationToken", Date.now().toString());
+    // await AsyncStorage.setItem("practiceTestActive", "true");
+    // await AsyncStorage.setItem("practicenavigationToken", Date.now().toString());
 
     const encryptedArray = await encryptBatch([testId, studentId, courseId]);
     const encryptedTestId = encodeURIComponent(encryptedArray[0]);

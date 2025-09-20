@@ -10,8 +10,8 @@ import axios from "axios";
 import { backEndUrl } from "../apiConfig.js";
 import { decryptBatch } from "../utils/CryptoUtils.jsx";
 import PraticeQuestionSection from "../components/PQBFolder/PraticeQuestionSection.jsx";
-import PraticeSummaryModal from "../components/PQBFolder/PraticeSummaryModal.jsx";
-import PraticeQuestionSidebar from "../components/PQBFolder/PraticeQuestionSidebar.jsx";
+// import PraticeSummaryModal from "../components/PQBFolder/PraticeSummaryModal.jsx";
+// import PraticeQuestionSidebar from "../components/PQBFolder/PraticeQuestionSidebar.jsx";
 import Icon from 'react-native-vector-icons/AntDesign'; // Adjust based on the icon you're using
 
 // import { useSession } from "../hooks/SessionContext.jsx";
@@ -66,24 +66,24 @@ const PracticeScreen = () => {
     return `${hrs}:${mins}:${secs}`;
   };
 
-  useEffect(() => {
-    const checkNavigationToken = async () => {
-      const token = await AsyncStorage.getItem("practicenavigationToken");
-      if (!token) {
-        navigation.navigate("Error");
-      }
-    };
+  // useEffect(() => {
+  //   const checkNavigationToken = async () => {
+  //     const token = await AsyncStorage.getItem("practicenavigationToken");
+  //     if (!token) {
+  //       navigation.navigate("Error");
+  //     }
+  //   };
 
-    checkNavigationToken();
+  //   checkNavigationToken();
 
-    // BackHandler to prevent back navigation if needed
-    const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
-      // Disable back button or handle accordingly
-      return true;
-    });
+  //   // BackHandler to prevent back navigation if needed
+  //   const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
+  //     // Disable back button or handle accordingly
+  //     return true;
+  //   });
 
-    return () => backHandler.remove();
-  }, [navigation]);
+  //   return () => backHandler.remove();
+  // }, [navigation]);
 
   useEffect(() => {
     const decryptParams = async () => {
@@ -544,7 +544,7 @@ const PracticeScreen = () => {
                setShowSolutionModal={setShowSolutionModal}
             />
 
-            <PraticeQuestionSidebar
+            {/* <PraticeQuestionSidebar
               showSidebar={showSidebar}
               studentProfile={studentProfile}
               studentName={studentName}
@@ -559,8 +559,8 @@ const PracticeScreen = () => {
               timeSpent={timeSpent}
               handleWithSession={handleWithSession}
               storageKey={storageKey}
-            />
-        {isSubmitted && (
+            /> */}
+        {/* {isSubmitted && (
           <PraticeSummaryModal
           summary={summary}
             currentSection={getCurrentSection()}
@@ -587,7 +587,7 @@ const PracticeScreen = () => {
             onClose={() => window.close()}
             storageKey={storageKey}
           />
-        )}
+        )} */}
         {showCustomPopup && (
           <View style={styles.popup}>
             <Text style={styles.warningTitle}>Warning!</Text>
