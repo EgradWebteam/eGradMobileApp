@@ -187,80 +187,94 @@ const PraticeQuestionSection = ({
     onSetNatAnswers(prev => ({ ...prev, [qId]: value }));
   };
 
-  const handleArrowInput = (qId, direction) => {
-    const inputElement = inputRef.current[qId];
-    if (!inputElement) return;
+const handleArrowInput = (qId, direction) => {
+  const inputElement = inputRef.current[qId];
 
-    inputElement.focus();
+  if (!inputElement) return;
 
-    const currentPosition = inputElement.selectionStart;
-    if (direction === "left" && currentPosition > 0) {
-      inputElement.setSelectionRange(currentPosition - 1, currentPosition - 1);
-    } else if (direction === "right" && currentPosition < inputElement.value.length) {
-      inputElement.setSelectionRange(currentPosition + 1, currentPosition + 1);
+  inputElement.focus(); // Focus the input field
+
+  let newCursorPos = cursorPos || 0;
+
+  // Move cursor left
+  if (direction === "left" && newCursorPos > 0) {
+    newCursorPos -= 1;
+  }
+  // Move cursor right
+  else if (direction === "right" && newCursorPos < natAnswers[qId].length) {
+    newCursorPos += 1;
+  }
+
+  // Update the cursor position in the state
+  onSetCursorPos(newCursorPos);
+
+  // setTimeout(() => {
+  //   // Sync the cursor visually with the new position
+  //   inputElement.setSelectionRange(newCursorPos, newCursorPos);
+  // }, 0);
+};
+
+
+const handleCalculatorInput = (qId, val, qtype) => {
+  const inputElement = inputRef.current[qId];
+  if (!inputElement) return;
+
+  inputElement.focus(); // Focus the input field
+
+  let currentValue = natAnswers[qId] || "";
+  let newCursorPos = cursorPos[qId] || 0;
+
+  if (val === "ClearAll") {
+    currentValue = "";
+    onSetNatAnswers((prev) => ({ ...prev, [qId]: "" }));
+    onSetCursorPos(0);
+    return;
+  }
+
+  if (val === "BackSpace") {
+    if (newCursorPos > 0) {
+      currentValue = currentValue.slice(0, newCursorPos - 1) + currentValue.slice(newCursorPos);
+      newCursorPos -= 1; // Move cursor back
+      onSetNatAnswers((prev) => ({ ...prev, [qId]: currentValue }));
+    }
+    return;
+  }
+
+  if (val === "-") {
+    // Only allow "-" at the start
+    if (!currentValue.includes("-") && newCursorPos === 0) {
+      currentValue = "-" + currentValue;
+      onSetNatAnswers((prev) => ({ ...prev, [qId]: currentValue }));
+      newCursorPos += 1; // Move cursor after the minus sign
+    }
+    return;
+  }
+
+  if (val === ".") {
+    const numericPart = currentValue.startsWith("-") ? currentValue.slice(1) : currentValue;
+    if (numericPart.includes(".")) return;
+
+    if (currentValue === "" || currentValue === "-") {
+      val = "0."; // Automatically prepend 0 before dot
     }
   }
-  const handleCalculatorInput = (qId,val,qtype) => {
-    const inputElement = inputRef.current[qId];
-    if (!inputElement) return;
 
-    inputElement.focus(); // Focus the input
+  // 🚫 Prevent inserting before the minus sign
+  if (currentValue.startsWith("-") && newCursorPos === 0) {
+    return;
+  }
 
-    let currentValue = natAnswers[qId] || "";
-    let cursorPos = cursorRef.current;
+  // Insert the value at the cursor position
+  const updatedValue = currentValue.slice(0, newCursorPos) + val + currentValue.slice(newCursorPos);
+  newCursorPos += val.length; // Update cursor position after inserting the value
 
-    if (val === "ClearAll") {
-      currentValue = "";
-      onSetNatAnswers((prev) => ({ ...prev, [qId]: "" }));
-      return;
-    }
+  onSetNatAnswers((prev) => ({ ...prev, [qId]: updatedValue }));
 
-    if (val === "BackSpace") {
-      if (cursorPos > 0) {
-        currentValue = currentValue.slice(0, cursorPos - 1) + currentValue.slice(cursorPos);
-        onSetNatAnswers((prev) => ({ ...prev, [qId]: currentValue }));
-
-        // Move cursor back by one after update
-        cursorRef.current = cursorPos - 1;
-      }
-      return;
-    }
-
-    if (val === "-") {
-      // Only allow "-" at the start
-      if (!currentValue.includes("-") && cursorPos === 0) {
-        currentValue = "-" + currentValue;
-        onSetNatAnswers((prev) => ({ ...prev, [qId]: currentValue }));
-        cursorRef.current = cursorPos + 1; // Move cursor after the minus sign
-      }
-      return;
-    }
-
-    if (val === ".") {
-      const numericPart = currentValue.startsWith("-") ? currentValue.slice(1) : currentValue;
-      if (numericPart.includes(".")) return;
-
-      if (currentValue === "" || currentValue === "-") {
-        val = "0."; // Automatically prepend 0 before dot
-      }
-    }
-
-    // 🚫 Prevent inserting before the minus sign
-    if (currentValue.startsWith("-") && cursorPos === 0) {
-      return;
-    }
-
-    // Insert the value at the cursor position
-    const updatedValue = currentValue.slice(0, cursorPos) + val + currentValue.slice(cursorPos);
-    const newCursorPos = cursorPos + val.length; // Update cursor position
-
-    onSetNatAnswers((prev) => ({ ...prev, [qId]: updatedValue }));
-
-    // Move the cursor to the new position after a timeout to ensure the input updates first
-    setTimeout(() => {
-      inputElement.setSelectionRange(newCursorPos, newCursorPos);
-    }, 0);
-  };
+  // Move the cursor to the new position after a timeout to ensure the input updates first
+  setTimeout(() => {
+    onSetCursorPos(newCursorPos);
+  });
+};
 
 // const handleSaveAnswer = (q) => {
 //     const qId = q.question_id;
@@ -569,6 +583,7 @@ const handleSaveAnswer = (q) => {
             showScientificCalc={showScientificCalc}
             cursorPos={cursorPos}
             inputRef={inputRef}
+            onSetCursorPos={onSetCursorPos}
             showSidebar={showSidebar}
             solutionRefs={solutionRefs}
             onToggleCalculator={onToggleCalculator}

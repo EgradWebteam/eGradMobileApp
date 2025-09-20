@@ -275,6 +275,12 @@ console.log(isAnswered,qId,answeredQuestions)
                 onChangeText={(val) =>
                   onNATInput(question.question_id, val)
                 }
+  //               selection={{ start: cursorPos, end: cursorPos }}
+  //                 onSelectionChange={({ nativeEvent: { selection } }) => {
+  //   onSetCursorPos(cursorPos);
+  // }}
+  //  showSoftInputOnFocus={false}
+
                 editable={!answeredQuestions[question.question_id]}
               /></View>
               {question.exercise_answer_unit && (
