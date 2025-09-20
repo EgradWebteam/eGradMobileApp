@@ -40,6 +40,7 @@ const PraticeQuestionSection = ({
   const paletteRef = useRef(null);
   const solutionRefs = useRef({});
   const inputRef = useRef({});
+const cursorRef = useRef(0); // default cursor position 0
 
   const goToNextQuestion = useCallback(() => {
     const subjects = getCurrentSubjects();
@@ -257,9 +258,7 @@ const PraticeQuestionSection = ({
     onSetNatAnswers((prev) => ({ ...prev, [qId]: updatedValue }));
 
     // Move the cursor to the new position after a timeout to ensure the input updates first
-    setTimeout(() => {
-      inputElement.setSelectionRange(newCursorPos, newCursorPos);
-    }, 0);
+   cursorRef.current = cursorPos; // Update cursor position
   };
 
 // const handleSaveAnswer = (q) => {
