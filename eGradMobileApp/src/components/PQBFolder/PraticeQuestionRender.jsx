@@ -386,10 +386,10 @@ console.log(isAnswered,qId,answeredQuestions)
 
               {/* Display Image or Video based on active tab */}
               {activeSolutionTab === 'image' && hasImage && (
-                <View style={styles.solutionImage}>
+               
                  
                    <ResponsiveImage uri={imageSolution} />
-                </View>
+           
               )}
 
               {activeSolutionTab === 'video' && hasVideo && (
