@@ -105,7 +105,7 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
           showQuizContainer: false,
           showTestContainer: selectedPortalId === 1,
           courseContainer: selectedPortalId === 2,
-          selectedExamId,
+          selectedExamId:selectedExamId,
         })
       );
     } catch (error) {
@@ -125,7 +125,7 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
         selectedTestCourse: null,
         showQuizContainer: true,
         showTestContainer: false,
-        selectedExam,
+        selectedExamId:selectedExamId,
         courseContainer: false,
       })
     );
@@ -152,7 +152,7 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
                       selectedTestCourse: null,
                       showQuizContainer: true,
                       showTestContainer: false,
-                      selectedExam,
+                      selectedExamId:selectedExamId,
                       courseContainer: false,
                     })
                   );
@@ -179,7 +179,7 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
                       showTestContainer: false,
                       courseContainer: true,
                       selectedTestCourse: selectedTestCourse,
-                      selectedExam,
+                      selectedExamId:selectedExamId,
                     })
                   );
                 }
@@ -276,6 +276,7 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
             chapterdetails={chapterdetails}
             selectedPortalId={selectedPortalId}
             selectedExam={selectedExam}
+            selectedExamId={selectedExamId}
             courseIds={courseIds}
             onBack={handleBackToCourses}
           />

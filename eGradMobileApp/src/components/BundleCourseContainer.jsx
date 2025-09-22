@@ -22,6 +22,7 @@ const BundleCourseContainer = ({
   selectedExam,
   setChapterdetails,
   chapterdetails,
+  selectedExamId
 }) => {
   const [bundleData, setBundleData] = useState(null);
   const [activeSection, setActiveSection] = useState("orvl");
@@ -142,7 +143,7 @@ console.log("user dataaaa bundleeee",userData)
           showQuizContainer: false,
           showTestContainer: false,
           courseContainer: true,
-          selectedExam,
+          selectedExamId:selectedExamId,
           selectedCourseId: courseCreationId,
           selectedChapterName: response.data.chapter_name || null,
           selectedChapterId: response.data.chapter_id || null,
@@ -185,7 +186,7 @@ console.log("user dataaaa bundleeee",userData)
               showTestContainer: false,
               courseContainer: true,
               selectedTestCourse: courseIds,
-              selectedExam,
+              selectedExamId:selectedExamId,
             })
           );
         }}
