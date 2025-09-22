@@ -1011,4 +1011,39 @@ fontWeight:'bold'
     elevation: 3,
     color: 'black',
   },
+    correctQuestion: {
+    height: 45,
+    width: 45,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 0,
+  },
+  incorrectQuestion: {
+    height: 45,
+    width: 45,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 0,
+  },
+  partialCorrectQuestion: {
+    height: 45,
+    width: 45,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 0,
+  },
+  questionPaletteBtn: {
+    height: 45,
+    width: 45,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    color:"#000"
+  },
+  activeQuestion: {
+    borderWidth: 2,
+    borderColor: "blue",
+  },
 });
