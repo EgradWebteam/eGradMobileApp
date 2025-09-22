@@ -13,6 +13,16 @@ export const styles = StyleSheet.create({
   },
   btnsSubContainer:{
 flexDirection:'row',
+justifyContent:"space-between",
+gap:10,
+    width:"100%",
+
+  },
+  optConCorWro: {
+    paddingHorizontal: 17,  // Horizontal padding (left and right)
+    flexDirection: "row",
+    gap:25,
+    // For gap, add margin to child elements (inside the container) if needed.
   },
     buttonsol: {
     paddingVertical: 10,
@@ -97,16 +107,16 @@ flexDirection:'row',
     backgroundColor: '#fff',
   },
   footerContainerpqb: {
-    padding: 8,
+    padding: 5,
 flexWrap:'wrap',
 gap:'10',
     borderTopWidth: 1,
     borderTopColor: '#eee',
-    height: 200
+    height: 100
    
   },
   footerContainer: {
-    padding: 8,
+    padding: 5,
 flexWrap:'wrap',
 gap:'10',
     borderTopWidth: 1,
@@ -189,7 +199,9 @@ height: 45,
     marginRight: 10,
   },
   disabledButton: {
-    backgroundColor: '#aaa',
+    backgroundColor: '#ccc',
+
+    opacity: 0.6,
   },
   buttonText: {
     color: '#fff',
@@ -645,10 +657,17 @@ color:'#fff',
     color: "red",
     fontWeight: "bold",
   },
-    btnsSubContainer: {
+    btnsSubContainerpqb: {
+      width:"100%",
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent:'space-between',
+    gap:10
  
+  },
+  pqbbtns:{
+flexDirection:"column",
+justifyContent:"space-between",
+height:"100%"
   },
   navigationBtnHolderSubContainer: {
 
@@ -680,7 +699,11 @@ color:'#fff',
 //     textAlign: 'center',
 //   },
   disabledButtonText: {
-    color: '#ddd',
+       color: '#666',
+  },
+  disabledButtonTextopt: {
+       color: '#999',
+       fontSize:15,
   },
   submitBtnCls: {
    flexDirection: 'row',
@@ -751,8 +774,7 @@ saveandnext:{
   paddingVertical: 6,
   paddingHorizontal: 6,
   borderRadius: 6,
-minWidth:100,
-maxWidth:200,
+
 justifyContent:'center',
   alignItems: 'center',
     backgroundColor: '#587dbd',
@@ -764,8 +786,7 @@ justifyContent:'center',
     paddingVertical: 6,
   paddingHorizontal: 6,
   borderRadius: 6,
-minWidth:100,
-maxWidth:200,
+
 justifyContent:'center',
   alignItems: 'center',
   },
@@ -1037,13 +1058,13 @@ fontWeight:'bold'
     width: 45,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
+    // borderWidth: 1,
+    // borderColor: "#ccc",
+    // borderRadius: 5,
     color:"#000"
   },
   activeQuestion: {
-    borderWidth: 2,
-    borderColor: "blue",
+    // borderWidth: 2,
+    // borderColor: "blue",
   },
 });

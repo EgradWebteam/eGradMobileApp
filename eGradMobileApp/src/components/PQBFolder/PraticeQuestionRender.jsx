@@ -174,20 +174,20 @@ const PracticeQuestionRender = ({
             <View key={opt.option_index} style={styles.optionRow}>
             {isAnswered !==null ? (
               isCorrectOption ? (
-                <>
-                 <Text style={styles.optionText}>
+                <View style={styles.optConCorWro}>
+                 <Text style={styles.disabledButtonTextopt}>
                       {getLabel(idx, opt.option_index)}
                     </Text>
                 <Image source={correctImg} style={styles.optIcon} />
-                </>
+                </View>
               ) : isSelected ? (
-                  <>
-                 <Text style={styles.optionText}>
+                  <View style={styles.optConCorWro}>
+                 <Text style={styles.disabledButtonTextopt}>
                       {getLabel(idx, opt.option_index)}
                     </Text>
                
                 <Image source={wrongImg} style={styles.optIcon} />
-              </>
+              </View>
               ) : (
                 <RadioButton.Item
                   label={getLabel(idx, opt.option_index)}
@@ -458,15 +458,15 @@ const PracticeQuestionRender = ({
     </View>
     <View style={styles.footerContainerpqb}>
       <View style={styles.QuestionNavigationButtonsMainContainer}>
-        <View style={styles.btnsSubContainer}>
-          <View style={styles.solutionToggle}>
+        <View style={styles.btnsSubContainerpqb}>
+          <View style={styles.pqbbtns}>
             {/* Previous Button */}
             <TouchableOpacity
-              style={styles.NavigationButton}
+              style={styles.saveandnext}
               onPress={handleWithSession(onPrevQuestion)}
             >
               <Text 
-              // style={styles.buttonText}
+             style={styles.buttonText}
               >Previous</Text>
             </TouchableOpacity>
 
@@ -474,26 +474,38 @@ const PracticeQuestionRender = ({
             
               <TouchableOpacity
                 style={[
-                  styles.NavigationButton,
-                  saveDisabled ? styles.disabledButton : null,
+                  styles.saveandnext,
+                  saveDisabled ? styles.disabledButton : styles.saveandnext,
                 ]}
                 disabled={saveDisabled}
                 onPress={handleWithSession(() => onSaveAnswer(question))}
               >
                 <Text 
-                // style={styles.buttonText}
+                  style={[
+                  styles.buttonText,
+                  saveDisabled ? styles.disabledButtonText : styles.buttonText,
+                ]}
+                // style={styles.buttonText}vdisabledButtonText
                 >Check Answer</Text>
               </TouchableOpacity>
            
 
             {/* View/Hide Solution Button */}
            
-              <TouchableOpacity
+             
+          
+          </View>
+<View style={styles.pqbbtns}>
+          {/* Question Counter */}
+          <Text style={styles.questionCounter}>
+            Question {currentQuestionIdx + 1} of {totalQuestions}
+          </Text>
+     <TouchableOpacity
                 style={[
-                  styles.NavigationButton,
-                  isAnswered ===null ? styles.disabledButton : null,
+                  styles.saveandnext,
+                  isAnswered ===null ? styles.disabledButton :  styles.saveandnext,
                 ]}
-                disabled={!isAnswered ===null}
+                disabled={!isAnswered === null}
                 onPress={handleWithSession(() => {
                   if (!isAnswered ===null) return;
                   onToggleSolution(qId);
@@ -502,36 +514,35 @@ const PracticeQuestionRender = ({
                 })}
               >
                 <Text 
+                  style={[
+                styles.buttonText,
+                 isAnswered ===null? styles.disabledButtonText : styles.buttonText,
+                ]}
                 // style={styles.buttonText}
                 >View Solution</Text>
               </TouchableOpacity>
-          
-          </View>
-
-          {/* Question Counter */}
-          <Text style={styles.questionCounter}>
-            Question {currentQuestionIdx + 1} of {totalQuestions}
-          </Text>
-
           {/* Next Button */}
-          <TouchableOpacity
-            style={styles.NavigationButton}
-            onPress={handleWithSession(onNextQuestion)}
-          >
-            <Text>Next</Text>
-          </TouchableOpacity>
-        </View>
+        
+</View>
+      
 
         {/* Submit Button */}
-        <View style={styles.submitBtnCls}>
-         
+        <View style={styles.pqbbtns}>
+     
+                <TouchableOpacity
+            style={styles.saveandnext}
+            onPress={handleWithSession(onNextQuestion)}
+          >
+            <Text style={styles.buttonText}>Next</Text>
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={handleWithSession(onFinalSubmit)}
-            style={styles.NavigationButton}
+            style={styles.saveandnext}
           >
-            <Text>Submit</Text>
+            <Text style={styles.buttonText}>Submit</Text>
           </TouchableOpacity>
         </View>
+          </View>
       </View>
          </View>
   </View>

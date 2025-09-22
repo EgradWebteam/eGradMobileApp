@@ -173,7 +173,7 @@ const PraticeQuestionSection = ({
 
     if (!status) {
       return {
-        image: null,
+        image: require("../../images/Visited.png"),
         textColor: "#000",
         style: styles.questionPaletteBtn,
       };
@@ -212,7 +212,8 @@ const PraticeQuestionSection = ({
           image: require("../../assets/partialImg.png"),
           textColor: "#000",
           style: styles.partialCorrectQuestion,
-        };
+        }; 
+      
     }
 
     return {
@@ -567,7 +568,7 @@ if (val === '.' && (currentValue.includes('.') || currentValue === '-')) return;
   return (
     <View style={styles.mainContainer}>
       <View style={styles.subjectContainer}>
-        <ScrollView horizontal style={styles.questionNumberRow}>
+        <ScrollView horizontal>
           {getCurrentSubjects().map((subj, idx) =>
             subj?.SubjectName ? (
               <TouchableOpacity
@@ -589,7 +590,7 @@ if (val === '.' && (currentValue.includes('.') || currentValue === '-')) return;
 
 
         {getCurrentSections().length > 0 && (
-          <ScrollView horizontal style={styles.questionNumberRow}>
+          <ScrollView horizontal >
             {getCurrentSections().map((sec, idx) =>
               sec?.SectionName ? (
                 <TouchableOpacity

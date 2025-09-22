@@ -518,7 +518,7 @@ const PracticeScreen = () => {
           <Text style={styles.timerText}>{formatTime(timeSpent)}</Text>
         </View>
       </View>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+   
 
         <PraticeQuestionSection
           practiceQuestionsData={practiceQuestionsData}
@@ -614,7 +614,7 @@ const PracticeScreen = () => {
             <Text onPress={() => setShowCustomPopup(false)} style={[styles.buttonText, { textAlign: 'center', padding: 10, backgroundColor: '#007AFF', borderRadius: 5 }]}>OK</Text>
           </View>
         )}
-      </ScrollView>
+    
       <Toast />
     </View>
   );
