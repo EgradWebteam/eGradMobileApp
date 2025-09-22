@@ -212,8 +212,8 @@ const PraticeQuestionSection = ({
           image: require("../../assets/partialImg.png"),
           textColor: "#000",
           style: styles.partialCorrectQuestion,
-        }; 
-      
+        };
+
     }
 
     return {
@@ -242,218 +242,218 @@ const PraticeQuestionSection = ({
     onSetNatAnswers(prev => ({ ...prev, [qId]: value }));
   };
 
-const handleArrowInput = (qId, direction) => {
-  const inputElement = inputRef.current[qId];
+  const handleArrowInput = (qId, direction) => {
+    const inputElement = inputRef.current[qId];
 
-  if (!inputElement) return;
+    if (!inputElement) return;
 
-// Focus the input field
+    // Focus the input field
 
-  let newCursorPos = cursorPos[qId]  || 0;
+    let newCursorPos = cursorPos[qId] || 0;
 
-  // Move cursor left
-  if (direction === "left" && newCursorPos > 0) {
-    newCursorPos -= 1;
-  }
-  // Move cursor right
-  else if (direction === "right" && newCursorPos < natAnswers[qId].length) {
-    newCursorPos += 1;
-  }
-
-  // Update the cursor position in the state
-    onSetCursorPos((prevPos) => ({
-    ...prevPos,
-    [qId]: newCursorPos,
-  }));
-  inputElement.focus(); 
-
-  // setTimeout(() => {
-  //   // Sync the cursor visually with the new position
-  //   inputElement.setSelectionRange(newCursorPos, newCursorPos);
-  // }, 0);
-};
-
-
-const handleCalculatorInput = (qId, val, qtype) => {
-  const inputElement = inputRef.current[qId];
-  if (!inputElement) return;
-
-  inputElement.focus(); // Focus the input field
-
-  let currentValue = natAnswers[qId] || "";
-  let newCursorPos = cursorPos[qId] || 0;
-
-  if (val === "ClearAll") {
-    currentValue = "";
-    onSetNatAnswers((prev) => ({ ...prev, [qId]: "" }));
-    onSetCursorPos((prev) => ({ ...prev, [qId]: 0 }));
-    return;
-  }
-
-  // if (val === "BackSpace") {
-  //   if (newCursorPos > 0) {
-  //     currentValue = currentValue.slice(0, newCursorPos - 1) + currentValue.slice(newCursorPos);
-  //     newCursorPos -= 1; // Move cursor back
-  //     onSetNatAnswers((prev) => ({ ...prev, [qId]: currentValue }));
-  //   }
-  //   return;
-  // }
-   if (val === "BackSpace") {
-    if (newCursorPos > 0) {
-      // Delete character just before the cursor
-      currentValue =
-        currentValue.slice(0, newCursorPos - 1) + currentValue.slice(newCursorPos);
+    // Move cursor left
+    if (direction === "left" && newCursorPos > 0) {
       newCursorPos -= 1;
-      onSetNatAnswers((prev) => ({ ...prev, [qId]: currentValue }));
-      onSetCursorPos((prev) => ({ ...prev, [qId]: newCursorPos }));
     }
-    return;
-  }
-
-  // if (val === "-") {
-  //   // Only allow "-" at the start
-  //   if (!currentValue.includes("-") && newCursorPos === 0) {
-  //     currentValue = "-" + currentValue;
-  //     onSetNatAnswers((prev) => ({ ...prev, [qId]: currentValue }));
-  //     newCursorPos += 1; // Move cursor after the minus sign
-  //   }
-  //   return;
-  // }
-  if (val === "-") {
-  // Only allow "-" at the start
-  if (!currentValue.includes("-") && newCursorPos === 0) {
-    currentValue = "-" + currentValue;
-    newCursorPos = 1; // move cursor after minus
-    onSetNatAnswers((prev) => ({ ...prev, [qId]: currentValue }));
-    onSetCursorPos((prev) => ({ ...prev, [qId]: newCursorPos })); // <-- update cursor position
-  }
-  return;
-}
- if (val === ".") {
-    const numericPart = currentValue.startsWith("-") ? currentValue.slice(1) : currentValue;
-    if (numericPart.includes(".")) return;
-
-    if (currentValue === "" || currentValue === "-") {
-      val = "0."; // Automatically prepend 0 before dot
+    // Move cursor right
+    else if (direction === "right" && newCursorPos < natAnswers[qId].length) {
+      newCursorPos += 1;
     }
-  }
-if (val === '.' && (currentValue.includes('.') || currentValue === '-')) return;
+
+    // Update the cursor position in the state
+    onSetCursorPos((prevPos) => ({
+      ...prevPos,
+      [qId]: newCursorPos,
+    }));
+    inputElement.focus();
+
+    // setTimeout(() => {
+    //   // Sync the cursor visually with the new position
+    //   inputElement.setSelectionRange(newCursorPos, newCursorPos);
+    // }, 0);
+  };
 
 
-  // Insert the value at the cursor position
-  const updatedValue = currentValue.slice(0, newCursorPos) + val + currentValue.slice(newCursorPos);
-  newCursorPos += val.length; // Update cursor position after inserting the value
+  const handleCalculatorInput = (qId, val, qtype) => {
+    const inputElement = inputRef.current[qId];
+    if (!inputElement) return;
 
-  onSetNatAnswers((prev) => ({ ...prev, [qId]: updatedValue }));
- onSetCursorPos((prev) => ({ ...prev, [qId]: newCursorPos }));
-  // Move the cursor to the new position after a timeout to ensure the input updates first
-  // setTimeout(() => {
-  // setTimeout(() => {
+    inputElement.focus(); // Focus the input field
+
+    let currentValue = natAnswers[qId] || "";
+    let newCursorPos = cursorPos[qId] || 0;
+
+    if (val === "ClearAll") {
+      currentValue = "";
+      onSetNatAnswers((prev) => ({ ...prev, [qId]: "" }));
+      onSetCursorPos((prev) => ({ ...prev, [qId]: 0 }));
+      return;
+    }
+
+    // if (val === "BackSpace") {
+    //   if (newCursorPos > 0) {
+    //     currentValue = currentValue.slice(0, newCursorPos - 1) + currentValue.slice(newCursorPos);
+    //     newCursorPos -= 1; // Move cursor back
+    //     onSetNatAnswers((prev) => ({ ...prev, [qId]: currentValue }));
+    //   }
+    //   return;
+    // }
+    if (val === "BackSpace") {
+      if (newCursorPos > 0) {
+        // Delete character just before the cursor
+        currentValue =
+          currentValue.slice(0, newCursorPos - 1) + currentValue.slice(newCursorPos);
+        newCursorPos -= 1;
+        onSetNatAnswers((prev) => ({ ...prev, [qId]: currentValue }));
+        onSetCursorPos((prev) => ({ ...prev, [qId]: newCursorPos }));
+      }
+      return;
+    }
+
+    // if (val === "-") {
+    //   // Only allow "-" at the start
+    //   if (!currentValue.includes("-") && newCursorPos === 0) {
+    //     currentValue = "-" + currentValue;
+    //     onSetNatAnswers((prev) => ({ ...prev, [qId]: currentValue }));
+    //     newCursorPos += 1; // Move cursor after the minus sign
+    //   }
+    //   return;
+    // }
+    if (val === "-") {
+      // Only allow "-" at the start
+      if (!currentValue.includes("-") && newCursorPos === 0) {
+        currentValue = "-" + currentValue;
+        newCursorPos = 1; // move cursor after minus
+        onSetNatAnswers((prev) => ({ ...prev, [qId]: currentValue }));
+        onSetCursorPos((prev) => ({ ...prev, [qId]: newCursorPos })); // <-- update cursor position
+      }
+      return;
+    }
+    if (val === ".") {
+      const numericPart = currentValue.startsWith("-") ? currentValue.slice(1) : currentValue;
+      if (numericPart.includes(".")) return;
+
+      if (currentValue === "" || currentValue === "-") {
+        val = "0."; // Automatically prepend 0 before dot
+      }
+    }
+    if (val === '.' && (currentValue.includes('.') || currentValue === '-')) return;
+
+
+    // Insert the value at the cursor position
+    const updatedValue = currentValue.slice(0, newCursorPos) + val + currentValue.slice(newCursorPos);
+    newCursorPos += val.length; // Update cursor position after inserting the value
+
+    onSetNatAnswers((prev) => ({ ...prev, [qId]: updatedValue }));
     onSetCursorPos((prev) => ({ ...prev, [qId]: newCursorPos }));
-  // });
-};
+    // Move the cursor to the new position after a timeout to ensure the input updates first
+    // setTimeout(() => {
+    // setTimeout(() => {
+    onSetCursorPos((prev) => ({ ...prev, [qId]: newCursorPos }));
+    // });
+  };
 
   // const handleSaveAnswer = (q) => {
-//     const qId = q.question_id;
-//     const qtype = q.questionType?.qtype_text;
-//     let isCorrect = false;
+  //     const qId = q.question_id;
+  //     const qtype = q.questionType?.qtype_text;
+  //     let isCorrect = false;
 
-//     const userAnswerRaw = selectedOption[qId] || "";
-//     const correctAnswerRaw = q.correctAnswer?.toString()?.trim() || "";
+  //     const userAnswerRaw = selectedOption[qId] || "";
+  //     const correctAnswerRaw = q.correctAnswer?.toString()?.trim() || "";
 
-//     if (["MCQ", "MCQ4", "MCQ5", "TF", "CTQ"].includes(qtype)) {
-//       isCorrect = userAnswerRaw === correctAnswerRaw;
+  //     if (["MCQ", "MCQ4", "MCQ5", "TF", "CTQ"].includes(qtype)) {
+  //       isCorrect = userAnswerRaw === correctAnswerRaw;
 
-//       onSetAnsweredQuestions((prev) => ({
-//         ...prev,
-//         [qId]: isCorrect ? "correct" : "incorrect",
-//       }));
+  //       onSetAnsweredQuestions((prev) => ({
+  //         ...prev,
+  //         [qId]: isCorrect ? "correct" : "incorrect",
+  //       }));
 
-//     } else if (qtype === "MSQ") {
-//       const userAnswers = Array.isArray(selectedOption[qId])
-//         ? selectedOption[qId].map(String)
-//         : (selectedOption[qId] || "").toString().split(",").map(a => a.trim());
+  //     } else if (qtype === "MSQ") {
+  //       const userAnswers = Array.isArray(selectedOption[qId])
+  //         ? selectedOption[qId].map(String)
+  //         : (selectedOption[qId] || "").toString().split(",").map(a => a.trim());
 
-//       const correctAnswers = Array.isArray(q.correctAnswer)
-//         ? q.correctAnswer.map(String)
-//         : correctAnswerRaw.split(",").map(a => a.trim());
+  //       const correctAnswers = Array.isArray(q.correctAnswer)
+  //         ? q.correctAnswer.map(String)
+  //         : correctAnswerRaw.split(",").map(a => a.trim());
 
-//       const correctSelected = userAnswers.filter(ans => correctAnswers.includes(ans));
-//       const wrongSelected = userAnswers.filter(ans => !correctAnswers.includes(ans));
+  //       const correctSelected = userAnswers.filter(ans => correctAnswers.includes(ans));
+  //       const wrongSelected = userAnswers.filter(ans => !correctAnswers.includes(ans));
 
-//       let status = "failed";
-//       if (correctSelected.length === correctAnswers.length && wrongSelected.length === 0) {
-//         status = "completed";
-//       }
+  //       let status = "failed";
+  //       if (correctSelected.length === correctAnswers.length && wrongSelected.length === 0) {
+  //         status = "completed";
+  //       }
 
-//       onSetAnsweredQuestions((prev) => ({
-//         ...prev,
-//         [qId]: {
-//           status,
-//           accuracy: status === "completed" ? 1 : 0,
-//           correctSelected,
-//           wrong: wrongSelected,
-//         },
-//       }));
+  //       onSetAnsweredQuestions((prev) => ({
+  //         ...prev,
+  //         [qId]: {
+  //           status,
+  //           accuracy: status === "completed" ? 1 : 0,
+  //           correctSelected,
+  //           wrong: wrongSelected,
+  //         },
+  //       }));
 
-//     } else if (qtype === "MSQN") {
-//       const userAnswers = Array.isArray(selectedOption[qId])
-//         ? selectedOption[qId].map(String)
-//         : (selectedOption[qId] || "").toString().split(",").map(a => a.trim());
+  //     } else if (qtype === "MSQN") {
+  //       const userAnswers = Array.isArray(selectedOption[qId])
+  //         ? selectedOption[qId].map(String)
+  //         : (selectedOption[qId] || "").toString().split(",").map(a => a.trim());
 
-//       const correctAnswers = Array.isArray(q.correctAnswer)
-//         ? q.correctAnswer.map(String)
-//         : correctAnswerRaw.split(",").map(a => a.trim());
+  //       const correctAnswers = Array.isArray(q.correctAnswer)
+  //         ? q.correctAnswer.map(String)
+  //         : correctAnswerRaw.split(",").map(a => a.trim());
 
-//       const correctSelected = userAnswers.filter(ans => correctAnswers.includes(ans));
-//       const wrongSelected = userAnswers.filter(ans => !correctAnswers.includes(ans));
+  //       const correctSelected = userAnswers.filter(ans => correctAnswers.includes(ans));
+  //       const wrongSelected = userAnswers.filter(ans => !correctAnswers.includes(ans));
 
-//       let status = "failed";
-//       if (correctSelected.length === correctAnswers.length && wrongSelected.length === 0) {
-//         status = "completed";
-//       } else if (correctSelected.length > 0 && wrongSelected.length === 0) {
-//         status = "partial";
-//       }
+  //       let status = "failed";
+  //       if (correctSelected.length === correctAnswers.length && wrongSelected.length === 0) {
+  //         status = "completed";
+  //       } else if (correctSelected.length > 0 && wrongSelected.length === 0) {
+  //         status = "partial";
+  //       }
 
-//       const accuracy = correctAnswers.length > 0 ? correctSelected.length / correctAnswers.length : 0;
+  //       const accuracy = correctAnswers.length > 0 ? correctSelected.length / correctAnswers.length : 0;
 
-//       onSetAnsweredQuestions((prev) => ({
-//         ...prev,
-//         [qId]: {
-//           status,
-//           accuracy,
-//           correctSelected,
-//           wrong: wrongSelected,
-//         },
-//       }));
+  //       onSetAnsweredQuestions((prev) => ({
+  //         ...prev,
+  //         [qId]: {
+  //           status,
+  //           accuracy,
+  //           correctSelected,
+  //           wrong: wrongSelected,
+  //         },
+  //       }));
 
-//     } else if (["NATI", "NATD"].includes(qtype)) {
-//       let userAnswer = natAnswers[qId]?.toString()?.trim() || "";
+  //     } else if (["NATI", "NATD"].includes(qtype)) {
+  //       let userAnswer = natAnswers[qId]?.toString()?.trim() || "";
 
-//       if (qtype === "NATI") userAnswer = userAnswer.replace(/[^0-9]/g, "");
-//       if (qtype === "NATD") userAnswer = userAnswer.replace(/[^0-9.\-]/g, "");
+  //       if (qtype === "NATI") userAnswer = userAnswer.replace(/[^0-9]/g, "");
+  //       if (qtype === "NATD") userAnswer = userAnswer.replace(/[^0-9.\-]/g, "");
 
-//       if (correctAnswerRaw.includes("-")) {
-//         const [minStr, maxStr] = correctAnswerRaw.split("-").map(s => s.trim());
-//         const min = parseFloat(minStr);
-//         const max = parseFloat(maxStr);
-//         const userNum = parseFloat(userAnswer);
+  //       if (correctAnswerRaw.includes("-")) {
+  //         const [minStr, maxStr] = correctAnswerRaw.split("-").map(s => s.trim());
+  //         const min = parseFloat(minStr);
+  //         const max = parseFloat(maxStr);
+  //         const userNum = parseFloat(userAnswer);
 
-//         isCorrect = !isNaN(userNum) && !isNaN(min) && !isNaN(max) && userNum >= min && userNum <= max;
-//       } else {
-//         const userNum = parseFloat(userAnswer);
-//         const correctNum = parseFloat(correctAnswerRaw);
-//         isCorrect = !isNaN(userNum) && !isNaN(correctNum) && userNum === correctNum;
-//       }
+  //         isCorrect = !isNaN(userNum) && !isNaN(min) && !isNaN(max) && userNum >= min && userNum <= max;
+  //       } else {
+  //         const userNum = parseFloat(userAnswer);
+  //         const correctNum = parseFloat(correctAnswerRaw);
+  //         isCorrect = !isNaN(userNum) && !isNaN(correctNum) && userNum === correctNum;
+  //       }
 
-//       onSetAnsweredQuestions((prev) => ({
-//         ...prev,
-//         [qId]: isCorrect ? "correct" : "incorrect",
-//       }));
+  //       onSetAnsweredQuestions((prev) => ({
+  //         ...prev,
+  //         [qId]: isCorrect ? "correct" : "incorrect",
+  //       }));
 
-//       onSetNatAnswers((prev) => ({ ...prev, [qId]: userAnswer }));
-//     }
-//   };
+  //       onSetNatAnswers((prev) => ({ ...prev, [qId]: userAnswer }));
+  //     }
+  //   };
 
   const handleSaveAnswer = (q) => {
     const qId = q.question_id;
@@ -517,9 +517,14 @@ if (val === '.' && (currentValue.includes('.') || currentValue === '-')) return;
       let status = "failed";
       if (correctSelected.length === correctAnswers.length && wrongSelected.length === 0) {
         status = "completed";
-      } else if (correctSelected.length > 0 && wrongSelected.length === 0) {
-        status = "partial"; // ✅ only MSQN allows partial
-      } else {
+      }
+      // else if (correctSelected.length > 0 && wrongSelected.length === 0) {
+      //   status = "partial"; // ✅ only MSQN allows partial
+      // } 
+      else if (correctSelected.length > 0) {
+        status = "partial";     // ✅ at least one correct, even if wrongs exist
+      }
+      else {
         status = "failed";
       }
 

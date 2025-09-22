@@ -206,7 +206,7 @@ height: 45,
   buttonText: {
     color: '#fff',
     textAlign: 'center',
-    fontWeight:90
+    fontWeight:90,
   },
   centered: {
     flex: 1,
@@ -678,6 +678,8 @@ height:"100%"
    buttonText: {
     color: '#fff',
     fontSize: 16,
+    textAlign:"center",
+    fontWeight: "600",
   },
   navigationBtnHolderSubContainerForSubmit: {
     flexDirection: 'row',
@@ -1066,5 +1068,35 @@ fontWeight:'bold'
   activeQuestion: {
     // borderWidth: 2,
     // borderColor: "blue",
+  },
+    OTSNavbarMainContainer: {
+    flexDirection: "row",      
+    justifyContent: "space-between", 
+    alignItems: "center",     
+    paddingHorizontal: 16,    
+    paddingVertical: 10,
+    backgroundColor: "#fff",  
+  },
+  OTSTestNameHolder: {
+    flex: 1, 
+  },
+  testNameText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#000",
+  },
+  timerWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  clockIcon: {
+    fontSize: 18,
+    marginRight: 6,
+    color: "#000",
+  },
+  timerText: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#000",
   },
 });
