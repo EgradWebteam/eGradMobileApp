@@ -55,52 +55,64 @@ const handleArrowInput = (direction) => {
   setCursorPosition(newPosition);
   inputRef.current.focus();
 };
- const handleCalculatorInput = (val) => {
-  let currentValue = natValue || '';
+const handleCalculatorInput = (val) => {
+  let currentValue = natValue || "";
+  let newCursorPos = cursorPosition || 0;
 
-  if (val === 'ClearAll') {
-    setNatValue('');
-    onSelectOption('');
+  if (val === "ClearAll") {
+    currentValue = "";
+    setNatValue("");
+    onSelectOption("");
     setCursorPosition(0);
     return;
   }
 
-  if (val === 'BackSpace') {
-    if (cursorPosition === 0) return;
-
-    const newValue =
-      currentValue.slice(0, cursorPosition - 1) +
-      currentValue.slice(cursorPosition);
-
-    const newCursor = cursorPosition - 1;
-
-    setNatValue(newValue);
-    onSelectOption(newValue);
-    setCursorPosition(newCursor);
+  if (val === "BackSpace") {
+    if (newCursorPos > 0) {
+      currentValue =
+        currentValue.slice(0, newCursorPos - 1) + currentValue.slice(newCursorPos);
+      newCursorPos -= 1;
+      setNatValue(currentValue);
+      onSelectOption(currentValue);
+      setCursorPosition(newCursorPos);
+    }
     return;
   }
 
-  if (val === '-' && !currentValue.includes('-')) {
-    const newValue = '-' + currentValue;
-    setNatValue(newValue);
-    onSelectOption(newValue);
-    setCursorPosition(cursorPosition + 1);
+  if (val === "-") {
+    // Only allow "-" at the start
+    if (!currentValue.includes("-") && newCursorPos === 0) {
+      currentValue = "-" + currentValue;
+      newCursorPos = 1;
+      setNatValue(currentValue);
+      onSelectOption(currentValue);
+      setCursorPosition(newCursorPos);
+    }
     return;
   }
 
-  if (val === '.' && (currentValue.includes('.') || currentValue === '-')) return;
+  if (val === ".") {
+    const numericPart = currentValue.startsWith("-")
+      ? currentValue.slice(1)
+      : currentValue;
+    if (numericPart.includes(".")) return;
+
+    if (currentValue === "" || currentValue === "-") {
+      val = "0.";
+    }
+  }
+
+  if (val === "." && (currentValue.includes(".") || currentValue === "-")) return;
 
   // ✅ Insert at cursor position
-  const newValue =
-    currentValue.slice(0, cursorPosition) +
-    val +
-    currentValue.slice(cursorPosition);
+  const updatedValue =
+    currentValue.slice(0, newCursorPos) + val + currentValue.slice(newCursorPos);
 
-  const newCursor = cursorPosition + val.length;
+  newCursorPos += val.length;
 
-  setNatValue(newValue);
-  onSelectOption(newValue);
-  setCursorPosition(newCursor);
+  setNatValue(updatedValue);
+  onSelectOption(updatedValue);
+  setCursorPosition(newCursorPos);
 };
 
 
