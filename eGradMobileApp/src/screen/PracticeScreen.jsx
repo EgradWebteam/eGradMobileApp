@@ -28,7 +28,7 @@ const PracticeScreen = () => {
   const [practiceQuestionsData, setPracticeQuestionsData] = useState(null);
   const [selectedOption, setSelectedOption] = useState({});
   const [natAnswers, setNatAnswers] = useState({});
-  const [cursorPos, setCursorPos] = useState({});
+  const [cursorPos, setCursorPos] = useState(0);
   const [activeSubjectIdx, setActiveSubjectIdx] = useState(0);
   const [activeSectionIdx, setActiveSectionIdx] = useState(0);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
