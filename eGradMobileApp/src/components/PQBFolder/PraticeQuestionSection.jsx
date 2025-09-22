@@ -246,7 +246,7 @@ const handleArrowInput = (qId, direction) => {
 
   if (!inputElement) return;
 
-  inputElement.focus(); // Focus the input field
+// Focus the input field
 
   let newCursorPos = cursorPos[qId]  || 0;
 
@@ -264,7 +264,7 @@ const handleArrowInput = (qId, direction) => {
     ...prevPos,
     [qId]: newCursorPos,
   }));
-
+  inputElement.focus(); 
 
   // setTimeout(() => {
   //   // Sync the cursor visually with the new position
@@ -329,27 +329,17 @@ const handleCalculatorInput = (qId, val, qtype) => {
   return;
 }
 
-  if (val === ".") {
-    const numericPart = currentValue.startsWith("-") ? currentValue.slice(1) : currentValue;
-    if (numericPart.includes(".")) return;
+if (val === '.' && (currentValue.includes('.') || currentValue === '-')) return;
 
-    if (currentValue === "" || currentValue === "-") {
-      val = "0."; // Automatically prepend 0 before dot
-    }
-  }
-
-  // 🚫 Prevent inserting before the minus sign
-  if (currentValue.startsWith("-") && newCursorPos === 0) {
-    return;
-  }
 
   // Insert the value at the cursor position
   const updatedValue = currentValue.slice(0, newCursorPos) + val + currentValue.slice(newCursorPos);
   newCursorPos += val.length; // Update cursor position after inserting the value
 
   onSetNatAnswers((prev) => ({ ...prev, [qId]: updatedValue }));
-
+ onSetCursorPos((prev) => ({ ...prev, [qId]: newCursorPos }));
   // Move the cursor to the new position after a timeout to ensure the input updates first
+  // setTimeout(() => {
   // setTimeout(() => {
     onSetCursorPos((prev) => ({ ...prev, [qId]: newCursorPos }));
   // });

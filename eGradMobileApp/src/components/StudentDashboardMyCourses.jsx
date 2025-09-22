@@ -45,8 +45,11 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
         if (data.length > 0) {
           const defaultPortal = data[0];
           const defaultExam = defaultPortal.exams[0];
-          setSelectedPortalId(defaultPortal.course_portal_id);
-          setSelectedExamId(defaultExam?.exam_id || null);
+             const savedState = await AsyncStorage.getItem('studentDashboardState');
+             const parsed = JSON.parse(savedState);
+
+          setSelectedPortalId(parsed.selectedPortalId  ?? defaultPortal.course_portal_id);
+          setSelectedExamId(parsed.selectedExamId  ?? defaultExam?.exam_id );
         }
       } catch (err) {
         console.error('Error fetching courses:', err);
@@ -265,7 +268,7 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
 
       {/* Test / Bundle / PQB Container */}
       {selectedTestCourse && (
-        courseContainer && courseIds.length > 0 ? (
+        courseContainer && selectedPortalId === 2 ? (
           <BundleCourseContainer
             studentId={studentId}
             userData={userData}
