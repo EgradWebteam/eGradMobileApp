@@ -40,6 +40,7 @@ const PraticeQuestionSection = ({
   const paletteRef = useRef(null);
   const solutionRefs = useRef({});
   const inputRef = useRef({});
+const cursorRef = useRef(0); // default cursor position 0
 
   const goToNextQuestion = useCallback(() => {
     const subjects = getCurrentSubjects();
