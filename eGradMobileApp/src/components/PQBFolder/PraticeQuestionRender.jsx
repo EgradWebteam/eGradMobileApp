@@ -61,7 +61,7 @@ const PracticeQuestionRender = ({
   const isAnswered = answeredQuestions[qId];
   const isDisabled = answeredQuestions[qId] !== null
   const showSol = showSolution[qId];
-console.log(isAnswered,qId,answeredQuestions)
+// console.log(isAnswered,qId,answeredQuestions)
   useEffect(() => {
     const scrollTarget = questionScrollRefMobile.current;
 
@@ -268,7 +268,7 @@ console.log(isAnswered,qId,answeredQuestions)
           {["NATI", "NATD"].includes(qtype) && (
            <View style={styles.NATInputHolder}>
                <View style={styles.NATLabel}>
-              <TextInput
+              {/* <TextInput
                style={styles.natInput}
                  ref={(el) => (inputRef.current[question.question_id] = el)}
                 value={natAnswers[question.question_id] || ""}
@@ -282,7 +282,20 @@ console.log(isAnswered,qId,answeredQuestions)
   //  showSoftInputOnFocus={false}
 
                 editable={!answeredQuestions[question.question_id]}
-              /></View>
+              /> */}
+            <TextInput
+  style={styles.natInput}
+  ref={(el) => (inputRef.current[question.question_id] = el)}
+  value={natAnswers[question.question_id] || ""}
+  onChangeText={(val) => onNATInput(question.question_id, val)}
+  selection={{
+    start: cursorPos[question.question_id] ?? (natAnswers[question.question_id]?.length || 0),
+    end: cursorPos[question.question_id] ?? (natAnswers[question.question_id]?.length || 0),
+  }}
+  showSoftInputOnFocus={false}
+  editable={!answeredQuestions[question.question_id]}
+/>
+              </View>
               {question.exercise_answer_unit && (
                 <Text style={styles.answerUnit}>
                   {question.exercise_answer_unit}
