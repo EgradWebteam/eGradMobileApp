@@ -1,8 +1,8 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { View, Alert,Text, TouchableOpacity, TextInput, ScrollView, FlatList } from 'react-native';
+import { View, Alert, Text, TouchableOpacity, TextInput, ScrollView, FlatList, ImageBackground } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // or AntDesign, MaterialIcons, etc.
 
-import {styles} from "../../styles/OTSStyles.js"; // Custom styles should be redefined for React Native
+import { styles } from "../../styles/OTSStyles.js"; // Custom styles should be redefined for React Native
 import PraticeQuestionRender from "./PraticeQuestionRender.jsx";
 
 const PraticeQuestionSection = ({
@@ -140,32 +140,86 @@ const PraticeQuestionSection = ({
     }
   };
 
+  // const getQuestionButtonClass = (question) => {
+  //   const qId = question.question_id;
+  //   const status = answeredQuestions[qId];
+
+  //   if (!status) return styles.questionPaletteBtn;
+
+  //   if (typeof status === 'string') {
+  //     if (status === "correct") return styles.correctQuestion;
+  //     if (status === "incorrect") return styles.incorrectQuestion;
+  //     return styles.questionPaletteBtn;
+  //   }
+
+  //   if (typeof status === 'object') {
+  //     if (status.status === "completed") return styles.correctQuestion;
+  //     if (status.status === "failed") return styles.incorrectQuestion;
+  //     if (status.status === "partial") return styles.partialCorrectQuestion;
+
+  //     if (status.correctSelected && status.correctSelected.length > 0) {
+  //       if (status.wrong && status.wrong.length === 0) {
+  //         return styles.partialCorrectQuestion;
+  //       }
+  //       return styles.incorrectQuestion;
+  //     }
+  //   }
+
+  //   return styles.questionPaletteBtn;
+  // };
   const getQuestionButtonClass = (question) => {
     const qId = question.question_id;
     const status = answeredQuestions[qId];
 
-    if (!status) return styles.questionPaletteBtn;
-
-    if (typeof status === 'string') {
-      if (status === "correct") return styles.correctQuestion;
-      if (status === "incorrect") return styles.incorrectQuestion;
-      return styles.questionPaletteBtn;
+    if (!status) {
+      return {
+        image: null,
+        textColor: "#000",
+        style: styles.questionPaletteBtn,
+      };
     }
 
-    if (typeof status === 'object') {
-      if (status.status === "completed") return styles.correctQuestion;
-      if (status.status === "failed") return styles.incorrectQuestion;
-      if (status.status === "partial") return styles.partialCorrectQuestion;
-
-      if (status.correctSelected && status.correctSelected.length > 0) {
-        if (status.wrong && status.wrong.length === 0) {
-          return styles.partialCorrectQuestion;
-        }
-        return styles.incorrectQuestion;
-      }
+    if (typeof status === "string") {
+      if (status === "correct")
+        return {
+          image: require("../../assets/Answered.png"),
+          textColor: "#fff",
+          style: styles.correctQuestion,
+        };
+      if (status === "incorrect")
+        return {
+          image: require("../../assets/NotAnswered.png"),
+          textColor: "#fff",
+          style: styles.incorrectQuestion,
+        };
     }
 
-    return styles.questionPaletteBtn;
+    if (typeof status === "object") {
+      if (status.status === "completed")
+        return {
+          image: require("../../assets/Answered.png"),
+          textColor: "#fff",
+          style: styles.correctQuestion,
+        };
+      if (status.status === "failed")
+        return {
+          image: require("../../assets/NotAnswered.png"),
+          textColor: "#fff",
+          style: styles.incorrectQuestion,
+        };
+      if (status.status === "partial")
+        return {
+          image: require("../../assets/partialImg.png"),
+          textColor: "#000",
+          style: styles.partialCorrectQuestion,
+        };
+    }
+
+    return {
+      image: null,
+      textColor: "#000",
+      style: styles.questionPaletteBtn,
+    };
   };
 
   const handleMCQSelection = (qId, optionIdx) => {
@@ -280,7 +334,7 @@ const handleCalculatorInput = (qId, val, qtype) => {
   });
 };
 
-// const handleSaveAnswer = (q) => {
+  // const handleSaveAnswer = (q) => {
 //     const qId = q.question_id;
 //     const qtype = q.questionType?.qtype_text;
 //     let isCorrect = false;
@@ -381,7 +435,8 @@ const handleCalculatorInput = (qId, val, qtype) => {
 //       onSetNatAnswers((prev) => ({ ...prev, [qId]: userAnswer }));
 //     }
 //   };
-const handleSaveAnswer = (q) => {
+
+  const handleSaveAnswer = (q) => {
     const qId = q.question_id;
     const qtype = q.questionType?.qtype_text;
     let isCorrect = false;
@@ -398,68 +453,68 @@ const handleSaveAnswer = (q) => {
       }));
 
     } else if (qtype === "MSQ") {
-    // --- MSQ: no partial, only completed or failed ---
-    const userAnswers = Array.isArray(selectedOption[qId])
-      ? selectedOption[qId].map(String)
-      : (selectedOption[qId] || "").toString().split(",").map(a => a.trim());
+      // --- MSQ: no partial, only completed or failed ---
+      const userAnswers = Array.isArray(selectedOption[qId])
+        ? selectedOption[qId].map(String)
+        : (selectedOption[qId] || "").toString().split(",").map(a => a.trim());
 
-    const correctAnswers = Array.isArray(q.correctAnswer)
-      ? q.correctAnswer.map(String)
-      : correctAnswerRaw.split(",").map(a => a.trim());
+      const correctAnswers = Array.isArray(q.correctAnswer)
+        ? q.correctAnswer.map(String)
+        : correctAnswerRaw.split(",").map(a => a.trim());
 
-    const correctSelected = userAnswers.filter(ans => correctAnswers.includes(ans));
-    const wrongSelected = userAnswers.filter(ans => !correctAnswers.includes(ans));
+      const correctSelected = userAnswers.filter(ans => correctAnswers.includes(ans));
+      const wrongSelected = userAnswers.filter(ans => !correctAnswers.includes(ans));
 
-    let status = "failed";
-    if (correctSelected.length === correctAnswers.length && wrongSelected.length === 0) {
-      status = "completed";
-    } else {
-      status = "failed"; // ✅ no partial for MSQ
-    }
+      let status = "failed";
+      if (correctSelected.length === correctAnswers.length && wrongSelected.length === 0) {
+        status = "completed";
+      } else {
+        status = "failed"; // ✅ no partial for MSQ
+      }
 
-    onSetAnsweredQuestions((prev) => ({
-      ...prev,
-      [qId]: {
-        status,
-        accuracy: status === "completed" ? 1 : 0,
-        correctSelected,
-        wrong: wrongSelected,
-      },
-    }));
+      onSetAnsweredQuestions((prev) => ({
+        ...prev,
+        [qId]: {
+          status,
+          accuracy: status === "completed" ? 1 : 0,
+          correctSelected,
+          wrong: wrongSelected,
+        },
+      }));
 
-  } else if (qtype === "MSQN") {
-    // --- MSQN: allow partial ---
-    const userAnswers = Array.isArray(selectedOption[qId])
-      ? selectedOption[qId].map(String)
-      : (selectedOption[qId] || "").toString().split(",").map(a => a.trim());
+    } else if (qtype === "MSQN") {
+      // --- MSQN: allow partial ---
+      const userAnswers = Array.isArray(selectedOption[qId])
+        ? selectedOption[qId].map(String)
+        : (selectedOption[qId] || "").toString().split(",").map(a => a.trim());
 
-    const correctAnswers = Array.isArray(q.correctAnswer)
-      ? q.correctAnswer.map(String)
-      : correctAnswerRaw.split(",").map(a => a.trim());
+      const correctAnswers = Array.isArray(q.correctAnswer)
+        ? q.correctAnswer.map(String)
+        : correctAnswerRaw.split(",").map(a => a.trim());
 
-    const correctSelected = userAnswers.filter(ans => correctAnswers.includes(ans));
-    const wrongSelected = userAnswers.filter(ans => !correctAnswers.includes(ans));
+      const correctSelected = userAnswers.filter(ans => correctAnswers.includes(ans));
+      const wrongSelected = userAnswers.filter(ans => !correctAnswers.includes(ans));
 
-    let status = "failed";
-    if (correctSelected.length === correctAnswers.length && wrongSelected.length === 0) {
-      status = "completed";
-    } else if (correctSelected.length > 0 && wrongSelected.length === 0) {
-      status = "partial"; // ✅ only MSQN allows partial
-    } else {
-      status = "failed";
-    }
+      let status = "failed";
+      if (correctSelected.length === correctAnswers.length && wrongSelected.length === 0) {
+        status = "completed";
+      } else if (correctSelected.length > 0 && wrongSelected.length === 0) {
+        status = "partial"; // ✅ only MSQN allows partial
+      } else {
+        status = "failed";
+      }
 
-    const accuracy = correctAnswers.length > 0 ? correctSelected.length / correctAnswers.length : 0;
+      const accuracy = correctAnswers.length > 0 ? correctSelected.length / correctAnswers.length : 0;
 
-    onSetAnsweredQuestions((prev) => ({
-      ...prev,
-      [qId]: {
-        status,
-        accuracy,
-        correctSelected,
-        wrong: wrongSelected,
-      },
-    }));
+      onSetAnsweredQuestions((prev) => ({
+        ...prev,
+        [qId]: {
+          status,
+          accuracy,
+          correctSelected,
+          wrong: wrongSelected,
+        },
+      }));
     } else if (["NATI", "NATD"].includes(qtype)) {
       let userAnswer = natAnswers[qId]?.toString()?.trim() || "";
 
@@ -487,125 +542,130 @@ const handleSaveAnswer = (q) => {
       onSetNatAnswers((prev) => ({ ...prev, [qId]: userAnswer }));
     }
   };
-   if (!practiceQuestionsData) {
+  if (!practiceQuestionsData) {
     return <Text>Loading questions...</Text>;
   }
 
   return (
     <View style={styles.mainContainer}>
-     <View style={styles.subjectContainer}>
-          <ScrollView horizontal style={styles.questionNumberRow}>
-        {getCurrentSubjects().map((subj, idx) =>
-          subj?.SubjectName ? (
-            <TouchableOpacity
-              key={idx}
-              style={[
-                styles.subjectButton,
-                idx === activeSubjectIdx && styles.activeButtontest,
-              ]}
-              onPress={handleWithSession(() => onSubjectChange(idx))}
-            >
-              <Text  style={[
-                styles.subjectText,
-                idx === activeSubjectIdx && styles.activeSubjectText,
-              ]}>{subj.SubjectName}</Text>
-            </TouchableOpacity>
-          ) : null
-        )}
-        </ScrollView>
-    
-
-      {getCurrentSections().length > 0 && (
-     <ScrollView horizontal style={styles.questionNumberRow}>
-          {getCurrentSections().map((sec, idx) =>
-            sec?.SectionName ? (
+      <View style={styles.subjectContainer}>
+        <ScrollView horizontal style={styles.questionNumberRow}>
+          {getCurrentSubjects().map((subj, idx) =>
+            subj?.SubjectName ? (
               <TouchableOpacity
                 key={idx}
                 style={[
-                  styles.sectionButton,
-                  idx === activeSectionIdx && styles.activeSubjectAndSectionBtn,
+                  styles.subjectButton,
+                  idx === activeSubjectIdx && styles.activeButtontest,
                 ]}
-                onPress={handleWithSession(() => onSectionChange(idx))}
+                onPress={handleWithSession(() => onSubjectChange(idx))}
               >
-                <Text>{sec.SectionName}</Text>
+                <Text style={[
+                  styles.subjectText,
+                  idx === activeSubjectIdx && styles.activeSubjectText,
+                ]}>{subj.SubjectName}</Text>
               </TouchableOpacity>
             ) : null
           )}
-        </ScrollView>)}
-  </View>
-     <ScrollView horizontal style={styles.questionNumberRow}>
-        
-            <ScrollView horizontal style={styles.questionNumberRow}>
-      <View style={styles.questionPaletteContainer}>
-        <TouchableOpacity
-          style={styles.scrollBtn}
-          onPress={handleWithSession(() => scrollPalette('left'))}
-        >
-          <Icon name="chevron-left" size={24} color="black" />
-        </TouchableOpacity>
-
-        <ScrollView
-          horizontal
-          contentContainerStyle={styles.questionPalette}
-          ref={paletteRef}
-          showsHorizontalScrollIndicator={false}
-        >
-          {getCurrentSection().questions.map((q, idx) => (
-            <TouchableOpacity
-              key={q.question_id}
-              style={[
-                getQuestionButtonClass(q), // should return a RN style object
-                idx === currentQuestionIdx && styles.activeQuestion,
-              ]}
-              onPress={handleWithSession(() => onQuestionChange(idx))}
-            >
-              <Text>{idx + 1}</Text>
-            </TouchableOpacity>
-          ))}
         </ScrollView>
 
-        <TouchableOpacity
-          style={styles.scrollBtn}
-          onPress={handleWithSession(() => scrollPalette('right'))}
-        >
-          <Icon name="chevron-right" size={24} color="black" />
-        </TouchableOpacity>
+
+        {getCurrentSections().length > 0 && (
+          <ScrollView horizontal style={styles.questionNumberRow}>
+            {getCurrentSections().map((sec, idx) =>
+              sec?.SectionName ? (
+                <TouchableOpacity
+                  key={idx}
+                  style={[
+                    styles.sectionButton,
+                    idx === activeSectionIdx && styles.activeSubjectAndSectionBtn,
+                  ]}
+                  onPress={handleWithSession(() => onSectionChange(idx))}
+                >
+                  <Text>{sec.SectionName}</Text>
+                </TouchableOpacity>
+              ) : null
+            )}
+          </ScrollView>)}
       </View>
-    </ScrollView>
-      
-   </ScrollView>
+      <ScrollView horizontal style={styles.questionNumberRow}>
+
+        <ScrollView horizontal style={styles.questionNumberRow}>
+          <View style={styles.questionPaletteContainer}>
+            {/* <TouchableOpacity
+              style={styles.scrollBtn}
+              onPress={handleWithSession(() => scrollPalette('left'))}
+            >
+              <Icon name="chevron-left" size={24} color="black" />
+            </TouchableOpacity> */}
+
+            <ScrollView
+              horizontal
+              contentContainerStyle={styles.questionPalette}
+              ref={paletteRef}
+              showsHorizontalScrollIndicator={false}
+            >
+              {getCurrentSection().questions.map((q, idx) => {
+                const { image, textColor, style } = getQuestionButtonClass(q);
+
+                return (
+                  <TouchableOpacity
+                    key={q.question_id}
+                    onPress={handleWithSession(() => onQuestionChange(idx))}
+                  >
+                    <ImageBackground
+                      source={image}
+                      style={[style, idx === currentQuestionIdx && styles.activeQuestion]}
+                      resizeMode="contain"
+                    >
+                      <Text style={{ color: textColor }}>{idx + 1}</Text>
+                    </ImageBackground>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+
+            {/* <TouchableOpacity
+              style={styles.scrollBtn}
+              onPress={handleWithSession(() => scrollPalette('right'))}
+            >
+              <Icon name="chevron-right" size={24} color="black" />
+            </TouchableOpacity> */}
+          </View>
+        </ScrollView>
+
+      </ScrollView>
 
       {/* <View style={styles.currentQuestionContainer}> */}
-        <PraticeQuestionRender
-          question={getCurrentQuestion()}
-            OptionPatternId={OptionPatternId}
-            currentQuestionIdx={currentQuestionIdx}
-            selectedOption={selectedOption}
-            natAnswers={natAnswers}
-            answeredQuestions={answeredQuestions}
-            showSolution={showSolution}
-            showScientificCalc={showScientificCalc}
-            cursorPos={cursorPos}
-            inputRef={inputRef}
-            onSetCursorPos={onSetCursorPos}
-            showSidebar={showSidebar}
-            solutionRefs={solutionRefs}
-            onToggleCalculator={onToggleCalculator}
-            onMCQSelection={handleMCQSelection}
-            onMSQSelection={handleMSQSelection}
-            onNATInput={handleNATInput}
-            onArrowInput={handleArrowInput}
-            onCalculatorInput={handleCalculatorInput}
-            onToggleSolution={toggleSolution}
-            onSaveAnswer={handleSaveAnswer}
-            onPrevQuestion={goToPrevQuestion}
-            onNextQuestion={goToNextQuestion}
-            onFinalSubmit={onFinalSubmit}
-            totalQuestions={getCurrentSection().questions.length}
-             handleWithSession={handleWithSession}
-             showSolutionModal={showSolutionModal}
-             setShowSolutionModal={setShowSolutionModal}
-        />
+      <PraticeQuestionRender
+        question={getCurrentQuestion()}
+        OptionPatternId={OptionPatternId}
+        currentQuestionIdx={currentQuestionIdx}
+        selectedOption={selectedOption}
+        natAnswers={natAnswers}
+        answeredQuestions={answeredQuestions}
+        showSolution={showSolution}
+        showScientificCalc={showScientificCalc}
+        cursorPos={cursorPos}
+        inputRef={inputRef}
+        showSidebar={showSidebar}
+        solutionRefs={solutionRefs}
+        onToggleCalculator={onToggleCalculator}
+        onMCQSelection={handleMCQSelection}
+        onMSQSelection={handleMSQSelection}
+        onNATInput={handleNATInput}
+        onArrowInput={handleArrowInput}
+        onCalculatorInput={handleCalculatorInput}
+        onToggleSolution={toggleSolution}
+        onSaveAnswer={handleSaveAnswer}
+        onPrevQuestion={goToPrevQuestion}
+        onNextQuestion={goToNextQuestion}
+        onFinalSubmit={onFinalSubmit}
+        totalQuestions={getCurrentSection().questions.length}
+        handleWithSession={handleWithSession}
+        showSolutionModal={showSolutionModal}
+        setShowSolutionModal={setShowSolutionModal}
+      />
       {/* </View> */}
     </View>
   );
