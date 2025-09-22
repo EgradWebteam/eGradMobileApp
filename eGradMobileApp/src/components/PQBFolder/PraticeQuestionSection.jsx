@@ -289,29 +289,53 @@ const handleCalculatorInput = (qId, val, qtype) => {
     return;
   }
 
-  if (val === "BackSpace") {
-    if(cursorPos[qId] === 0) return;
+  // if (val === "BackSpace") {
+  //   if (newCursorPos > 0) {
+  //     currentValue = currentValue.slice(0, newCursorPos - 1) + currentValue.slice(newCursorPos);
+  //     newCursorPos -= 1; // Move cursor back
+  //     onSetNatAnswers((prev) => ({ ...prev, [qId]: currentValue }));
+  //   }
+  //   return;
+  // }
+   if (val === "BackSpace") {
     if (newCursorPos > 0) {
-      currentValue = currentValue.slice(0, cursorPos[qId] - 1) + currentValue.slice(cursorPos[qId]);
-      newCursorPos -= 1; // Move cursor back
+      // Delete character just before the cursor
+      currentValue =
+        currentValue.slice(0, newCursorPos - 1) + currentValue.slice(newCursorPos);
+      newCursorPos -= 1;
       onSetNatAnswers((prev) => ({ ...prev, [qId]: currentValue }));
-       onSetCursorPos((prev) => ({ ...prev, [qId]: newCursorPos }));
+      onSetCursorPos((prev) => ({ ...prev, [qId]: newCursorPos }));
     }
     return;
   }
 
+  // if (val === "-") {
+  //   // Only allow "-" at the start
+  //   if (!currentValue.includes("-") && newCursorPos === 0) {
+  //     currentValue = "-" + currentValue;
+  //     onSetNatAnswers((prev) => ({ ...prev, [qId]: currentValue }));
+  //     newCursorPos += 1; // Move cursor after the minus sign
+  //   }
+  //   return;
+  // }
   if (val === "-") {
-    // Only allow "-" at the start
-    if (!currentValue.includes("-") ) {
-      currentValue = "-" + currentValue;
-      onSetNatAnswers((prev) => ({ ...prev, [qId]: currentValue }));
-      newCursorPos += 1; // Move cursor after the minus sign
-       onSetCursorPos((prev) => ({ ...prev, [qId]: newCursorPos }));
-
-    }
-    return;
+  // Only allow "-" at the start
+  if (!currentValue.includes("-") && newCursorPos === 0) {
+    currentValue = "-" + currentValue;
+    newCursorPos = 1; // move cursor after minus
+    onSetNatAnswers((prev) => ({ ...prev, [qId]: currentValue }));
+    onSetCursorPos((prev) => ({ ...prev, [qId]: newCursorPos })); // <-- update cursor position
   }
+  return;
+}
+ if (val === ".") {
+    const numericPart = currentValue.startsWith("-") ? currentValue.slice(1) : currentValue;
+    if (numericPart.includes(".")) return;
 
+    if (currentValue === "" || currentValue === "-") {
+      val = "0."; // Automatically prepend 0 before dot
+    }
+  }
 if (val === '.' && (currentValue.includes('.') || currentValue === '-')) return;
 
 
@@ -322,6 +346,7 @@ if (val === '.' && (currentValue.includes('.') || currentValue === '-')) return;
   onSetNatAnswers((prev) => ({ ...prev, [qId]: updatedValue }));
  onSetCursorPos((prev) => ({ ...prev, [qId]: newCursorPos }));
   // Move the cursor to the new position after a timeout to ensure the input updates first
+  // setTimeout(() => {
   // setTimeout(() => {
     onSetCursorPos((prev) => ({ ...prev, [qId]: newCursorPos }));
   // });
@@ -658,6 +683,7 @@ if (val === '.' && (currentValue.includes('.') || currentValue === '-')) return;
         handleWithSession={handleWithSession}
         showSolutionModal={showSolutionModal}
         setShowSolutionModal={setShowSolutionModal}
+        onSetCursorPos={onSetCursorPos}
       />
       {/* </View> */}
     </View>
