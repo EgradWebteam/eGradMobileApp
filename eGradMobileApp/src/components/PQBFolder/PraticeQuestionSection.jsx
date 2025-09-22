@@ -40,7 +40,6 @@ const PraticeQuestionSection = ({
   const paletteRef = useRef(null);
   const solutionRefs = useRef({});
   const inputRef = useRef({});
-const cursorRef = useRef(0); // default cursor position 0
 
   const goToNextQuestion = useCallback(() => {
     const subjects = getCurrentSubjects();
@@ -195,7 +194,7 @@ const handleArrowInput = (qId, direction) => {
 
   inputElement.focus(); // Focus the input field
 
-  let newCursorPos = cursorPos || 0;
+  let newCursorPos = cursorPos[qId]  || 0;
 
   // Move cursor left
   if (direction === "left" && newCursorPos > 0) {
@@ -207,7 +206,11 @@ const handleArrowInput = (qId, direction) => {
   }
 
   // Update the cursor position in the state
-  onSetCursorPos(newCursorPos);
+    onSetCursorPos((prevPos) => ({
+    ...prevPos,
+    [qId]: newCursorPos,
+  }));
+
 
   // setTimeout(() => {
   //   // Sync the cursor visually with the new position
@@ -228,7 +231,7 @@ const handleCalculatorInput = (qId, val, qtype) => {
   if (val === "ClearAll") {
     currentValue = "";
     onSetNatAnswers((prev) => ({ ...prev, [qId]: "" }));
-    onSetCursorPos(0);
+    onSetCursorPos((prev) => ({ ...prev, [qId]: 0 }));
     return;
   }
 
@@ -273,7 +276,7 @@ const handleCalculatorInput = (qId, val, qtype) => {
 
   // Move the cursor to the new position after a timeout to ensure the input updates first
   setTimeout(() => {
-    onSetCursorPos(newCursorPos);
+    onSetCursorPos((prev) => ({ ...prev, [qId]: newCursorPos }));
   });
 };
 

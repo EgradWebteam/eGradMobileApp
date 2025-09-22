@@ -28,7 +28,7 @@ const PracticeScreen = () => {
   const [practiceQuestionsData, setPracticeQuestionsData] = useState(null);
   const [selectedOption, setSelectedOption] = useState({});
   const [natAnswers, setNatAnswers] = useState({});
-  const [cursorPos, setCursorPos] = useState(0);
+  const [cursorPos, setCursorPos] = useState({});
   const [activeSubjectIdx, setActiveSubjectIdx] = useState(0);
   const [activeSectionIdx, setActiveSectionIdx] = useState(0);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
@@ -39,7 +39,7 @@ const PracticeScreen = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showCustomPopup, setShowCustomPopup] = useState(false);
   const [showSolutionModal, setShowSolutionModal] = useState(false);
-  // console.log(answeredQuestions)
+  console.log(answeredQuestions)
   //   const pressedKeys = useRef(new Set());
   const [summary, setSummary] = useState({
     correct: 0,
