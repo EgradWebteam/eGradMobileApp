@@ -328,7 +328,14 @@ const handleCalculatorInput = (qId, val, qtype) => {
   }
   return;
 }
+ if (val === ".") {
+    const numericPart = currentValue.startsWith("-") ? currentValue.slice(1) : currentValue;
+    if (numericPart.includes(".")) return;
 
+    if (currentValue === "" || currentValue === "-") {
+      val = "0."; // Automatically prepend 0 before dot
+    }
+  }
 if (val === '.' && (currentValue.includes('.') || currentValue === '-')) return;
 
 
