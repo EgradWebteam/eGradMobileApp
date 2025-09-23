@@ -435,7 +435,7 @@ const PracticeQuestionRender = ({
               )}
 
               {activeSolutionTab === 'video' && hasVideo && (
-                  renderVideo(solutionVideo)
+                  renderVideo(videoSolution)
               
               )}
               </View>

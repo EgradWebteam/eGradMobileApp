@@ -36,6 +36,10 @@ gap:10,
     flexDirection:"column",
     gap:10,
   },
+  activeButtontext:{
+    color:"#fff",
+    fontWeight:"600",
+  },
   activeButtonsol: {
     backgroundColor: '#007bff', // Active button background
   },
@@ -44,6 +48,13 @@ gap:10,
     justifyContent: 'center',
 
     minHeight: 20,
+    padding: 10,
+  },
+  solutionTabs:{
+  flexDirection: 'row',
+    justifyContent: 'center',
+
+    minHeight: 50,
     padding: 10,
   },
   solutionOverlay: {

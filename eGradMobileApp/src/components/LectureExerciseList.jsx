@@ -34,104 +34,109 @@ const LectureExerciseList = ({
             : `${m}:${String(s).padStart(2, "0")}`;
     };
 
-const navigation = useNavigation();
+    const navigation = useNavigation();
 
-  const handleOpenPdf = async (fileName, topicId, studyMaterialId, chapterId) => {
-    // const isValid = await validateSession();
-    // if (!isValid) return;
-console.log("open pdfff firedddddd");
-console.log("ids from open pdfff",topicId,chapterId,studyMaterialId,fileName)
-   let localStorageUserId = null;
-try {
-  localStorageUserId = await AsyncStorage.getItem("userId");
-  console.log("local storage user idddd", localStorageUserId);
-} catch (err) {
-  console.error("❌ Failed to get userId from AsyncStorage:", err);
-}
+    const handleOpenPdf = async (fileName, topicId, studyMaterialId, chapterId) => {
+        // const isValid = await validateSession();
+        // if (!isValid) return;
+        console.log("open pdfff firedddddd");
+        console.log("ids from open pdfff", topicId, chapterId, studyMaterialId, fileName)
+        let localStorageUserId = null;
+        try {
+            localStorageUserId = await AsyncStorage.getItem("userId");
+            console.log("local storage user idddd", localStorageUserId);
+        } catch (err) {
+            console.error("❌ Failed to get userId from AsyncStorage:", err);
+        }
 
-    // 🔐 Encrypt params
-    const [et, es, ec] = await encryptBatch([
-      topicId,
-      studyMaterialId,
-      chapterId,
-    ]);
-    
+        // 🔐 Encrypt params
+        const [et, es, ec] = await encryptBatch([
+            topicId,
+            studyMaterialId,
+            chapterId,
+        ]);
 
-    // Build query params like web
-    const params = { et, es, ec, userId: localStorageUserId, fileUrl: fileName };
+        // Build query params like web
+        const params = { et, es, ec, userId: localStorageUserId, fileUrl: fileName };
 
-    // Navigate to StudyMaterial screen and pass params
-    navigation.navigate("StudyMaterial", params);
-  };
+        // Navigate to StudyMaterial screen and pass params
+        navigation.navigate("StudyMaterial", params);
+    };
 
     return (
         <ScrollView style={styles.container}>
-            {/* Lectures */}
             {lectures.map((lecture) => (
-                <View key={lecture.orvl_lecture_name_id} style={styles.lectureCard}>
-                    <View style={styles.row}>
-                        <Image source={videoIcon} style={styles.icon} />
-                        <View style={styles.info}>
-                            <Text style={styles.title}>{lecture.orvl_lecture_name}</Text>
-                            <Text>Duration: {formatVideoTime(lecture.orvl_lecture_duration)}</Text>
-                            <TouchableOpacity
-                                style={styles.startButtonLec}
-                                onPress={() => onLectureClick(lecture)}
-                            >
-                                <Text style={styles.buttonText}>Start Lecture</Text>
-                            </TouchableOpacity>
+                <View key={lecture.orvl_lecture_name_id}>
+                    {/* Lecture Card */}
+                    <View style={styles.lectureCard}>
+                        <View style={styles.row}>
+                            <Image source={videoIcon} style={styles.icon} />
+                            <View style={styles.info}>
+                                <Text style={styles.title}>{lecture.orvl_lecture_name}</Text>
+                                <Text>Duration: {formatVideoTime(lecture.orvl_lecture_duration)}</Text>
+                                <TouchableOpacity
+                                    style={styles.startButtonLec}
+                                    onPress={() => onLectureClick(lecture)}
+                                >
+                                    <Text style={styles.buttonText}>Start Lecture</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
+
+                    {/* Exercises under this lecture */}
+                    {lecture.exercises?.map((exercise) => (
+                        <View key={exercise.exercise_name_id} style={styles.exerciseCard}>
+                            <View style={styles.row}>
+                                <Image source={exerciseIcon} style={styles.icon} />
+                                <View style={styles.info}>
+                                    <Text style={styles.title}>{exercise.exercise_name}</Text>
+                                    <Text>Questions: {exercise.questions.length}</Text>
+                                    <TouchableOpacity
+                                        style={styles.startButtonExe}
+                                        onPress={() => onExerciseClick(exercise)}
+                                    >
+                                        <Text style={styles.buttonText}>Start Exercise</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+                    ))}
+
+                    {/* PDFs under this lecture */}
+                    {lecture.study_material_pdfs?.map((pdf) => (
+                        <View key={pdf.study_material_id} style={styles.pdfCard}>
+                            <View style={styles.row}>
+                                <Image source={pdfIcon} style={styles.icon} />
+                                <View style={styles.info}>
+                                    <Text>{pdf.study_material_pdf
+                                        .split("/")
+                                        .pop()
+                                        .split("_")
+                                        .slice(1)
+                                        .join("_")
+                                        .replace(/\.pdf$/i, "")}{" "} Document</Text>
+                                    <TouchableOpacity
+                                        style={styles.startButtonDoc}
+                                        onPress={() =>
+                                            handleOpenPdf(
+                                                pdf.study_material_pdf,
+                                                topicid,
+                                                pdf.study_material_id,
+                                                chapter_id
+                                            )
+                                        }
+                                    >
+                                        <Text style={styles.buttonText}>Open Document</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+                    ))}
                 </View>
             ))}
 
-            {/* Exercises */}
-            {lectures.map((lecture) =>
-                lecture.exercises.map((exercise) => (
-                    <View key={exercise.exercise_name_id} style={styles.exerciseCard}>
-                        <View style={styles.row}>
-                            <Image source={exerciseIcon} style={styles.icon} />
-                            <View style={styles.info}>
-                                <Text style={styles.title}>{exercise.exercise_name}</Text>
-                                <Text>Questions: {exercise.questions.length}</Text>
-                                <TouchableOpacity
-                                    style={styles.startButtonExe}
-                                    onPress={() => onExerciseClick(exercise)}
-                                >
-                                    <Text style={styles.buttonText}>Start Exercise</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-                ))
-            )}
-
-            {/* PDFs */}
-            {lectures.map((lecture) =>
-                lecture.study_material_pdfs?.map((pdf) => (
-                    <View key={pdf.study_material_id} style={styles.pdfCard}>
-                        <View style={styles.row}>
-                            <Image source={pdfIcon} style={styles.icon} />
-                            <View style={styles.info}>
-                                <Text>{pdf.study_material_pdf.split("/").pop()}</Text>
-                                <TouchableOpacity
-                                    style={styles.startButtonDoc}
-                                    onPress={() =>   handleOpenPdf(
-                              pdf.study_material_pdf,
-                              topicid,
-                              pdf.study_material_id,
-                              chapter_id
-                            )}
-                                >
-                                    <Text style={styles.buttonText}>Open Document</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-                ))
-            )}
-
-            {/* Global Study Material */}
+            {/* Global Study Material (not tied to a lecture) */}
             {StudyMaterial?.map((material) => (
                 <View key={material.study_material_id} style={styles.pdfCard}>
                     <View style={styles.row}>
@@ -149,12 +154,14 @@ try {
                             </Text>
                             <TouchableOpacity
                                 style={styles.startButtonDoc}
-                                onPress={() =>   handleOpenPdf(
-                              material.study_material_pdf,
-                              topicid,
-                              material.study_material_id,
-                              chapter_id
-                            )}
+                                onPress={() =>
+                                    handleOpenPdf(
+                                        material.study_material_pdf,
+                                        topicid,
+                                        material.study_material_id,
+                                        chapter_id
+                                    )
+                                }
                             >
                                 <Text style={styles.buttonText}>Open Document</Text>
                             </TouchableOpacity>
@@ -163,6 +170,7 @@ try {
                 </View>
             ))}
         </ScrollView>
+
     );
 };
 
@@ -207,7 +215,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#ffcccc",
         padding: 10,
         borderRadius: 10,
-        marginBottom: 15,
+        marginBottom: 10,
         shadowColor: "#000",
         shadowOpacity: 0.2,
         shadowOffset: { width: 0, height: 2 },
