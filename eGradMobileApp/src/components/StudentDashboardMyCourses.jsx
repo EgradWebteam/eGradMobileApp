@@ -40,17 +40,34 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
         const res = await axios.get(`${backEndUrl}/studentmycourses/PurchasedCourses/${studentId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+        console.log("PurchasedCourses API response:", res.data);
         const data = res.data;
         setPortals(data || []);
-        if (data.length > 0) {
-          const defaultPortal = data[0];
-          const defaultExam = defaultPortal.exams[0];
-             const savedState = await AsyncStorage.getItem('studentDashboardState');
-             const parsed = JSON.parse(savedState);
+        // if (data.length > 0) {
+        //   const defaultPortal = data[0];
+        //   const defaultExam = defaultPortal.exams[0];
+        //      const savedState = await AsyncStorage.getItem('studentDashboardState');
+        //      const parsed = JSON.parse(savedState);
 
-          setSelectedPortalId(parsed.selectedPortalId  ?? defaultPortal.course_portal_id);
-          setSelectedExamId(parsed.selectedExamId  ?? defaultExam?.exam_id );
-        }
+        //   setSelectedPortalId(parsed.selectedPortalId  ?? defaultPortal.course_portal_id);
+        //   setSelectedExamId(parsed.selectedExamId  ?? defaultExam?.exam_id );
+        // }
+        if (Array.isArray(data) && data.length > 0) {
+  const defaultPortal = data[0] || null;
+  const defaultExam = defaultPortal?.exams?.[0] || null;
+
+  const savedState = await AsyncStorage.getItem('studentDashboardState');
+  let parsed = {};
+  try {
+    parsed = savedState ? JSON.parse(savedState) : {};
+  } catch (e) {
+    console.warn("Invalid saved state:", savedState);
+  }
+
+  setSelectedPortalId(parsed.selectedPortalId ?? defaultPortal?.course_portal_id ?? null);
+  setSelectedExamId(parsed.selectedExamId ?? defaultExam?.exam_id ?? null);
+}
+
       } catch (err) {
         console.error('Error fetching courses:', err);
         Alert.alert('Error', 'Failed to fetch courses');
@@ -215,7 +232,7 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
 
           {/* Exam Selector */}
           <ScrollView horizontal style={styles.examButtons}>
-            {selectedPortal?.exams.map((exam) => (
+            {/* {selectedPortal?.exams.map((exam) => (
               <TouchableOpacity
                 key={exam.exam_id}
                 style={[styles.examButton, selectedExamId === exam.exam_id && styles.activeButton]}
@@ -225,7 +242,29 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
                   {exam.exam_name}
                 </Text>
               </TouchableOpacity>
-            ))}
+            ))} */}
+            {/* Exam Selector */}
+{selectedPortal?.exams?.length > 0 && (
+  <ScrollView horizontal style={styles.examButtons}>
+    {selectedPortal.exams.map((exam) => (
+      <TouchableOpacity
+        key={exam.exam_id}
+        style={[styles.examButton, selectedExamId === exam.exam_id && styles.activeButton]}
+        onPress={() => setSelectedExamId(exam.exam_id)}
+      >
+        <Text
+          style={[
+            styles.examButtontext,
+            selectedExamId === exam.exam_id && styles.activeButtontext,
+          ]}
+        >
+          {exam.exam_name}
+        </Text>
+      </TouchableOpacity>
+    ))}
+  </ScrollView>
+)}
+
           </ScrollView>
 
           {/* Course Cards */}
