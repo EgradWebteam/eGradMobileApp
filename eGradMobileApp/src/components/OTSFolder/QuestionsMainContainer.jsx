@@ -72,7 +72,14 @@ useEffect(() => {
   }
 }, [activeQuestionIndex, activeSection, activeSubject]);
 
+  const verticalRef = useRef(null);
+  const horizontalRef = useRef(null);
 
+  // Scroll to top-left on mount
+  useEffect(() => {
+    verticalRef.current?.scrollTo({ x: 0, y: 0, animated: false });
+    horizontalRef.current?.scrollTo({ x: 0, y: 0, animated: false });
+}, [activeQuestionIndex, activeSection, activeSubject]);
 
   useEffect(() => {
     setSelectedOption(null);
@@ -291,14 +298,17 @@ console.log(answerClass);
           <Text>Question No. {activeQuestionIndex + 1}</Text>
         </View>
 
-        <ScrollView
-         ref={questionScrollRefMobile}
-          style={
-            isParagraphPresent
-              ? styles.questionSplitContainer
-              : styles.optionsScroll
-          }
-        >
+    <ScrollView
+      ref={verticalRef}
+      showsVerticalScrollIndicator={true}
+      nestedScrollEnabled={true}
+    >
+      <ScrollView
+        ref={horizontalRef}
+        horizontal={true}
+        showsHorizontalScrollIndicator={true}
+        nestedScrollEnabled={true}
+      >
           {isParagraphPresent && (
             <View style={styles.paragraphContainer}>
               {paragraph?.paragraphImgName ? (
@@ -328,6 +338,7 @@ console.log(answerClass);
             />
           </View>
         </ScrollView>
+         </ScrollView>
 
         {/* {showSidebar && !isMobile && (
            

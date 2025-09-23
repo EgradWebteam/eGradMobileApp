@@ -969,7 +969,7 @@ const onCancelSubmit = async () => {
           >
             <Text
            
-            //  style={getButtonTextStyle(isDisabled)}
+           style={{fontSize:11}}
              >Marked For Review & Next</Text>
           </TouchableOpacity>
 
@@ -980,6 +980,7 @@ const onCancelSubmit = async () => {
             disabled={isDisabled || isSaving}
           >
             <Text 
+               style={{fontSize:11}}
             // style={getButtonTextStyle(isDisabled)}
             >Clear Response</Text>
           </TouchableOpacity>
@@ -994,6 +995,7 @@ const onCancelSubmit = async () => {
               disabled={isDisabled || isSaving}
             >
               <Text 
+                 style={{fontSize:11}}
               // style={getButtonTextStyle(isDisabled)}
               >Previous</Text>
             </TouchableOpacity>
@@ -1010,7 +1012,7 @@ const onCancelSubmit = async () => {
           disabled={isSaving}
         >
           <Text 
-  style={{ color: '#fff', fontSize: 16 }}
+  style={{ color: '#fff', fontSize: 13 , fontWeight: 'bold'}}
           // style={getButtonTextStyle(isSaving)}
           >Submit</Text>
         </TouchableOpacity>
@@ -1021,7 +1023,7 @@ const onCancelSubmit = async () => {
             disabled={isDisabled || isSaving}
           >
             <Text 
-           style={styles.buttonText}
+           style={{ color: '#fff', fontSize: 13 , fontWeight: 'bold'}}
             >Save & Next</Text>
           </TouchableOpacity>
         {/* Hidden Save & Next button equivalent, if needed, you can toggle with conditional rendering */}
