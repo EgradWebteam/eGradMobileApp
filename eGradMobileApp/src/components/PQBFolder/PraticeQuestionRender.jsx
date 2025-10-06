@@ -165,7 +165,7 @@ const PracticeQuestionRender = ({
           
               <ResponsiveImage uri={question.questionImgName} />
           )}
-    <ScrollView contentContainerStyle={styles.excercisecontainer}>
+    <View>
           {/* Example MCQ Options */}
           {["MCQ4", "MCQ5", "TF", "CTQ"].includes(qtype) && (
             <RadioButton.Group
@@ -456,7 +456,7 @@ const PracticeQuestionRender = ({
 
 
 
-          </ScrollView>
+          </View>
         </View>
       </ScrollView>
     </ScrollView>

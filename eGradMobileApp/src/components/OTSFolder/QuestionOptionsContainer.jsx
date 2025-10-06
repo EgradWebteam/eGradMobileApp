@@ -117,7 +117,7 @@ const handleCalculatorInput = (val) => {
 
 
   return (
-    <ScrollView contentContainerStyle={styles.excercisecontainer}>
+    <View>
       {/* MCQ - Single Selection */}
 {[1, 2, 8].includes(questionTypeId) && (
   <RadioButton.Group
@@ -240,7 +240,7 @@ const handleCalculatorInput = (val) => {
           </View>
         </View>
       )}
-    </ScrollView>
+    </View>
   );
 };
 
