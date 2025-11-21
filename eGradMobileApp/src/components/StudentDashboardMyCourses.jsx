@@ -400,17 +400,17 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
                 <TouchableOpacity
                   key={dept.department_id}
                   style={[
-                    styles.departmentBtn,
+                    styles.examButton,
                     selectedDepartment === dept.department_name &&
-                      styles.departmentActiveBtn,
+                      styles.activeButton,
                   ]}
                   onPress={() => setSelectedDepartment(dept.department_name)}
                 >
                   <Text
                     style={[
-                      styles.departmentBtnText,
+                      styles.examButtontext,
                       selectedDepartment === dept.department_name &&
-                        styles.departmentActiveBtnText,
+                        styles.activeButtontext,
                     ]}
                   >
                     {dept.department_name === "No Department"
