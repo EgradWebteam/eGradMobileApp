@@ -27,7 +27,7 @@ const StudentDashboardMyResults = ({ studentId, userData }) => {
   const navigation = useNavigation();
   // const { validateSession } = useSession();
 
-  // Fetch test data
+  /* ---------------------- FETCH TEST RESULTS ---------------------- */
   useEffect(() => {
     if (!studentId) return;
 
@@ -35,25 +35,23 @@ const StudentDashboardMyResults = ({ studentId, userData }) => {
       try {
         setLoading(true);
         const token = await AsyncStorage.getItem("accessToken");
-        const response = await fetch(
+
+        const res = await fetch(
           `${backEndUrl}/MyResults/FetchResultTestdata/${studentId}`,
           {
-            method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
             },
           }
         );
-        const data = await response.json();
 
+        const data = await res.json();
         if (data.success) {
           setTestData(data.data);
-        } else {
-          console.error("Failed to fetch data");
         }
-      } catch (error) {
-        console.error("Error fetching test result data:", error);
+      } catch (err) {
+        console.error("Error fetching test result data:", err);
       } finally {
         setLoading(false);
       }
@@ -62,29 +60,34 @@ const StudentDashboardMyResults = ({ studentId, userData }) => {
     fetchResultTestData();
   }, [studentId]);
 
+  /* ---------------------- PORTALS & EXAMS ---------------------- */
   const portals = testData.map((portal) => ({
     course_portal_id: portal.course_portal_id,
     portal_name: portal.portal_name,
     exams: portal.exams,
   }));
 
-  const currentPortal = portals.find((p) => p.course_portal_id === selectedPortalId);
-
-  useEffect(() => {
-    if (currentPortal && currentPortal.exams.length > 0) {
-      setSelectedExamId(currentPortal.exams[0].exam_id);
-    }
-  }, [selectedPortalId, testData]);
+  const currentPortal = portals.find(
+    (p) => p.course_portal_id === selectedPortalId
+  );
 
   useEffect(() => {
     if (testData.length > 0) {
-      const firstPortal = testData[0];
-      setSelectedPortalId(firstPortal.course_portal_id);
-      const firstExam = firstPortal.exams?.[0];
+      const first = testData[0];
+      setSelectedPortalId(first.course_portal_id);
+
+      const firstExam = first.exams?.[0];
       if (firstExam) setSelectedExamId(firstExam.exam_id);
     }
   }, [testData]);
 
+  useEffect(() => {
+    if (currentPortal?.exams?.length > 0) {
+      setSelectedExamId(currentPortal.exams[0].exam_id);
+    }
+  }, [selectedPortalId]);
+
+  /* ---------------------- NAVIGATION ---------------------- */
   const handleViewReportClick = async (testId, test, course_id) => {
     // const isValid = await validateSession();
     // if (!isValid) return;
@@ -120,40 +123,7 @@ const StudentDashboardMyResults = ({ studentId, userData }) => {
     });
   };
 
-  const getBackgroundColor = (id) => {
-    switch (Number(id)) {
-      case 1:
-        return "#E0F7FA"; // ChapterWise
-      case 2:
-        return "#E8F5E9"; // TopicWise
-      case 3:
-        return "#FFF3E0"; // SubjectWise
-      case 4:
-        return "#F3E5F5"; // PartTest
-      case 5:
-        return "#FFEBEE"; // FullTest
-      default:
-        return "#fff";
-    }
-  };
-
-  const getBorderColor = (id) => {
-    switch (Number(id)) {
-      case 1:
-        return "#00BCD4";
-      case 2:
-        return "#4CAF50";
-      case 3:
-        return "#FF9800";
-      case 4:
-        return "#9C27B0";
-      case 5:
-        return "#F44336";
-      default:
-        return "#ddd";
-    }
-  };
-
+  /* ---------------------- RENDER ---------------------- */
   return (
     <ScrollView contentContainerStyle={styles.containerMyresults}>
       <Text style={styles.heading}>My Results</Text>
@@ -168,30 +138,44 @@ const StudentDashboardMyResults = ({ studentId, userData }) => {
         </View>
       ) : (
         <>
-          {/* Portal buttons */}
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.portalButtonsScroll}>
+          {/* ------- PORTAL BUTTONS ------- */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.portalButtonsScroll}
+          >
             {portals.map((portal) => (
               <TouchableOpacity
                 key={portal.course_portal_id}
                 style={[
                   styles.portalButton,
-                  selectedPortalId === portal.course_portal_id && styles.activeButton,
+                  selectedPortalId === portal.course_portal_id &&
+                    styles.activeButton,
                 ]}
                 onPress={() => {
                   setSelectedPortalId(portal.course_portal_id);
                   setSelectedExamId(portal.exams[0]?.exam_id || null);
                 }}
               >
-                <Text style={[
-                  styles.portalButtontext,
-                  selectedPortalId === portal.course_portal_id && styles.activeButtontext,
-                ]}>{portal.portal_name}</Text>
+                <Text
+                  style={[
+                    styles.portalButtontext,
+                    selectedPortalId === portal.course_portal_id &&
+                      styles.activeButtontext,
+                  ]}
+                >
+                  {portal.portal_name}
+                </Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
 
-          {/* Exam buttons */}
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.examButtonsScroll}>
+          {/* ------- EXAM BUTTONS ------- */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.examButtonsScroll}
+          >
             {currentPortal?.exams.map((exam) => (
               <TouchableOpacity
                 key={exam.exam_id}
@@ -201,63 +185,58 @@ const StudentDashboardMyResults = ({ studentId, userData }) => {
                 ]}
                 onPress={() => setSelectedExamId(exam.exam_id)}
               >
-                <Text style={[
-                  styles.examButtontext,
-                  selectedExamId === exam.exam_id && styles.activeButtontext,
-                ]}>{exam.exam_name}</Text>
+                <Text
+                  style={[
+                    styles.examButtontext,
+                    selectedExamId === exam.exam_id &&
+                      styles.activeButtontext,
+                  ]}
+                >
+                  {exam.exam_name}
+                </Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
 
-          {/* Courses and Tests */}
+          {/* ------- TEST CARDS ------- */}
           <View style={styles.resultsContainer}>
             {currentPortal?.exams
               .find((exam) => exam.exam_id === selectedExamId)
               ?.courses.flatMap((course) =>
-                course.tests?.map((test, idx) => (
-                  <View
-                    key={idx}
-                    style={[
-                      styles.resultCard,
-                      test.type_of_test_id === 1 && styles.chapterWiseResultsBorder,
-                      test.type_of_test_id === 2 && styles.topicWiseResultsBorder,
-                      test.type_of_test_id === 3 && styles.subjectWiseResultsBorder,
-                      test.type_of_test_id === 4 && styles.partTestResultsBorder,
-                      test.type_of_test_id === 5 && styles.fullTestResultsBorder,
-                    ]}
-                  >
+                course.tests?.map((test, index) => (
+                  <View key={index} style={styles.resultCard}>
+                    {/* HEADER */}
                     <Text style={styles.testName}>
                       {course.course_name} - {test.test_name}
                     </Text>
 
-                    <View style={styles.resultRow}>
-                      <Icon name="trending-up" size={18} color="#555" />
-                      <Text style={styles.resultRowText}>Performance</Text>
-                    </View>
+                    <View style={styles.resultContent}>
+                      <View style={styles.resultRow}>
+                        <Icon name="trending-up" size={20} color="#3c3c3c" />
+                        <Text style={styles.resultRowText}>Performance</Text>
+                      </View>
 
-                    <View style={styles.resultRow}>
-                      <Icon name="menu-book" size={18} color="#555" />
-                      <Text style={styles.resultRowText}>Solutions</Text>
-                    </View>
+                      <View style={styles.resultRow}>
+                        <Icon name="menu-book" size={20} color="#3c3c3c" />
+                        <Text style={styles.resultRowText}>Solutions</Text>
+                      </View>
 
-                    <TouchableOpacity
-                      style={[
-                        styles.viewReportButton,
-                        {
-                          backgroundColor:
-                            test.type_of_test_id === 1 ? "#976963" :
-                              test.type_of_test_id === 2 ? "#5282ae" :
-                                test.type_of_test_id === 3 ? "#ac9563" :
-                                  test.type_of_test_id === 4 ? "#ceccca" :
-                                    "#579b75"
-                        },
-                      ]}
-                      onPress={() => handleViewReportClick(test.test_id, test, course.course_id)}
-                    >
-                      <Text style={styles.viewReportButtonText}>VIEW REPORT</Text>
-                    </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.viewReportButton}
+                        onPress={() =>
+                          handleViewReportClick(
+                            test.test_id,
+                            test,
+                            course.course_id
+                          )
+                        }
+                      >
+                        <Text style={styles.viewReportButtonText}>
+                          VIEW REPORT
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
-
                 ))
               )}
           </View>
@@ -267,6 +246,6 @@ const StudentDashboardMyResults = ({ studentId, userData }) => {
   );
 };
 
-
 export default StudentDashboardMyResults;
+
 

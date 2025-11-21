@@ -235,15 +235,19 @@ activeButtontext:{
   color:'#fff'
 },
   // my results
- containerMyresults: {
+ /* ---------------- My Results Card Styles (MATCHES YOUR IMAGE) ---------------- */
+
+containerMyresults: {
     padding: 16,
   },
+
   heading: {
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 16,
     textAlign: "center",
   },
+
   noResultsContainer: {
     alignItems: "center",
     marginTop: 40,
@@ -252,10 +256,9 @@ activeButtontext:{
     fontSize: 16,
     color: "#555",
   },
-  portalButtonsScroll: {
-    flexDirection: "row",
-    marginBottom: 12,
-  },
+
+  /* PORTAL BUTTONS */
+  portalButtonsScroll: { marginBottom: 12 },
   portalButton: {
     paddingVertical: 8,
     paddingHorizontal: 16,
@@ -263,74 +266,86 @@ activeButtontext:{
     backgroundColor: "#f0f0f0",
     marginRight: 8,
   },
-  activeButton: {
-    backgroundColor: "#007bff",
-  },
+  activeButton: { backgroundColor: "#007bff" },
   portalButtontext: {
     color: "#333",
     fontWeight: "bold",
   },
-  solbtntext:{
-  color: "#000",
-    fontWeight: "bold",
-  },
-  activeButtontext: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  examButtonsScroll: {
-    flexDirection: "row",
-    marginBottom: 12,
-  },
+  activeButtontext: { color: "#fff", fontWeight: "bold" },
+
+  /* EXAM BUTTONS */
+  examButtonsScroll: { marginBottom: 12 },
   examButton: {
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 6,
     backgroundColor: "#e0e0e0",
-    marginRight: 6,
+    marginRight: 8,
   },
-  examButtontext: {
-    color: "#333",
-    fontWeight: "bold",
-  },
-  resultsContainer: {
-    marginTop: 12,
-  },
+  examButtontext: { color: "#333", fontWeight: "bold" },
+
+  /* RESULT CARDS */
+  resultsContainer: { marginTop: 10 },
+
   resultCard: {
-    borderWidth: 2,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
+    backgroundColor: "#fff",
+    borderRadius: 18,
+    marginBottom: 22,
+    overflow: "hidden",
+
     shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
   },
+
   testName: {
-    fontSize: 16,
+    backgroundColor: "#3c3c3c",
+    color: "#fff",
+    fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 12,
     textAlign: "center",
+    paddingVertical: 14,
   },
+
+  resultContent: {
+    paddingVertical: 18,
+    paddingHorizontal: 20,
+  },
+
   resultRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 6,
+    marginBottom: 16,
   },
+
   resultRowText: {
-    marginLeft: 8,
-    fontSize: 14,
+    marginLeft: 12,
+    fontSize: 17,
     color: "#333",
+    fontWeight: "700",
   },
+
   viewReportButton: {
-    marginTop: 12,
-    paddingVertical: 12,
-    borderRadius: 8,
+    backgroundColor: "#2bb8ff",
+    paddingVertical: 14,
+    borderRadius: 30,
     alignItems: "center",
+    alignSelf: "center",
+    width: "70%",
+    marginTop: 8,
+
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 4,
   },
+
   viewReportButtonText: {
     color: "#fff",
+    fontSize: 18,
     fontWeight: "bold",
   },
 
