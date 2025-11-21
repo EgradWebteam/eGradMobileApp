@@ -14,7 +14,7 @@ import PraticeSummaryModal from "../components/PQBFolder/PraticeSummaryModal.jsx
 // import PraticeQuestionSidebar from "../components/PQBFolder/PraticeQuestionSidebar.jsx";
 import Icon from 'react-native-vector-icons/AntDesign'; // Adjust based on the icon you're using
 
-// import { useSession } from "../hooks/SessionContext.jsx";
+import { useSession } from "../hooks/SessionContext.jsx";
 // import { closeTestWindowIfOpen } from "../ContextFolder/windowManager.jsx";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -56,7 +56,7 @@ const PracticeScreen = () => {
   const userData = studentData?.userDetails;
   const studentProfile = userData?.uploaded_photo;
   const studentName = userData?.candidate_name;
-  //   const { validateSessionWithoutNavigation } = useSession();
+    const { validateSessionWithoutNavigation } = useSession();
   const storageKey = `practiceTest_${testId}_${studentId}`;
 
   const formatTime = (seconds) => {
@@ -371,16 +371,16 @@ const PracticeScreen = () => {
       // isSessionCheckInProgress.current = true;
 
       try {
-        // const isValid = await validateSessionWithoutNavigation();
+        const isValid = await validateSessionWithoutNavigation();
 
-        // if (!isValid) {
-        //   try {
-        //     closeTestWindowIfOpen();
-        //   } catch (e) {
-        //     console.log("Cannot close window:", e);
-        //   }
-        //   return;
-        // }
+        if (!isValid) {
+          try {
+            closeTestWindowIfOpen();
+          } catch (e) {
+            console.log("Cannot close window:", e);
+          }
+          return;
+        }
 
         callback(...args);
       } catch (err) {

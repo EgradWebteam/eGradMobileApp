@@ -16,6 +16,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { WebView } from "react-native-webview";
 import CheckBox from "@react-native-community/checkbox";
 import { RadioButton } from "react-native-paper";
+import { useSession } from "../hooks/SessionContext";
 // const { width } = Dimensions.get("window");
 import ResponsiveImage from './OTSFolder/ResponsiveImage';
 import { backEndUrl } from "../apiConfig";
@@ -49,14 +50,15 @@ const Popup = ({
 }) => {
   // const [isMobile, setIsMobile] = useState(width <= 768);
   // const [showPalette, setShowPalette] = useState(width > 768);
+  const { validateSession }= useSession()
   const [solutionTypes, setSolutionTypes] = useState({});
   const [solutionVisibility, setSolutionVisibility] = useState(null);
   const [cursorPosition, setCursorPosition] = useState(0);
   const inputRef = useRef(null);
   const submitLock = useRef(false);
   const togglePalette = async () => {
-    // const isValid = await validateSession();
-    // if (!isValid) return;
+    const isValid = await validateSession();
+    if (!isValid) return;
     setShowPalette(prev => !prev);
   };
   const getStatus = (questionId) => {
@@ -170,8 +172,8 @@ const Popup = ({
   const currentQuestion = exercise?.questions?.[currentQuestionIndex];
 
   const handleOptionChange = async (value) => {
-    // const isValid = await validateSession();
-    // if (!isValid) return;
+    const isValid = await validateSession();
+    if (!isValid) return;
     if (currentQuestion.qtype_text === "MCQ4" || currentQuestion.qtype_text === "MCQ5" || currentQuestion.qtype_text === "CTQ") {
       setUserAnswer(value);
     } else if (currentQuestion.qtype_text === "MSQ" || currentQuestion.qtype_text === "MSQN") {
@@ -520,8 +522,8 @@ const Popup = ({
                       <TouchableOpacity
                         style={styles.btn}
                         onPress={async () => {
-                          // const isValid = await validateSession();
-                          // if (!isValid) return;
+                          const isValid = await validateSession();
+                          if (!isValid) return;
                           setSolutionVisibility(
                             currentQuestion.exercise_question_id
                           );

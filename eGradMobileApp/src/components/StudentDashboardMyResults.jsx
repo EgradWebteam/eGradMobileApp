@@ -13,7 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // import { BASE_URL } from "../../ConfigFile/ApiConfigURL";
 import { backEndUrl, frontEndUrl } from "../apiConfig";
 import { styles } from "../styles/StudentDashboardStyles";
-// import { useSession } from "./hooks/SessionContext";
+import { useSession } from "../hooks/SessionContext";
 // import DisableKeysAndMouseInteractions from "../../ContextFolder/DisableKeysAndMouseInteractions";
 
 const StudentDashboardMyResults = ({ studentId, userData }) => {
@@ -25,7 +25,7 @@ const StudentDashboardMyResults = ({ studentId, userData }) => {
   // DisableKeysAndMouseInteractions(null);
 
   const navigation = useNavigation();
-  // const { validateSession } = useSession();
+  const { validateSession } = useSession();
 
   /* ---------------------- FETCH TEST RESULTS ---------------------- */
   useEffect(() => {
@@ -89,8 +89,8 @@ const StudentDashboardMyResults = ({ studentId, userData }) => {
 
   /* ---------------------- NAVIGATION ---------------------- */
   const handleViewReportClick = async (testId, test, course_id) => {
-    // const isValid = await validateSession();
-    // if (!isValid) return;
+    const isValid = await validateSession();
+    if (!isValid) return;
 
     let course_portal_id = null;
     for (const portal of testData) {

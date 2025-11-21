@@ -18,7 +18,7 @@ import { styles } from '../styles/OTSStyles.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useStudent } from '../hooks/StudentContext.jsx';
-// import { useSession } from '../../StudentDashboard/hooks/SessionContext';
+import { useSession } from '../hooks/SessionContext.jsx';
 import { decryptBatch, encryptBatch } from '../utils/CryptoUtils.jsx';
 import axios from 'axios';
 import defaultImage from '../images/studentimage.png';
@@ -30,7 +30,7 @@ const ExamInstructionsScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { testId, studentId, courseId } = route.params || {};
-//   const { validateSessionWithoutNavigation } = useSession();
+  const { validateSessionWithoutNavigation } = useSession();
   const [realTestId, setRealTestId] = useState('');
   const [realStudentId, setRealStudentId] = useState('');
   const [realCourseId, setRealCourseId] = useState('');
@@ -134,8 +134,8 @@ useEffect(() => {
   }, [testId, studentId, courseId]);
 
   const handleBeginTest = async () => {
-    // const isValid = await validateSessionWithoutNavigation();
-    // if (isValid) {
+    const isValid = await validateSessionWithoutNavigation();
+    if (isValid) {
       setIsSaving(true);
       // await AsyncStorage.setItem('navigationToken', 'valid');
       try {
@@ -154,14 +154,14 @@ useEffect(() => {
       } finally {
         setIsSaving(false);
       }
-    // } else {
-    //   Alert.alert('Session expired', 'Your session is no longer valid.');
-    // }
+    } else {
+      Alert.alert('Session expired', 'Your session is no longer valid.');
+    }
   };
 
   const handlePrevious = async () => {
-    // const isValid = await validateSessionWithoutNavigation();
-    // if (isValid) {
+    const isValid = await validateSessionWithoutNavigation();
+    if (isValid) {
       const encrypted = studentId
         ? await encryptBatch([realTestId, realStudentId, realCourseId])
         : await encryptBatch([realTestId]);
@@ -171,7 +171,7 @@ useEffect(() => {
         studentId: studentId ? encodeURIComponent(encrypted[1]) : null,
         courseId: courseId ? encodeURIComponent(encrypted[2]) : null,
       });
-    // }
+    }
   };
 
   if (isLoading) {

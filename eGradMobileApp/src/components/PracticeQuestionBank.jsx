@@ -13,7 +13,7 @@ import { Picker } from "@react-native-picker/picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig";
 import { encryptBatch } from "../utils/CryptoUtils";
-// import { useSession } from "./hooks/SessionContext.jsx";
+import { useSession } from "../hooks/SessionContext";
 import { useNavigation } from "@react-navigation/native";
 import CompletedPractice from "../assets/CompletedPractice.png";
 import ReAttemptedPratice from "../assets/ReAttemptedPratice.png";
@@ -30,7 +30,7 @@ const PracticeQuestionBank = ({ onBack, course_name, course, studentId ,userData
   const [showPopup, setShowPopup] = useState(false);
   const [pendingTest, setPendingTest] = useState(null);
   const [Popup, setPopup] = useState(false);
-  // const { validateSession } = useSession();
+  const { validateSession } = useSession();
 const navigation = useNavigation();
 const fetchPracticeData = async () => {
   try {
@@ -154,24 +154,24 @@ const getBackgroundClass = (id) => backgroundColors[id] || "#f0f0f0";
 const handleStartPracticeWithSession = async (testId, studentId, courseId) => {
   console.log("dataaaa",testId,studentId,courseId);
   try {
-    // const navigationToken = await AsyncStorage.getItem("navigationToken");
-    // if (navigationToken === "valid") {
-    //   setPopup(true);
-    //   return;
-    // }
+    const navigationToken = await AsyncStorage.getItem("navigationToken");
+    if (navigationToken === "valid") {
+      setPopup(true);
+      return;
+    }
 
-    // const isActive = (await AsyncStorage.getItem("practiceTestActive")) === "true";
-    // if (isActive) {
-    //   setShowPopup(true);
-    //   setPendingTest({ testId, studentId, courseId });
-    //   return;
-    // }
+    const isActive = (await AsyncStorage.getItem("practiceTestActive")) === "true";
+    if (isActive) {
+      setShowPopup(true);
+      setPendingTest({ testId, studentId, courseId });
+      return;
+    }
 
-    // const keys = await AsyncStorage.getAllKeys();
-    // const practiceKeys = keys.filter((key) => key.startsWith("practiceTest_"));
-    // if (practiceKeys.length > 0) {
-    //   await AsyncStorage.multiRemove(practiceKeys);
-    // }
+    const keys = await AsyncStorage.getAllKeys();
+    const practiceKeys = keys.filter((key) => key.startsWith("practiceTest_"));
+    if (practiceKeys.length > 0) {
+      await AsyncStorage.multiRemove(practiceKeys);
+    }
 
     handleStartPractice(testId, studentId, courseId);
   } catch (err) {

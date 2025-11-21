@@ -10,17 +10,17 @@ import {
 import image1 from '../images/opqb.png';
 import image2 from '../images/orvlm.png';
 import image3 from '../images/otsm.png';
-// import { useSession } from '../StudentDashboard/hooks/SessionContext';
+import { useSession } from '../hooks/SessionContext';
 
 const images = [image1, image2, image3];
 
 const BundleCourseCard = ({ exam_id, exam_name, Portal2data, onGoToCourse, setCourseIds }) => {
   const imageToShow = images[exam_id % images.length];
-//   const { validateSession } = useSession();
+  const { validateSession } = useSession();
 
   const handleGoToCourse = async () => {
-    // const isValid = await validateSession();
-    // if (!isValid) return;
+    const isValid = await validateSession();
+    if (!isValid) return;
 
     const onlyCourseIds = (Portal2data?.courses || []).map(course => course.course_id);
 

@@ -18,7 +18,7 @@ import { useStudent } from '../../hooks/StudentContext';
 // import { closeTestWindowIfOpen } from '../../ContextFolder/windowManager';
 import StudentDashboardHeader from '../../components/StudentDashboardHeader';
 import StudentDashboardLeftSidebar from '../../components/StudentDashboardLeftSidebar';
-
+import { useSession } from '../../hooks/SessionContext';
 // Dummy components to simulate lazy-loaded
 import StudentDashboardHome from '../../components/StudentDashboardHome';
 import StudentDashboardMyCourses from '../../components/StudentDashboardMyCourses';
@@ -40,11 +40,13 @@ export const StudentDashboard = () => {
 const { studentData } = useStudent();
   const navigation = useNavigation();
   const logoutHandledRef = useRef(false);
-
+  const { validateSession } = useSession();
 
 
 const handleSectionChange = useCallback(
   async (section, portalId = null) => {
+        const isValid = await validateSession();
+  if (!isValid) return;
     setActiveSection(section);
 
     const state = { activeSection: section };

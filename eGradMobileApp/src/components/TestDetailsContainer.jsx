@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { backEndUrl, frontEndUrl, backEndPort } from "../apiConfig";
 import { encryptBatch } from "../utils/CryptoUtils";
 import axios from 'axios';
-// import { useSession } from "./hooks/SessionContext";
+import { useSession } from "../hooks/SessionContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import imageStarted from "../images/startTest.png";
 import imageResumed from "../images/resomeTest.png";
@@ -20,7 +20,7 @@ const TestDetailsContainer = ({ course, testDataLoading, refreshTriggerBundle, s
   const [loading, setLoading] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(false);
-  //   const { validateSession } = useSession();
+    const { validateSession } = useSession();
   const navigation = useNavigation();
 
   const courseId = course?.course_id;
@@ -127,7 +127,8 @@ const TestDetailsContainer = ({ course, testDataLoading, refreshTriggerBundle, s
   const handleStartTestClick = async (test) => {
     console.log("handleStartTestClick CALLED with test:", test);
     const testCreationTableId = test.test_id;
-
+  const isValid = await validateSession();
+    if (!isValid) return;
     const courseCreationId = courseId ?? test.course_id;
 
     try {
@@ -213,7 +214,9 @@ const TestDetailsContainer = ({ course, testDataLoading, refreshTriggerBundle, s
   };
 
 
-  const handleViewReport = (test) => {
+  const handleViewReport = async (test) => {
+      const isValid = await validateSession();
+    if (!isValid) return;
     navigation.navigate("StudentReport", {
       testId: test.test_id,
       studentId,

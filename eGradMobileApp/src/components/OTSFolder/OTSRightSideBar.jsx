@@ -15,7 +15,7 @@ import {
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 // import adminCapImg from '../../images/capImg.png';
  // Replace with RN vector icons
-// import { useSession } from "../../StudentDashboard/hooks/SessionContext.jsx";
+import { useSession } from "../../hooks/SessionContext.jsx";
 // import Icon from "react-native-vector-icons/FontAwesome";
 // import { styles } from '../../styles/OTSStyles';
 const OTSRightSideBar = ({
@@ -37,7 +37,7 @@ const OTSRightSideBar = ({
   // getElapsedTimeForCurrentQuestion,
 }) => {
   // const { studentData } = useStudent();
-//   const { validateSessionWithoutNavigation } = useSession();
+  const { validateSessionWithoutNavigation } = useSession();
 
   if (!testData || !Array.isArray(testData.subjects)) return null;
 

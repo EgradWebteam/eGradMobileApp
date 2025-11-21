@@ -20,7 +20,7 @@ import { Intstruction_content } from "../components/OTSFolder/Intstruction_conte
 import adminCapImg from "../images/logoCap.jpeg"; // You may need to import these images differently in RN
 import defaultImage from "../images/studentimage.png";
 import { useStudent } from "../hooks/StudentContext";
-// import { useSession } from "../../StudentDashboard/hooks/SessionContext";
+import { useSession } from "../hooks/SessionContext.jsx";
 import {encryptBatch,decryptBatch as decryptDataBatch,} from "../utils/CryptoUtils";
 
 const GeneralInstructions = () => {
@@ -29,7 +29,7 @@ const GeneralInstructions = () => {
 
   const { testId, studentId, courseId } = route.params || {};
 
-//   const { validateSessionWithoutNavigation } = useSession();
+  const { validateSessionWithoutNavigation } = useSession();
   const { studentData } = useStudent();
 
   const [realTestId, setRealTestId] = useState("");
@@ -122,8 +122,8 @@ useEffect(() => {
   }, [testId, studentId, courseId, navigation]);
 
   const handleNextClick = async () => {
-    // const isValid = await validateSessionWithoutNavigation();
-    // if (isValid) {
+    const isValid = await validateSessionWithoutNavigation();
+    if (isValid) {
       setIsSaving(true);
       try {
         // await AsyncStorage.setItem("navigationToken", "valid");
@@ -154,11 +154,11 @@ useEffect(() => {
       } finally {
         setIsSaving(false);
       }
-    // } else {
-    //   Alert.alert("Session invalid", "Your session has expired", [
-    //     { text: "OK", onPress: () => null },
-    //   ]);
-    // }
+    } else {
+      Alert.alert("Session invalid", "Your session has expired", [
+        { text: "OK", onPress: () => null },
+      ]);
+    }
   };
 
   if (isDecrypting) {
