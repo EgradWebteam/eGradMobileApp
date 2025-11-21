@@ -75,6 +75,17 @@ const Popup = ({
     unanswered: require('../images/NotAnswered.png'),
     unvisited: require('../images/Visited.png'),
   };
+    const verticalRef = useRef(null);
+  const horizontalRef = useRef(null);
+
+  // Scroll to top-left on mount
+  useEffect(() => {
+    verticalRef.current?.scrollTo({ x: 0, y: 0, animated: false });
+    horizontalRef.current?.scrollTo({ x: 0, y: 0, animated: false });
+  }, [currentQuestionIndex]);
+
+
+
   // useEffect(() => {
   //   const update = () => {
   //     const mobile = Dimensions.get("window").width <= 768;
@@ -277,7 +288,7 @@ const Popup = ({
 
             {/* Content */}
             {exercise && exercise.questions?.length > 0 ? (
-              <View style={styles.slideshow}>
+             <View style={{ width: SCREEN_WIDTH , height: SCREEN_HEIGHT * 0.65 }}>
                 {/* Question Section */}
                 <View style={styles.exerciseQuestionContainers}>
                   <ScrollView horizontal style={styles.questionNumberRow}>
@@ -324,19 +335,21 @@ const Popup = ({
                   </View>
                   {/* <ScrollView style={styles.optionsScroll}> */}
 
-                  <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={true}
-                    nestedScrollEnabled={true}
-                  >
-                    <View style={[styles.questionAndImage, { width: SCREEN_WIDTH }]} ref={inputRef}>
-                      <View style={{
-                        height: SCREEN_HEIGHT * 0.5, // set specific height (50% of screen)
-                      }}>
-                        <ScrollView
-                          showsVerticalScrollIndicator={true}
-                          nestedScrollEnabled={true}
-                        >
+              
+                    <View style={[styles.questionAndImage, { width: SCREEN_WIDTH , height: SCREEN_HEIGHT * 0.45}]} ref={inputRef}>
+                      
+                   <ScrollView
+      ref={verticalRef}
+      showsVerticalScrollIndicator={true}
+      nestedScrollEnabled={true}
+    >
+      <ScrollView
+        ref={horizontalRef}
+        horizontal={true}
+        showsHorizontalScrollIndicator={true}
+        nestedScrollEnabled={true}
+      >
+                          <View style={styles.questionoptContainer}>
                           {currentQuestion.qtype_text === "CTQ" && currentQuestion.paragraph_img && (
                             <View style={styles.imgContainer}>
                               <ResponsiveImage uri={currentQuestion.paragraph_img}
@@ -439,7 +452,7 @@ const Popup = ({
                                   .map((option) => (
                                     <View key={option.option_id} style={styles.optionLabel}>
                                       {/* For MSQ / MSQN → CheckBox */}
-                                      <Text>{option.option_index}</Text>
+                                      <Text>({option.option_index})</Text>
                                       {(currentQuestion.qtype_text === "MSQ" ||
                                         currentQuestion.qtype_text === "MSQN") ? (
                                         <CheckBox
@@ -466,7 +479,7 @@ const Popup = ({
                                       {option.option_img_name ? (
                                         <ResponsiveImage uri={option.option_img_name} />
                                       ) : (
-                                        <Text style={styles.optionIndex}>{option.option_index}</Text>
+                                        <Text style={styles.optionIndex}>({option.option_index})</Text>
                                       )}
                                     </View>
                                   ))}
@@ -474,10 +487,12 @@ const Popup = ({
                             )}
 
                           {feedback && <Text>{feedback}</Text>}
+                          </View>
+                             </ScrollView>
                         </ScrollView>
                       </View>
-                    </View>
-                  </ScrollView>
+                    
+                
                   {/* </ScrollView> */}
 
                   {/* Navigation Buttons */}
@@ -563,7 +578,7 @@ const Popup = ({
               //   style={{ flex: 1 }}
               //   allowsFullscreenVideo
               // />
-              <View style={{ width: SCREEN_WIDTH , height: SCREEN_HEIGHT * 0.75 }}>
+              <View style={{ width: SCREEN_WIDTH , height: SCREEN_HEIGHT * 0.65 }}>
                 {renderVideo(lecture.lecture_video_link)}
               </View>
             ) : (
@@ -704,6 +719,11 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textAlign: "center",
   },
+  questionoptContainer:{
+    padding:10,
+   
+    flexDirection:"column",
+  },
   btn: {
     padding: 10,
     backgroundColor: "#007bff",
@@ -718,6 +738,7 @@ const styles = StyleSheet.create({
   },
   optionLabel: {
     flexDirection: "row",
+    alignItems:"center",
     gap: 2,
   },
   feedback: { color: "red", textAlign: "center" },

@@ -61,6 +61,14 @@ const PracticeQuestionRender = ({
   const isAnswered = answeredQuestions[qId];
   const isDisabled = answeredQuestions[qId] !== null
   const showSol = showSolution[qId];
+      const verticalRef = useRef(null);
+    const horizontalRef = useRef(null);
+  
+    // Scroll to top-left on mount
+    useEffect(() => {
+      verticalRef.current?.scrollTo({ x: 0, y: 0, animated: false });
+      horizontalRef.current?.scrollTo({ x: 0, y: 0, animated: false });
+    }, [qId]);
 // console.log(isAnswered,qId,answeredQuestions)
   useEffect(() => {
     const scrollTarget = questionScrollRefMobile.current;
@@ -130,20 +138,18 @@ const PracticeQuestionRender = ({
           </View>
         )}
       </View> */}
-        <ScrollView
-       style={
-                 qtype === "CTQ"
-                    ? styles.questionSplitContainer
-                    : styles.optionsScroll
-                }
-      horizontal
-      showsHorizontalScrollIndicator={false}
+                <ScrollView
+      ref={verticalRef}
+      showsVerticalScrollIndicator={true}
+      nestedScrollEnabled={true}
     >
       <ScrollView
-        style={{ flex: 1 }}
-        showsVerticalScrollIndicator={true}
-        contentContainerStyle={styles.scrollContent}
+        ref={horizontalRef}
+        horizontal={true}
+        showsHorizontalScrollIndicator={true}
+        nestedScrollEnabled={true}
       >
+
         {/* Left Column: Paragraph */}
         {qtype === "CTQ" && question.paragraph?.paragraphImgName && (
           <View style={styles.paragraphContainer}>
@@ -159,7 +165,7 @@ const PracticeQuestionRender = ({
           
               <ResponsiveImage uri={question.questionImgName} />
           )}
-    <ScrollView contentContainerStyle={styles.excercisecontainer}>
+    <View>
           {/* Example MCQ Options */}
           {["MCQ4", "MCQ5", "TF", "CTQ"].includes(qtype) && (
             <RadioButton.Group
@@ -450,7 +456,7 @@ const PracticeQuestionRender = ({
 
 
 
-          </ScrollView>
+          </View>
         </View>
       </ScrollView>
     </ScrollView>
