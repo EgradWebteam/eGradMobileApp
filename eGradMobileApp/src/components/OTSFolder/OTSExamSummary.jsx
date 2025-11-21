@@ -16,7 +16,7 @@ import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from '@react-navigation/native';
 import { backEndUrl, frontEndUrl,backEndPort } from "../../apiConfig";
-// import { useSession } from "../../StudentDashboard/hooks/SessionContext";
+import { useSession } from "../../hooks/SessionContext";
 
 const OTSExamSummary = ({
   onCancelSubmit,
@@ -44,7 +44,7 @@ console.log(   answeredCount,
     notVisitedCount,
     visitedCount,
     totalQuestionsInTest)
-//   const { validateSessionWithoutNavigation } = useSession();
+  const { validateSessionWithoutNavigation } = useSession();
   // const { alert } = useAlert();
 
   const [showSubmittedPopup, setShowSubmittedPopup] = useState(false);
@@ -83,13 +83,13 @@ const token = await AsyncStorage.getItem('accessToken');
         return;
       }
 
-    //   const isValid = await validateSessionWithoutNavigation();
-    //   if (!isValid) {
+      const isValid = await validateSessionWithoutNavigation();
+      if (!isValid) {
         // You may want to navigate to login or exit app
-        // Alert.alert("Session invalid", "Please login again.");
-        // isSubmittingRef.current = false;
-        // return;
-    //   }
+        Alert.alert("Session invalid", "Please login again.");
+        isSubmittingRef.current = false;
+        return;
+      }
 
       setShowSubmittedPopup(true);
 

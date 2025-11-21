@@ -1,25 +1,25 @@
-import React, { createContext, useContext } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig";
-// import { closeTestWindowIfOpen } from '../../../ContextFolder/windowManager';
+import React, { createContext, useContext } from "react";
+import { Alert } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+import { backEndUrl } from "../../src/apiConfig";
 
 const SessionContext = createContext();
 
 export const SessionProvider = ({ children }) => {
   const navigation = useNavigation();
 
+  /* ===========================================================
+     VALIDATE SESSION (with Navigation)
+  =========================================================== */
   const validateSession = async () => {
-    const sessionId = await AsyncStorage.getItem('sessionId');
+    const sessionId = await AsyncStorage.getItem("sessionId");
     if (!sessionId) return;
 
     try {
       const response = await fetch(`${backEndUrl}/login/verifySession`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sessionId }),
       });
 
@@ -27,92 +27,89 @@ export const SessionProvider = ({ children }) => {
 
       if (!data.success) {
         Alert.alert(
-          'Session Expired',
-          'You have been logged out due to login from another device or tab.'
+          "Logged Out",
+          "You have been logged out due to login from another device."
         );
-        await clearSessionAndNavigate();
+
+        await clearSessionData();
+
+        navigation.navigate("login");
         return false;
       }
 
       return true;
     } catch (err) {
-      console.error('Session check failed', err);
+      console.error("Session check failed", err);
       return false;
     }
   };
 
+  /* ===========================================================
+     VALIDATE SESSION WITHOUT NAVIGATION (Admin Support)
+  =========================================================== */
   const validateSessionWithoutNavigation = async () => {
-    const sessionId = await AsyncStorage.getItem('sessionId');
-    const adminRole = await AsyncStorage.getItem('adminRole');
+    const sessionId = await AsyncStorage.getItem("sessionId");
+    const adminRole = await AsyncStorage.getItem("adminRole");
 
-    if (adminRole === 'admin') {
-      return true;
-    }
+    const isAdmin = adminRole === "admin";
+    if (isAdmin) return true;
 
-    if (!sessionId) {
-      return false;
-    }
+    if (!sessionId) return false;
 
     try {
       const response = await fetch(`${backEndUrl}/login/verifySession`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sessionId }),
       });
 
-      if (!response.ok) {
-        console.error('Non-200 response:', response.status);
-        return false;
-      }
+      if (!response.ok) return false;
 
-      const data = await response.json();
-
-      if (typeof data.success !== 'boolean') {
-        console.warn('Unexpected response format:', data);
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        console.error("JSON parse failed:", jsonError);
         return false;
       }
 
       if (!data.success) {
         Alert.alert(
-          'Session Expired',
-          'You have been logged out due to login from another device or tab.'
+          "Logged Out",
+          "You have been logged out due to login from another device."
         );
-        await clearSession(); // no navigation
+
+        await clearSessionData();
         return false;
       }
 
       return true;
     } catch (err) {
-      console.error('Session check failed due to fetch error:', err);
+      console.error("Session check failed:", err);
       return false;
     }
   };
 
-  const clearSessionAndNavigate = async () => {
-    await clearSession();
-    // closeTestWindowIfOpen();
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'login' }],
-    });
-  };
-
-  const clearSession = async () => {
+  /* ===========================================================
+     CLEAR SESSION DATA
+  =========================================================== */
+  const clearSessionData = async () => {
     await AsyncStorage.multiRemove([
-      'decryptedId',
-      'accessToken',
-      'sessionId',
-      'userId',
-      'studentData',
-      'OTS_FormattedTime',
-      'studentDashboardState'
+      "decryptedId",
+      "accessToken",
+      "sessionId",
+      "userId",
+      "studentData",
+      "OTS_FormattedTime",
+      "studentDashboardState",
+      "navigationToken",
     ]);
   };
 
   return (
-    <SessionContext.Provider value={{ validateSession, validateSessionWithoutNavigation }}>
+    <SessionContext.Provider
+      value={{ validateSession, validateSessionWithoutNavigation }}
+    >
       {children}
     </SessionContext.Provider>
   );

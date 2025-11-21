@@ -18,7 +18,7 @@ import { styles } from '../styles/OTSStyles.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useStudent } from '../hooks/StudentContext.jsx';
-// import { useSession } from '../../StudentDashboard/hooks/SessionContext';
+import { useSession } from '../hooks/SessionContext.jsx';
 import { decryptBatch, encryptBatch } from '../utils/CryptoUtils.jsx';
 import axios from 'axios';
 import defaultImage from '../images/studentimage.png';
@@ -30,7 +30,7 @@ const PracticeInstruction = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { testId, studentId, courseId } = route.params || {};
-//   const { validateSessionWithoutNavigation } = useSession();
+  const { validateSessionWithoutNavigation } = useSession();
   const [realTestId, setRealTestId] = useState('');
   const [realStudentId, setRealStudentId] = useState('');
   const [realCourseId, setRealCourseId] = useState('');
@@ -166,12 +166,12 @@ useEffect(() => {
 
   try {
     // 1️⃣ Optional: Validate session if you have that logic
-    // const isValid = await validateSessionWithoutNavigation();
-    // if (!isValid) {
-    //   Alert.alert('Session expired', 'Your session is no longer valid.');
-    //   setIsSaving(false);
-    //   return;
-    // }
+    const isValid = await validateSessionWithoutNavigation();
+    if (!isValid) {
+      Alert.alert('Session expired', 'Your session is no longer valid.');
+      setIsSaving(false);
+      return;
+    }
 
     // 2️⃣ Get auth token
     const token = isAdmin

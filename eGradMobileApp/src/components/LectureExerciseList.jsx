@@ -13,7 +13,7 @@ import videoIcon from "../assets/video.png";
 import exerciseIcon from "../assets/excercise.png";
 import pdfIcon from "../assets/pdf.png";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { useSession } from "../hooks/SessionContext";
 const LectureExerciseList = ({
     lectures,
     onLectureClick,
@@ -35,10 +35,10 @@ const LectureExerciseList = ({
     };
 
     const navigation = useNavigation();
-
+  const { validateSession } = useSession();
     const handleOpenPdf = async (fileName, topicId, studyMaterialId, chapterId) => {
-        // const isValid = await validateSession();
-        // if (!isValid) return;
+        const isValid = await validateSession();
+        if (!isValid) return;
         console.log("open pdfff firedddddd");
         console.log("ids from open pdfff", topicId, chapterId, studyMaterialId, fileName)
         let localStorageUserId = null;

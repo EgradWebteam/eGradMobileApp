@@ -13,12 +13,12 @@ import { backEndUrl, frontEndUrl } from "../apiConfig";
 import StudentReport from "./StudentReport"; 
 import SolutionsTab from "./SolutionsTab.jsx";
 import QuestionsTab from "./QuestionsTab.jsx";
-// import { useSession } from "../../StudentDashboard/hooks/SessionContext.jsx";
+import { useSession } from "../hooks/SessionContext.jsx";
 // import DisableKeysAndMouseInteractions from "../../../ContextFolder/DisableKeysAndMouseInteractions.jsx";
 
 const StudentReportMain = () => {
   const [activeTab, setActiveTab] = useState("Your Performance");
-//   const { validateSession } = useSession();
+  const { validateSession } = useSession();
   const navigation = useNavigation();
   const route = useRoute();
 
@@ -50,8 +50,8 @@ console.log("dataaa",route.params)
 
   // ✅ Go Back
   const handleGoBack = async () => {
-    // const isValid = await validateSession();
-    // if (!isValid) return;
+    const isValid = await validateSession();
+    if (!isValid) return;
 
     navigation.navigate("studentDashboard", { studentId });
     await AsyncStorage.removeItem("activeTab");
@@ -191,8 +191,8 @@ console.log("dataaa",route.params)
   }, []);
 
   const handleTabChange = async (tab) => {
-    // const isValid = await validateSession();
-    // if (!isValid) return;
+    const isValid = await validateSession();
+    if (!isValid) return;
     setActiveTab(tab);
     await AsyncStorage.setItem("activeTab", tab);
   };

@@ -12,8 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { backEndUrl, frontEndUrl } from "../apiConfig";
 import LectureExerciseList from "./LectureExerciseList.jsx";
 import Popup from "./ Popup.jsx";
-// import { useSession } from "./hooks/SessionContext.jsx";
-
+import { useSession } from "../hooks/SessionContext.jsx";
 const OrvlCourseTopic = ({
   topicid,
   onBack,
@@ -39,7 +38,7 @@ const OrvlCourseTopic = ({
   const playedTimeRef = useRef(0);
   const submittedStatusRef = useRef({});
 
-//   const { validateSession: contextValidateSession } = useSession();
+  const { validateSession: contextValidateSession } = useSession();
 
   // ------------------------ CHECK ADMIN ROLE ------------------------
   useEffect(() => {
@@ -54,9 +53,9 @@ const OrvlCourseTopic = ({
     fetchAdminRole();
   }, []);
 
-//   const validateSession = isAdmin
-//     ? async () => true
-//     : contextValidateSession;
+  const validateSession = isAdmin
+    ? async () => true
+    : contextValidateSession;
 
   // ------------------------ FETCH EXERCISE META ------------------------
   const fetchexerciseMeta = async () => {
@@ -296,8 +295,8 @@ const max = rangeMatch ? parseFloat(rangeMatch[2]) : NaN;
 
   // ------------------------ HANDLERS ------------------------
   const handleLectureClick = async (lecture) => {
-    // const isValid = await validateSession();
-    // if (!isValid) return;
+    const isValid = await validateSession();
+    if (!isValid) return;
     setSelectedLecture(lecture);
     setSelectedExercise(null);
     setShowExercise(false);
@@ -305,8 +304,8 @@ const max = rangeMatch ? parseFloat(rangeMatch[2]) : NaN;
   };
 
   const handleExerciseClick = async (exercise) => {
-    // const isValid = await validateSession();
-    // if (!isValid) return;
+    const isValid = await validateSession();
+    if (!isValid) return;
 
     const parentLecture = courseData.lectures.find((lecture) =>
       lecture.exercises.some((ex) => ex.exercise_name === exercise.exercise_name)
@@ -322,8 +321,8 @@ const max = rangeMatch ? parseFloat(rangeMatch[2]) : NaN;
   };
 
   const handleClosePopup = async () => {
-    // const isValid = await validateSession();
-    // if (!isValid) return;
+    const isValid = await validateSession();
+    if (!isValid) return;
     setSelectedLecture(null);
     setSelectedExercise(null);
     setShowPopup(false);
@@ -331,8 +330,8 @@ const max = rangeMatch ? parseFloat(rangeMatch[2]) : NaN;
 
   // ------------------------ NAVIGATION ------------------------
  const nextLectureOrExercise = async () => {
-  // const isValid = await validateSession();
-  // if (!isValid) return;
+  const isValid = await validateSession();
+  if (!isValid) return;
 
   if (!courseData || !selectedLecture) return;
 
@@ -384,8 +383,8 @@ const max = rangeMatch ? parseFloat(rangeMatch[2]) : NaN;
 };
 
   const previousLectureOrExercise = async() => {
-  // const isValid = await validateSession();
-  //   if (!isValid) return;
+  const isValid = await validateSession();
+    if (!isValid) return;
   if (!courseData || !selectedLecture) return;
 
   const currentLectureIndex = courseData.lectures.findIndex(

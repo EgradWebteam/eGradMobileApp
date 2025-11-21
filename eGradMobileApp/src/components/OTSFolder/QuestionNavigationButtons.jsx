@@ -7,7 +7,7 @@ import { useTimer } from "../../hooks/TimerContext.jsx";
 import { backEndUrl, frontEndUrl,backEndPort } from "../../apiConfig";
 import { styles } from '../../styles/OTSStyles';
 import OTSExamSummary from "./OTSExamSummary.jsx";
-// import { useSession } from "../../StudentDashboard/hooks/SessionContext.jsx";
+import { useSession } from "../../hooks/SessionContext.jsx";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const QuestionNavigationButtons = ({
   testData,
@@ -50,7 +50,7 @@ const QuestionNavigationButtons = ({
     visitedCount,
     totalQuestionsInTest,
   } = useQuestionStatus();
-//   const { validateSessionWithoutNavigation } = useSession();
+  const { validateSessionWithoutNavigation } = useSession();
   const [showBonusConfirmPopup, setShowBonusConfirmPopup] = useState(false);
   const { timeSpent, timeLeft } = useTimer();
   const [isSaving, setIsSaving] = useState(false);
@@ -359,11 +359,11 @@ const addNextQuestionToState = ({
   });
 };
 const handleSaveAndNext = async () => {
-//   const isValid = await validateSessionWithoutNavigation();
-//   if (!isValid) {
-    // window.close();
-    // return;
-//   }
+  const isValid = await validateSessionWithoutNavigation();
+  if (!isValid) {
+    window.close();
+    return;
+  }
 
   setIsSaving(true);
   try {
@@ -466,11 +466,11 @@ const handleSaveAndNext = async () => {
   }
 };
 const handleMarkedForReview = async () => {
-//   const isValid = await validateSessionWithoutNavigation();
-//   if (!isValid) {
-//     window.close();
-//     return;
-//   }
+  const isValid = await validateSessionWithoutNavigation();
+  if (!isValid) {
+    window.close();
+    return;
+  }
 
   setIsSaving(true);
   try {
@@ -602,8 +602,8 @@ const handleMarkedForReview = async () => {
   }
 };
 const handleClearResponse = async () => {
-//   const isValid = await validateSessionWithoutNavigation();
-//   if (!isValid) return window.close();
+  const isValid = await validateSessionWithoutNavigation();
+  if (!isValid) return window.close();
 
   setIsSaving(true);
 
@@ -665,8 +665,8 @@ const handleClearResponse = async () => {
 };
 
 const handlePrevious = async () => {
-//   const isValid = await validateSessionWithoutNavigation();
-//   if (!isValid) return window.close();
+  const isValid = await validateSessionWithoutNavigation();
+  if (!isValid) return window.close();
 
   const subject = testData?.subjects?.find(sub => sub.SubjectName === activeSubject);
   const section = subject?.sections?.find(sec => sec.SectionName === activeSection);
@@ -779,8 +779,8 @@ const prepareForTimeSaveforQuestion = async () => {
 };
 
 const handleSubmitClick = async () => {
-//   const isValid = await validateSessionWithoutNavigation();
-//   if (!isValid) return window.close();
+  const isValid = await validateSessionWithoutNavigation();
+  if (!isValid) return window.close();
 
   setIsSaving(true); // disable Submit button
   try {
@@ -881,8 +881,8 @@ const handleExtraQYes = async () => {
 };
 
 const handleConfirmExtraQuestions = async () => {
-//   const isValid = await validateSessionWithoutNavigation();
-//   if (!isValid) return window.close();
+  const isValid = await validateSessionWithoutNavigation();
+  if (!isValid) return window.close();
 
   try {
     const token = await AsyncStorage.getItem("accessToken");
@@ -928,8 +928,8 @@ const handleConfirmExtraQuestions = async () => {
 };
 
 const handleCancelExtraQuestions = async () => {
-//   const isValid = await validateSessionWithoutNavigation();
-//   if (!isValid) return window.close();
+  const isValid = await validateSessionWithoutNavigation();
+  if (!isValid) return window.close();
 
   setShowBonusConfirmPopup(false);
 
@@ -941,8 +941,8 @@ const handleCancelExtraQuestions = async () => {
 };
 
 const onCancelSubmit = async () => {
-//   const isValid = await validateSessionWithoutNavigation();
-//   if (!isValid) return window.close();
+  const isValid = await validateSessionWithoutNavigation();
+  if (!isValid) return window.close();
 
   setShowExamSummary(false);
   setIsSubmitClicked(false);

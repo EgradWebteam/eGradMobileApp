@@ -9,7 +9,7 @@ import {
   Alert,
   ImageBackground,
 } from 'react-native';
-// import { useSession } from '../../StudentDashboard/hooks/SessionContext'; // Assume it's RN-compatible
+import { useSession } from '../../hooks/SessionContext';
 import { styles } from '../../styles/OTSStyles';
 // import axios from 'axios';
 import QuestionOptionsContainer from './QuestionOptionsContainer';
@@ -108,7 +108,7 @@ useEffect(() => {
   const handleQuestionClick = async (index) => {
         if(activeQuestionIndex === index) return;
     // Commented session validation for now
-    // const isValid = await validateSessionWithoutNavigation();
+    const isValid = await validateSessionWithoutNavigation();
 await autoSaveNATIfNeeded();
     const question = section?.questions?.[index];
     if (!question) return;

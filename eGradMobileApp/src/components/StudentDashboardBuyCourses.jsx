@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import RazorpayCheckout from "react-native-razorpay";
 import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig";
-// import { useSession } from "../hooks/useSession";
+import { useSession } from "../hooks/SessionContext";
 import CourseCards from "./CourseCards";
 import { styles } from '../styles/StudentDashboardStyles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -26,7 +26,7 @@ const StudentDashboardBuyCourses = ({ setActiveSection, studentId, preselectedPo
 
   const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
 
-  // const { validateSession } = useSession();
+  const { validateSession } = useSession();
 
   const [showDualPopup, setShowDualPopup] = useState(false);
   const [pendingPurchase, setPendingPurchase] = useState(null);
@@ -183,14 +183,14 @@ const StudentDashboardBuyCourses = ({ setActiveSection, studentId, preselectedPo
     return Object.values(grouped);
   }, [filteredCourses]);
   const handlePortalSelect = async (portalId) => {
-    // const valid = await validateSession();
-    // if (!valid) return;
+    const valid = await validateSession();
+    if (!valid) return;
     setSelectedPortal(portalId);
   };
 
   const handleExamSelect = async (examName) => {
-    // const valid = await validateSession();
-    // if (!valid) return;
+    const valid = await validateSession();
+    if (!valid) return;
     setSelectedExam(examName);
   };
 

@@ -13,7 +13,7 @@ import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig";
 import defaultImage from '../images/studentimage.png';
 import headerImage from '../images/EGTLogoExamHeaderCompressed.png';
 // import { closeTestWindowIfOpen } from '../hooks/windowManager';
-// import { useSession } from './hooks/SessionContext';
+import { useSession } from '../hooks/SessionContext';
 import { styles } from '../styles/StudentDashboardStyles';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const StudentDashboardHeader = ({
@@ -24,7 +24,7 @@ const StudentDashboardHeader = ({
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
-//   const { validateSession } = useSession() || {};
+  const { validateSession } = useSession() || {};
 
   const studentProfile = userData?.uploaded_photo;
 
@@ -72,16 +72,16 @@ console.log("Attempting logout...");
   };
 
   const handleProfileClick = async () => {
-    // const isValid = await validateSession();
-    // if (!isValid) return;
+    const isValid = await validateSession();
+    if (!isValid) return;
     setActiveSection('account');
     setActiveSubSection('profile');
     setModalVisible(false);
   };
 
   const handlePasswordClick = async () => {
-    // const isValid = await validateSession();
-    // if (!isValid) return;
+    const isValid = await validateSession();
+    if (!isValid) return;
     setActiveSection('account');
     setActiveSubSection('password');
     setModalVisible(false);

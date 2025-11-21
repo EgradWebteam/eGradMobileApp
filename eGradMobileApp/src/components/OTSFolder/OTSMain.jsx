@@ -20,7 +20,7 @@ import ExamSummaryCollector from './ExamSummaryCollector';
 import TimerProvider from '../../hooks/TimerContext';
 import  QuestionStatusProvider  from '../../hooks/CountsContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { useSession } from '../../StudentDashboard/hooks/SessionContext';
+import { useSession } from '../../hooks/SessionContext';
 
 const OTSMain = ({
   testData,
@@ -55,7 +55,7 @@ const OTSMain = ({
   const [isBonusLoaded, setIsBonusLoaded] = useState(false);
 
   const questionStartTimeRef = useRef(Date.now());
-//   const { validateSessionWithoutNavigation } = useSession();
+  const { validateSessionWithoutNavigation } = useSession();
 
   const currentSubject = testData?.subjects?.find(sub => sub.SubjectName === activeSubject);
   const currentSection = currentSubject?.sections?.find(sec => sec.SectionName === activeSection);
@@ -448,8 +448,8 @@ const autoSaveNATIfNeeded = async () => {
       const alreadySubmitted = await AsyncStorage.getItem("examSubmitted") === "true";
       if (timeSpent > 0 && !alreadySubmitted) {
         try {
-        //   const isValid = await validateSessionWithoutNavigation();
-        //   if (!isValid) return Alert.alert("Session expired", "Please login again.");
+          const isValid = await validateSessionWithoutNavigation();
+          if (!isValid) return Alert.alert("Session expired", "Please login again.");
           await axios.patch(`${backEndUrl}/OTSTestPaper/SaveTimeOnly`, { realStudentId, realTestId, realCourseId, question_id: qid, time_spent_on_question: timeSpent });
         } catch (err) {
           console.error("Auto-save time error:", err);

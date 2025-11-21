@@ -12,7 +12,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
  import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig";
 import TestDetailsContainer from "./TestDetailsContainer";
 import OrvlCourseTopic from "./OrvlCourseTopic";
-// import { useSession } from "./hooks/SessionContext";
+import { useSession } from "../hooks/SessionContext";
 
 const BundleCourseContainer = ({
   courseIds,
@@ -33,7 +33,7 @@ const BundleCourseContainer = ({
   const [orvlDataLoading, setOrvlDataLoading] = useState(true);
   const [refreshTriggerBundle, setRefreshTriggerBundle] = useState(false);
   const [courseId, setCourseId] = useState(null);
-//   const { validateSession } = useSession();
+  const { validateSession } = useSession();
 console.log("user dataaaa bundleeee",userData)
   // Fetch ORVL (bundle) data
   useEffect(() => {
@@ -71,8 +71,8 @@ console.log("user dataaaa bundleeee",userData)
   useEffect(() => {
     const fetchTestDetails = async () => {
       setTestDataLoading(true);
-    //   const isValid = await validateSession();
-    //   if (!isValid) return;
+      const isValid = await validateSession();
+      if (!isValid) return;
       try {
         const response = await axios.post(
           `${backEndUrl}/studentmycourses/getBundleCourseDetails`,
@@ -113,8 +113,8 @@ console.log("user dataaaa bundleeee",userData)
   }, []);
 
   const handleSectionChange = async (section) => {
-    // const isValid = await validateSession();
-    // if (!isValid) return;
+    const isValid = await validateSession();
+    if (!isValid) return;
 
     setActiveSection(section);
     const savedState = {
@@ -125,8 +125,8 @@ console.log("user dataaaa bundleeee",userData)
   };
 
   const handleStartPractice = async (chapterId, courseCreationId) => {
-    // const isValid = await validateSession();
-    // if (!isValid) return;
+    const isValid = await validateSession();
+    if (!isValid) return;
     try {
       const response = await axios.get(
         `${backEndUrl}/studentmycourses/getChapterQuestions/${chapterId}`
@@ -173,8 +173,8 @@ console.log("user dataaaa bundleeee",userData)
         studentId={studentId}
         topicid={chapterdetails.topic_id}
         onBack={async () => {
-        //   const isValid = await validateSession();
-        //   if (!isValid) return;
+          const isValid = await validateSession();
+          if (!isValid) return;
           setChapterdetails(null);
           await AsyncStorage.setItem(
             "studentDashboardState",
