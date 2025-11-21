@@ -36,6 +36,8 @@ const CourseCards = React.memo(
 
     const testLabel = portalId === 3 ? "Worksheets" : "Tests";
 
+const formatCount = (num) => String(num).padStart(2, "0");
+
     return (
       <View style={styles.cardContainer}>
         <View style={styles.card}>
@@ -62,54 +64,60 @@ const CourseCards = React.memo(
               {(portalId === 1 || portalId === 3) && (
                 <View>
 
-                  <View style={styles.iconList}>
+           <View style={styles.iconList}>
 
-                    {chapterWiseTestCount > 0 && (
-                      <View style={styles.row}>
-                        <Icon name="book-open" size={18} color="#2bb8ff" />
-                        <Text style={styles.testLine}>
-                          {chapterWiseTestCount} Chapterwise {testLabel}
-                        </Text>
-                      </View>
-                    )}
-                    
-                    {topicWiseTestCount > 0 && (
-                      <View style={styles.row}>
-                        <Icon name="list-ul" size={18} color="#2bb8ff" />
-                        <Text style={styles.testLine}>
-                          {topicWiseTestCount} Topicwise {testLabel}
-                        </Text>
-                      </View>
-                    )}
+  {chapterWiseTestCount > 0 && (
+    <View style={styles.featureRow}>
+      <Icon name="book-open" size={18} color="#2bb8ff" style={styles.iconFix} />
+      <View style={styles.alignBlock}>
+        <Text style={styles.countText}>{formatCount(chapterWiseTestCount)}</Text>
+        <Text style={styles.labelText}>Chapterwise {testLabel}</Text>
+      </View>
+    </View>
+  )}
 
-                    {subjectWiseTestCount > 0 && (
-                      <View style={styles.row}>
-                        <Icon name="book" size={18} color="#2bb8ff" />
-                        <Text style={styles.testLine}>
-                          {subjectWiseTestCount} Subjectwise {testLabel}
-                        </Text>
-                      </View>
-                    )}
+  {topicWiseTestCount > 0 && (
+    <View style={styles.featureRow}>
+      <Icon name="list-ul" size={18} color="#2bb8ff" style={styles.iconFix} />
+      <View style={styles.alignBlock}>
+        <Text style={styles.countText}>{formatCount(topicWiseTestCount)}</Text>
+        <Text style={styles.labelText}>Topicwise {testLabel}</Text>
+      </View>
+    </View>
+  )}
 
-                    {partTestCount > 0 && (
-                      <View style={styles.row}>
-                        <Icon name="puzzle-piece" size={18} color="#2bb8ff" />
-                        <Text style={styles.testLine}>
-                          {partTestCount} Part {testLabel}
-                        </Text>
-                      </View>
-                    )}
+  {subjectWiseTestCount > 0 && (
+    <View style={styles.featureRow}>
+      <Icon name="book" size={18} color="#2bb8ff" style={styles.iconFix} />
+      <View style={styles.alignBlock}>
+        <Text style={styles.countText}>{formatCount(subjectWiseTestCount)}</Text>
+        <Text style={styles.labelText}>Subjectwise {testLabel}</Text>
+      </View>
+    </View>
+  )}
 
-                    {fullTestCount > 0 && (
-                      <View style={styles.row}>
-                        <Icon name="bullseye" size={18} color="#2bb8ff" />
-                        <Text style={styles.testLine}>
-                          {fullTestCount} Full {testLabel}
-                        </Text>
-                      </View>
-                    )}
+  {partTestCount > 0 && (
+    <View style={styles.featureRow}>
+      <Icon name="puzzle-piece" size={18} color="#2bb8ff" style={styles.iconFix} />
+      <View style={styles.alignBlock}>
+        <Text style={styles.countText}>{formatCount(partTestCount)}</Text>
+        <Text style={styles.labelText}>Part {testLabel}</Text>
+      </View>
+    </View>
+  )}
 
-                  </View>
+  {fullTestCount > 0 && (
+    <View style={styles.featureRow}>
+      <Icon name="bullseye" size={18} color="#2bb8ff" style={styles.iconFix} />
+      <View style={styles.alignBlock}>
+        <Text style={styles.countText}>{formatCount(fullTestCount)}</Text>
+        <Text style={styles.labelText}>Full {testLabel}</Text>
+      </View>
+    </View>
+  )}
+
+</View>
+
 
                   {/* PRICE */}
                   <View style={styles.priceRow}>
@@ -147,36 +155,39 @@ const CourseCards = React.memo(
                     <Text>N/A</Text>
                   )}
 
-                  <View style={styles.iconList}>
+<View style={styles.iconList}>
 
-                    {VideoLectures > 0 && (
-                      <View style={styles.row}>
-                        <Icon name="video" size={18} color="#2bb8ff" />
-                        <Text style={styles.testLine}>
-                          {VideoLectures} Lectures
-                        </Text>
-                      </View>
-                    )}
+  {VideoLectures > 0 && (
+    <View style={styles.featureRow}>
+      <Icon name="video" size={18} color="#2bb8ff" style={styles.iconFix} />
+      <View style={styles.alignBlock}>
+        <Text style={styles.countText}>{formatCount(VideoLectures)}</Text>
+        <Text style={styles.labelText}>Lectures</Text>
+      </View>
+    </View>
+  )}
 
-                    {totalPracticeQuestions > 0 && (
-                      <View style={styles.row}>
-                        <Icon name="question-circle" size={18} color="#2bb8ff" />
-                        <Text style={styles.testLine}>
-                          {totalPracticeQuestions} Practice Questions
-                        </Text>
-                      </View>
-                    )}
+  {totalPracticeQuestions > 0 && (
+    <View style={styles.featureRow}>
+      <Icon name="question-circle" size={18} color="#2bb8ff" style={styles.iconFix} />
+      <View style={styles.alignBlock}>
+        <Text style={styles.countText}>{formatCount(totalPracticeQuestions)}</Text>
+        <Text style={styles.labelText}>Practice Questions</Text>
+      </View>
+    </View>
+  )}
 
-                    {studyMaterialCount > 0 && (
-                      <View style={styles.row}>
-                        <Icon name="file-alt" size={18} color="#2bb8ff" />
-                        <Text style={styles.testLine}>
-                          {studyMaterialCount} Study Materials
-                        </Text>
-                      </View>
-                    )}
+  {studyMaterialCount > 0 && (
+    <View style={styles.featureRow}>
+      <Icon name="file-alt" size={18} color="#2bb8ff" style={styles.iconFix} />
+      <View style={styles.alignBlock}>
+        <Text style={styles.countText}>{formatCount(studyMaterialCount)}</Text>
+        <Text style={styles.labelText}>Study Materials</Text>
+      </View>
+    </View>
+  )}
 
-                  </View>
+</View>
 
                   {/* PRICE */}
                   <View style={styles.priceRow}>
@@ -328,4 +339,37 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
+ featureRow: {
+  flexDirection: "row",
+  alignItems: "center",
+  marginVertical: 6,
+},
+
+iconFix: {
+  width: 24,       // FIXED WIDTH FOR ICONS (ALIGN EVERYTHING)
+  textAlign: "center",
+},
+
+alignBlock: {
+  flexDirection: "row",
+  alignItems: "center",
+  marginLeft: 10,
+},
+
+countText: {
+  fontSize: 17,
+  fontWeight: "bold",
+  color: "#3c3c3c",
+  width: 30,        // FIXED WIDTH FOR COUNT
+  textAlign: "right",
+},
+
+labelText: {
+  fontSize: 17,
+  color: "#3c3c3c",
+  fontWeight: "600",
+  marginLeft: 8,
+},
+
+
 });
