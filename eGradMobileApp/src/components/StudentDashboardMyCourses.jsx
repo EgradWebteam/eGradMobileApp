@@ -30,6 +30,7 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
   const [selectedPortalId, setSelectedPortalId] = useState(null);
   const [selectedExamId, setSelectedExamId] = useState(null);
   const [chapterdetails, setChapterdetails] = useState(null);
+  const [selectedDepartment, setSelectedDepartment] = useState("");
 
   // Fetch purchased courses
   useEffect(() => {
@@ -43,31 +44,37 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
         console.log("PurchasedCourses API response:", res.data);
         const data = res.data;
         setPortals(data || []);
-        // if (data.length > 0) {
-        //   const defaultPortal = data[0];
-        //   const defaultExam = defaultPortal.exams[0];
-        //      const savedState = await AsyncStorage.getItem('studentDashboardState');
-        //      const parsed = JSON.parse(savedState);
-
-        //   setSelectedPortalId(parsed.selectedPortalId  ?? defaultPortal.course_portal_id);
-        //   setSelectedExamId(parsed.selectedExamId  ?? defaultExam?.exam_id );
-        // }
+        
         if (Array.isArray(data) && data.length > 0) {
-  const defaultPortal = data[0] || null;
-  const defaultExam = defaultPortal?.exams?.[0] || null;
+          const defaultPortal = data[0] || null;
+          const defaultExam = defaultPortal?.exams?.[0] || null;
 
-  const savedState = await AsyncStorage.getItem('studentDashboardState');
-  let parsed = {};
-  try {
-    parsed = savedState ? JSON.parse(savedState) : {};
-  } catch (e) {
-    console.warn("Invalid saved state:", savedState);
-  }
+          const savedState = await AsyncStorage.getItem('studentDashboardState');
+          let parsed = {};
+          try {
+            parsed = savedState ? JSON.parse(savedState) : {};
+          } catch (e) {
+            console.warn("Invalid saved state:", savedState);
+          }
 
-  setSelectedPortalId(parsed.selectedPortalId ?? defaultPortal?.course_portal_id ?? null);
-  setSelectedExamId(parsed.selectedExamId ?? defaultExam?.exam_id ?? null);
-}
+          const newSelectedPortalId = parsed.selectedPortalId ?? defaultPortal?.course_portal_id ?? null;
+          const newSelectedExamId = parsed.selectedExamId ?? defaultExam?.exam_id ?? null;
 
+          setSelectedPortalId(newSelectedPortalId);
+          setSelectedExamId(newSelectedExamId);
+
+          // Set initial department based on selected exam
+          if (newSelectedPortalId && newSelectedExamId) {
+            const portal = data.find(p => p.course_portal_id === newSelectedPortalId);
+            const exam = portal?.exams?.find(e => e.exam_id === newSelectedExamId);
+            
+            if (exam?.departments?.length > 0) {
+              setSelectedDepartment(exam.departments[0].department_name);
+            } else {
+              setSelectedDepartment("");
+            }
+          }
+        }
       } catch (err) {
         console.error('Error fetching courses:', err);
         Alert.alert('Error', 'Failed to fetch courses');
@@ -77,6 +84,58 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
     };
     if (studentId) fetchPurchasedCourses();
   }, [studentId]);
+
+  // Memoized values
+  const selectedPortal = useMemo(() => 
+    portals.find(p => p.course_portal_id === selectedPortalId), 
+    [portals, selectedPortalId]
+  );
+
+  const selectedExam = useMemo(() => 
+    selectedPortal?.exams?.find(e => e.exam_id === selectedExamId), 
+    [selectedPortal, selectedExamId]
+  );
+
+  const examHasDepartments = useMemo(() => {
+    return !!selectedExam && Array.isArray(selectedExam.departments) && selectedExam.departments.length > 0;
+  }, [selectedExam]);
+
+  const examDepartments = useMemo(() => {
+    if (!examHasDepartments) return [];
+    return selectedExam.departments;
+  }, [selectedExam, examHasDepartments]);
+
+  const departmentWiseCourses = useMemo(() => {
+    if (!examHasDepartments) return [];
+    const result = [];
+    selectedExam.departments.forEach(dept => {
+      (dept.courses || []).forEach(course => {
+        result.push({
+          ...course,
+          department_id: dept.department_id,
+          department_name: dept.department_name
+        });
+      });
+    });
+    return result;
+  }, [selectedExam, examHasDepartments]);
+
+  const filteredCourses = useMemo(() => {
+    if (!selectedExam) return [];
+
+    // Case: exam doesn't have departments → return its direct courses array
+    if (!examHasDepartments) {
+      return selectedExam.courses || [];
+    }
+
+    // Case: exam has departments
+    if (selectedDepartment) {
+      return departmentWiseCourses.filter(c => c.department_name === selectedDepartment);
+    }
+
+    // no department filter selected → return all courses from departments
+    return departmentWiseCourses;
+  }, [selectedExam, examHasDepartments, selectedDepartment, departmentWiseCourses]);
 
   // Restore state
   useEffect(() => {
@@ -90,9 +149,10 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
             setShowQuizContainer(parsed.showQuizContainer ?? true);
             setShowTestContainer(parsed.showTestContainer ?? false);
             setSelectedPortalId(parsed.selectedPortalId || null);
-            setCourseIds(parsed.selectedTestCourse || []); // fixed from selectedTestCourse
+            setCourseIds(parsed.courseIds || []); // Fixed: use courseIds instead of selectedTestCourse
             setSelectedExamId(parsed.selectedExamId || null);
             setCourseContainer(parsed.courseContainer ?? false);
+            setSelectedDepartment(parsed.selectedDepartment || "");
           }
         }
       } catch (err) {
@@ -102,9 +162,18 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
     restoreDashboardState();
   }, []);
 
-  const selectedPortal = useMemo(() => portals.find(p => p.course_portal_id === selectedPortalId), [portals, selectedPortalId]);
-  const selectedExam = useMemo(() => selectedPortal?.exams.find(e => e.exam_id === selectedExamId), [selectedPortal, selectedExamId]);
-  const filteredCourses = useMemo(() => selectedExam?.courses || [], [selectedExam]);
+  // Update department when exam changes
+  useEffect(() => {
+    if (selectedExam && examHasDepartments && examDepartments.length > 0) {
+      setSelectedDepartment(prev => {
+        // if prev already exists in current dept list, keep it
+        if (prev && examDepartments.some(d => d.department_name === prev)) return prev;
+        return examDepartments[0].department_name;
+      });
+    } else {
+      setSelectedDepartment("");
+    }
+  }, [selectedExam, examHasDepartments, examDepartments]);
 
   const handleGoToTest = async (course) => {
     setSelectedTestCourse(course);
@@ -122,7 +191,9 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
           showQuizContainer: false,
           showTestContainer: selectedPortalId === 1,
           courseContainer: selectedPortalId === 2,
-          selectedExamId:selectedExamId,
+          selectedExamId,
+          selectedDepartment, // Save department state
+          courseIds // Save courseIds
         })
       );
     } catch (error) {
@@ -135,162 +206,250 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
     setShowQuizContainer(true);
     setShowTestContainer(false);
     setCourseContainer(false);
-    await AsyncStorage.setItem(
-      "studentDashboardState",
-      JSON.stringify({
-        activeSection: "myCourses",
-        selectedTestCourse: null,
-        showQuizContainer: true,
-        showTestContainer: false,
-        selectedExamId:selectedExamId,
-        courseContainer: false,
-      })
-    );
+    try {
+      await AsyncStorage.setItem(
+        "studentDashboardState",
+        JSON.stringify({
+          activeSection: "myCourses",
+          selectedTestCourse: null,
+          showQuizContainer: true,
+          showTestContainer: false,
+          selectedExamId,
+          courseContainer: false,
+          selectedDepartment, // Save department state
+          courseIds // Save courseIds
+        })
+      );
+    } catch (error) {
+      console.error('Failed to save dashboard state:', error);
+    }
+  };
+
+  const handlePortalChange = (portalId) => {
+    setSelectedPortalId(portalId);
+    
+    const portal = portals.find(p => p.course_portal_id === portalId);
+    const firstExam = portal?.exams?.[0];
+    const newExamId = firstExam?.exam_id || null;
+    
+    setSelectedExamId(newExamId);
+    
+    // Reset department when portal changes
+    if (firstExam?.departments?.length > 0) {
+      setSelectedDepartment(firstExam.departments[0].department_name);
+    } else {
+      setSelectedDepartment("");
+    }
+  };
+
+  const handleExamChange = (examId) => {
+    setSelectedExamId(examId);
+    
+    const exam = selectedPortal?.exams?.find(e => e.exam_id === examId);
+    
+    // Reset department when exam changes
+    if (exam?.departments?.length > 0) {
+      setSelectedDepartment(exam.departments[0].department_name);
+    } else {
+      setSelectedDepartment("");
+    }
   };
 
   return (
     <ScrollView style={styles.containerMyCourses}>
+
       {/* Breadcrumb */}
       {(!showQuizContainer || selectedTestCourse) && (
         <View style={styles.breadcrumb}>
           <Text style={styles.breadcrumbText}>My Courses</Text>
+
           {selectedExam && (
             <>
-              <Text> <Icon name="chevron-right" size={16} color="#000" /> </Text>
-              <TouchableOpacity onPress={async () => {
+              <Icon name="chevron-right" size={16} color="#000" />
+              <TouchableOpacity
+                onPress={async () => {
                   setSelectedTestCourse(null);
                   setChapterdetails(null);
                   setShowTestContainer(false);
                   setShowQuizContainer(true);
-                  await AsyncStorage.setItem(
-                    "studentDashboardState",
-                    JSON.stringify({
-                      activeSection: "myCourses",
-                      selectedTestCourse: null,
-                      showQuizContainer: true,
-                      showTestContainer: false,
-                      selectedExamId:selectedExamId,
-                      courseContainer: false,
-                    })
-                  );
-                }}>
+
+                  try {
+                    await AsyncStorage.setItem(
+                      "studentDashboardState",
+                      JSON.stringify({
+                        activeSection: "myCourses",
+                        selectedTestCourse: null,
+                        showQuizContainer: true,
+                        showTestContainer: false,
+                        selectedExamId: selectedExamId,
+                        courseContainer: false,
+                        selectedDepartment,
+                        courseIds
+                      })
+                    );
+                  } catch (error) {
+                    console.error('Failed to save dashboard state:', error);
+                  }
+                }}
+              >
                 <Text style={styles.breadcrumbText}>{selectedExam.exam_name}</Text>
               </TouchableOpacity>
             </>
           )}
+
           {selectedTestCourse && (
             <>
-              <Text> <Icon name="chevron-right" size={16} color="#000" /> </Text>
-              <TouchableOpacity onPress={async () => {
-                if (!selectedTestCourse.course_name) {
-                  setShowTestContainer(false);
-                  setCourseContainer(true);
-                  setChapterdetails(null);
-                  await AsyncStorage.setItem(
-                    "studentDashboardState",
-                    JSON.stringify({
-                      activeSection: "myCourses",
-                      // selectedTestCourse: course,
-                      selectedPortalId: 2,
-                      showQuizContainer: false,
-                      showTestContainer: false,
-                      courseContainer: true,
-                      selectedTestCourse: selectedTestCourse,
-                      selectedExamId:selectedExamId,
-                    })
-                  );
-                }
-              }}>
-                <Text style={styles.breadcrumbText}>{selectedTestCourse.course_name || 'MINI / MICRO COURSES'}</Text>
+              <Icon name="chevron-right" size={16} color="#000" />
+              <TouchableOpacity
+                onPress={async () => {
+                  if (!selectedTestCourse.course_name) {
+                    setShowTestContainer(false);
+                    setCourseContainer(true);
+                    setChapterdetails(null);
+
+                    try {
+                      await AsyncStorage.setItem(
+                        "studentDashboardState",
+                        JSON.stringify({
+                          activeSection: "myCourses",
+                          selectedPortalId: 2,
+                          showQuizContainer: false,
+                          showTestContainer: false,
+                          courseContainer: true,
+                          selectedTestCourse,
+                          selectedExamId,
+                          selectedDepartment,
+                          courseIds
+                        })
+                      );
+                    } catch (error) {
+                      console.error('Failed to save dashboard state:', error);
+                    }
+                  }
+                }}
+              >
+                <Text style={styles.breadcrumbText}>
+                  {selectedTestCourse.course_name || "MINI / MICRO COURSES"}
+                </Text>
               </TouchableOpacity>
-              
             </>
           )}
         </View>
       )}
 
-      {/* Portal Selector */}
+      {/* -------------------------------------------- */}
+      {/*         SHOW QUIZ (MAIN MY COURSES)           */}
+      {/* -------------------------------------------- */}
       {showQuizContainer && (
         <>
           <Text style={styles.heading}>My Courses</Text>
+
+          {/* =================== PORTAL SELECTOR =================== */}
           <ScrollView horizontal style={styles.portalButtons}>
             {portals.map((portal) => (
               <TouchableOpacity
                 key={portal.course_portal_id}
-                style={[styles.portalButton, selectedPortalId === portal.course_portal_id && styles.activeButton]}
-                onPress={() => {
-                  setSelectedPortalId(portal.course_portal_id);
-                  setSelectedExamId(portal.exams[0]?.exam_id || null);
-                }}
+                style={[
+                  styles.portalButton,
+                  selectedPortalId === portal.course_portal_id && styles.activeButton,
+                ]}
+                onPress={() => handlePortalChange(portal.course_portal_id)}
               >
-                <Text style={[styles.portalButtontext, selectedPortalId === portal.course_portal_id && styles.activeButtontext]}>
+                <Text
+                  style={[
+                    styles.portalButtontext,
+                    selectedPortalId === portal.course_portal_id &&
+                      styles.activeButtontext,
+                  ]}
+                >
                   {portal.portal_name}
                 </Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
 
-          {/* Exam Selector */}
-          <ScrollView horizontal style={styles.examButtons}>
-            {/* {selectedPortal?.exams.map((exam) => (
-              <TouchableOpacity
-                key={exam.exam_id}
-                style={[styles.examButton, selectedExamId === exam.exam_id && styles.activeButton]}
-                onPress={() => setSelectedExamId(exam.exam_id)}
-              >
-                <Text style={[styles.examButtontext, selectedExamId === exam.exam_id && styles.activeButtontext]}>
-                  {exam.exam_name}
-                </Text>
-              </TouchableOpacity>
-            ))} */}
-            {/* Exam Selector */}
-{selectedPortal?.exams?.length > 0 && (
-  <ScrollView horizontal style={styles.examButtons}>
-    {selectedPortal.exams.map((exam) => (
-      <TouchableOpacity
-        key={exam.exam_id}
-        style={[styles.examButton, selectedExamId === exam.exam_id && styles.activeButton]}
-        onPress={() => setSelectedExamId(exam.exam_id)}
-      >
-        <Text
-          style={[
-            styles.examButtontext,
-            selectedExamId === exam.exam_id && styles.activeButtontext,
-          ]}
-        >
-          {exam.exam_name}
-        </Text>
-      </TouchableOpacity>
-    ))}
-  </ScrollView>
-)}
+          {/* =================== EXAM SELECTOR =================== */}
+          {selectedPortal?.exams?.length > 0 && (
+            <ScrollView horizontal style={styles.examButtons}>
+              {selectedPortal.exams.map((exam) => (
+                <TouchableOpacity
+                  key={exam.exam_id}
+                  style={[
+                    styles.examButton,
+                    selectedExamId === exam.exam_id && styles.activeButton,
+                  ]}
+                  onPress={() => handleExamChange(exam.exam_id)}
+                >
+                  <Text
+                    style={[
+                      styles.examButtontext,
+                      selectedExamId === exam.exam_id && styles.activeButtontext,
+                    ]}
+                  >
+                    {exam.exam_name}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          )}
 
-          </ScrollView>
+          {/* =================== DEPARTMENT SELECTOR (IF EXISTS) =================== */}
+          {examHasDepartments && (
+            <ScrollView horizontal style={styles.departmentButtons}>
+              {examDepartments.map((dept) => (
+                <TouchableOpacity
+                  key={dept.department_id}
+                  style={[
+                    styles.departmentBtn,
+                    selectedDepartment === dept.department_name &&
+                      styles.departmentActiveBtn,
+                  ]}
+                  onPress={() => setSelectedDepartment(dept.department_name)}
+                >
+                  <Text
+                    style={[
+                      styles.departmentBtnText,
+                      selectedDepartment === dept.department_name &&
+                        styles.departmentActiveBtnText,
+                    ]}
+                  >
+                    {dept.department_name === "No Department"
+                      ? "Common"
+                      : dept.department_name}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          )}
 
-          {/* Course Cards */}
+          {/* =================== COURSE CARDS =================== */}
           {loading ? (
             <ActivityIndicator size="large" color="#0000ff" />
           ) : !filteredCourses.length ? (
-            <Text style={styles.noCourses}>No active courses found.</Text>
+            <View style={styles.noCoursesContainer}>
+              <Text style={styles.noCourses}>No courses found for selected criteria.</Text>
+              <Text style={styles.noCoursesSubtitle}>
+                {selectedDepartment ? `Department: ${selectedDepartment}` : ''}
+                {selectedExam ? ` | Exam: ${selectedExam.exam_name}` : ''}
+              </Text>
+            </View>
           ) : selectedPortalId === 2 ? (
+            /* ---------------------- PORTAL 2 (ORVL) ---------------------- */
             <BundleCourseCard
               exam_id={selectedExam.exam_id}
               exam_name={selectedExam.exam_name}
               studentId={studentId}
-              // Portal2data={{ courses: selectedExam.courses }}
-               Portal2data={{
-                          courses:
-                            portals
-                              .find((portal) => portal.course_portal_id === 2)
-                              ?.exams.find(
-                                (exam) => exam.exam_id === selectedExam.exam_id
-                              )?.courses || [],
-                        }}
+              Portal2data={{
+                courses: filteredCourses.map((c) => ({
+                  ...c,
+                  department_id: selectedDepartment === "No Department" ? "common" : c.department_id,
+                }))
+              }}
               setCourseIds={setCourseIds}
-              // onGoToCourse={handleGoToTest}
               onGoToCourse={(course) => handleGoToTest(course)}
             />
           ) : (
+            /* ---------------------- NORMAL PORTAL COURSE CARDS ---------------------- */
             filteredCourses.map((course) => (
               <CourseCards
                 key={course.course_id}
@@ -305,9 +464,9 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
         </>
       )}
 
-      {/* Test / Bundle / PQB Container */}
-      {selectedTestCourse && (
-        courseContainer && selectedPortalId === 2 ? (
+      {/* =================== COURSE DETAIL / PQB / BUNDLE =================== */}
+      {selectedTestCourse &&
+        (courseContainer && selectedPortalId === 2 ? (
           <BundleCourseContainer
             studentId={studentId}
             userData={userData}
@@ -337,8 +496,7 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
             course_name={selectedTestCourse.course_name}
             selectedExam={selectedExam}
           />
-        )
-      )}
+        ))}
     </ScrollView>
   );
 };
