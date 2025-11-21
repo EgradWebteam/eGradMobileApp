@@ -100,7 +100,7 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
     return !!selectedExam && Array.isArray(selectedExam.departments) && selectedExam.departments.length > 0;
   }, [selectedExam]);
 
-  const examDepartments = useMemo(() => {
+   const examDepartments = useMemo(() => {
     if (!examHasDepartments) return [];
     return selectedExam.departments;
   }, [selectedExam, examHasDepartments]);
@@ -350,16 +350,16 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
               <TouchableOpacity
                 key={portal.course_portal_id}
                 style={[
-                  styles.portalButton,
-                  selectedPortalId === portal.course_portal_id && styles.activeButton,
+                  styles.portalBtn,
+                  selectedPortalId === portal.course_portal_id && styles.portalActive,
                 ]}
                 onPress={() => handlePortalChange(portal.course_portal_id)}
               >
                 <Text
                   style={[
-                    styles.portalButtontext,
+                    styles.portalText,
                     selectedPortalId === portal.course_portal_id &&
-                      styles.activeButtontext,
+                      styles.portalTextActive,
                   ]}
                 >
                   {portal.portal_name}
@@ -375,15 +375,15 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
                 <TouchableOpacity
                   key={exam.exam_id}
                   style={[
-                    styles.examButton,
-                    selectedExamId === exam.exam_id && styles.activeButton,
+                    styles.examBtn,
+                    selectedExamId === exam.exam_id && styles.examActive,
                   ]}
                   onPress={() => handleExamChange(exam.exam_id)}
                 >
                   <Text
                     style={[
-                      styles.examButtontext,
-                      selectedExamId === exam.exam_id && styles.activeButtontext,
+                      styles.examText,
+                      selectedExamId === exam.exam_id && styles.examTextActive,
                     ]}
                   >
                     {exam.exam_name}
@@ -394,23 +394,23 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
           )}
 
           {/* =================== DEPARTMENT SELECTOR (IF EXISTS) =================== */}
-          {examHasDepartments && (
+          {examHasDepartments &&  selectedExam.usingTable === true && (
             <ScrollView horizontal style={styles.departmentButtons}>
               {examDepartments.map((dept) => (
                 <TouchableOpacity
                   key={dept.department_id}
                   style={[
-                    styles.examButton,
+                    styles.deptBtn,
                     selectedDepartment === dept.department_name &&
-                      styles.activeButton,
+                      styles.deptActive,
                   ]}
                   onPress={() => setSelectedDepartment(dept.department_name)}
                 >
                   <Text
                     style={[
-                      styles.examButtontext,
+                      styles.deptText,
                       selectedDepartment === dept.department_name &&
-                        styles.activeButtontext,
+                        styles.deptTextActive,
                     ]}
                   >
                     {dept.department_name === "No Department"

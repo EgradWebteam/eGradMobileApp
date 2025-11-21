@@ -148,9 +148,9 @@ const StudentDashboardMyResults = ({ studentId, userData }) => {
               <TouchableOpacity
                 key={portal.course_portal_id}
                 style={[
-                  styles.portalButton,
+                  styles.portalBtn,
                   selectedPortalId === portal.course_portal_id &&
-                    styles.activeButton,
+                    styles.portalActive,
                 ]}
                 onPress={() => {
                   setSelectedPortalId(portal.course_portal_id);
@@ -159,9 +159,9 @@ const StudentDashboardMyResults = ({ studentId, userData }) => {
               >
                 <Text
                   style={[
-                    styles.portalButtontext,
+                    styles.portalText,
                     selectedPortalId === portal.course_portal_id &&
-                      styles.activeButtontext,
+                      styles.portalTextActive,
                   ]}
                 >
                   {portal.portal_name}
@@ -180,16 +180,16 @@ const StudentDashboardMyResults = ({ studentId, userData }) => {
               <TouchableOpacity
                 key={exam.exam_id}
                 style={[
-                  styles.examButton,
-                  selectedExamId === exam.exam_id && styles.activeButton,
+                  styles.examBtn,
+                  selectedExamId === exam.exam_id && styles.examActive,
                 ]}
                 onPress={() => setSelectedExamId(exam.exam_id)}
               >
                 <Text
                   style={[
-                    styles.examButtontext,
+                    styles.examText,
                     selectedExamId === exam.exam_id &&
-                      styles.activeButtontext,
+                      styles.examTextActive,
                   ]}
                 >
                   {exam.exam_name}

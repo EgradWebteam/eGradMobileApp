@@ -13,6 +13,7 @@ import RazorpayCheckout from "react-native-razorpay";
 import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig";
 // import { useSession } from "../hooks/useSession";
 import CourseCards from "./CourseCards";
+import { styles } from '../styles/StudentDashboardStyles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // import { styles } from '../styles/StudentDashboardStyles';
 const StudentDashboardBuyCourses = ({ setActiveSection, studentId, preselectedPortalId }) => {
@@ -275,81 +276,130 @@ setShowDualPopup(false);
   setPendingPurchase(null);
 };
 
-  const studentpaymentcreation = async (courseId, studentId, price, isUpgrade) => {
-    // const valid = await validateSession();
-    // if (!valid) return;
 
-    try {
-      setIsPaymentProcessing(true);
+const studentpaymentcreation = async (courseId, studentId, price, isUpgrade) => {
+  if (!courseId || !studentId) {
+    console.error("❌ Invalid course ID or student ID.");
+    return;
+  }
 
-      const response = await fetch(
-        `${backEndUrl}/studentbuycourses/studentpaymentcreation/${studentId}/${courseId}`
-      );
-      const data = await response.json();
+  try {
+    setIsPaymentProcessing(true);
 
-      const { student, course } = data;
+    // 1️⃣ Fetch student & course info
+    const res = await fetch(`${backEndUrl}/studentbuycourses/studentpaymentcreation/${studentId}/${courseId}`);
+    if (!res.ok) throw new Error(`Failed to fetch course/student info: ${res.status}`);
+    const data = await res.json();
 
-      const orderRes = await fetch(`${backEndUrl}/razorpay/razorpay-create-order`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount: price * 100,
-          currency: "INR",
-          studentId: student.student_registration_id,
-          courseId: course.course_creation_id
-        })
-      });
-
-      const result = await orderRes.json();
-      const { orderData, razorpayKey } = result;
-
-      const options = {
-        key: razorpayKey,
-        amount: orderData.amount,
-        currency: orderData.currency,
-        name: "eGRADTutor",
-        description: `Payment for ${course.course_name}`,
-        order_id: orderData.id,
-
-        prefill: {
-          name: student.candidate_name,
-          email: student.email_id,
-          contact: student.mobile_no,
-        }
-      };
-
-      RazorpayCheckout.open(options)
-        .then(async (response) => {
-          await fetch(`${backEndUrl}/razorpay/paymentsuccess`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_order_id: response.razorpay_order_id,
-              email: student.email_id,
-              name: student.candidate_name,
-              course_name: course.course_name,
-              studentId: student.student_registration_id,
-              courseId: course.course_creation_id,
-              amount: price,
-              isUpgrade
-            })
-          });
-
-          await fetchCoursesInBuyCourses();
-          setActiveSection("myCourses");
-        })
-        .catch(async () => {
-          await fetch(`${backEndUrl}/razorpay/paymentfailure`);
-
-        })
-        .finally(() => setIsPaymentProcessing(false));
-
-    } catch (e) {
-      console.error(e);
+    const { student, course } = data;
+    if (!student || !course) {
+      console.error("❌ Invalid student or course data:", data);
       setIsPaymentProcessing(false);
+      return;
     }
-  };
+
+    const { student_registration_id, candidate_name, email_id, mobile_no } = student;
+    const { course_creation_id, course_name, course_start_date, course_end_date } = course;
+
+    // 2️⃣ Create Razorpay order on backend
+    const orderRes = await fetch(`${backEndUrl}/razorpay/razorpay-create-order`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        amount: price * 100, // Razorpay expects paise
+        currency: "INR",
+        studentId: student_registration_id,
+        courseId: course_creation_id,
+      }),
+    });
+
+    if (!orderRes.ok) throw new Error(`Failed to create Razorpay order: ${orderRes.status}`);
+    const orderResult = await orderRes.json();
+console.log("order",orderResult)
+    if ( !orderResult.orderData || !orderResult.razorpayKey) {
+      console.error("❌ Razorpay order creation failed:", orderResult);
+      Alert.alert("Order creation failed", orderResult.error || "Please try again.");
+      setIsPaymentProcessing(false);
+      return;
+    }
+
+    const { orderData, razorpayKey } = orderResult;
+console.log( orderData, razorpayKey)
+    // 3️⃣ Setup Razorpay options
+    const options = {
+      key: razorpayKey,
+      amount: orderData.amount,
+      currency: orderData.currency,
+      name: "eGRADTutor",
+      description: `Payment for ${course_name}`,
+      order_id: orderData.id,
+      prefill: {
+        name: candidate_name,
+        email: email_id,
+        contact: mobile_no,
+      },
+      notes: {
+        address: "Corporate Office, eGRADTutor, Hyderabad",
+      },
+      theme: { color: "#3399cc" },
+    };
+
+    console.log("Razorpay options:", options);
+
+    // 4️⃣ Open Razorpay checkout
+    RazorpayCheckout.open(options)
+      .then(async (response) => {
+        console.log("✅ Payment success response:", response);
+        // Notify backend of successful payment
+        await fetch(`${backEndUrl}/razorpay/paymentsuccess`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_order_id: response.razorpay_order_id,
+            email: email_id,
+            name: candidate_name,
+            course_name,
+            course_start_date,
+            course_end_date,
+            studentId: student_registration_id,
+            courseId: course_creation_id,
+            amount: price,
+            isUpgrade,
+          }),
+        });
+        // Alert.alert(`Payment Success,${course_name} Course added to your My Courses`);
+
+        setActiveSection("myCourses");
+      })
+      .catch(async (error) => {
+        console.error("❌ Razorpay payment failed:", error);
+        Alert.alert("Payment failed", "Please try again.");
+
+        // Notify backend of payment failure
+        await fetch(`${backEndUrl}/razorpay/paymentfailure`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: email_id,
+            name: candidate_name,
+            course_name,
+            studentId: student_registration_id,
+            courseId: course_creation_id,
+          }),
+        });
+      })
+      .finally(() => {
+        setIsPaymentProcessing(false);
+      });
+  } catch (err) {
+    console.error("❌ Error in payment creation flow:", err);
+    Alert.alert("Error", "Something went wrong. Please try again.");
+    setIsPaymentProcessing(false);
+  }
+};
+
+
   if (loading || isPaymentProcessing) {
     return (
       <View style={styles.loader}>
@@ -644,179 +694,5 @@ setShowDualPopup(false);
 };
 
 export default StudentDashboardBuyCourses;
-const styles = StyleSheet.create({
-  heading: {
-    fontSize: 22,
-    fontWeight: "bold",
-    margin: 15,
-    textAlign: "center",
-  },
 
-row: {
-    flexDirection: "row",
-    // flexWrap: "wrap",
-    paddingHorizontal: 10,
-    marginBottom: 10,
-  },
-
-  /** PORTAL BUTTONS **/
-  portalBtn: {
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: "#000",
-    backgroundColor: "#ffffff",
-    marginRight: 12,
-    marginBottom: 12,
-  },
-  portalActive: {
-    backgroundColor: "#2bb8ff", // same as screenshot blue
-    borderColor: "#2bb8ff",
-  },
-  portalText: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#000",
-    textAlign: "center",
-  },
-  portalTextActive: {
-    color: "#fff",
-  },
-
-  /** EXAM BUTTONS **/
-  examBtn: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderTopRightRadius: 10,
-    borderTopLeftRadius:10,
-    backgroundColor: "#3c3c3c",
-    marginRight: 12,
-    marginBottom: 12,
-  },
-  examActive: {
-    backgroundColor: "#2bb8ff",
-  },
-  examText: {
-    fontSize: 14,
-    fontWeight: "600",
-     color: "#fff",
-  },
-  examTextActive: {
-    color: "#fff",
-  },
-
-  /** DEPARTMENT BUTTONS **/
-  deptBtn: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    backgroundColor: "#3c3c3c",
-    borderRadius: 10,
-    marginRight: 10,
-    marginBottom: 10,
-  },
-  deptActive: {
-    backgroundColor: "#2bb8ff",
-  },
-  deptText: {
-    fontSize: 14,
-    fontWeight: "600",
-     color: "#fff",
-  },
-  deptTextActive: {
-    color: "#fff",
-  },
-
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginLeft: 15,
-    marginTop: 20,
-    marginBottom: 10,
-  },
-
-  noCourses: {
-    textAlign: "center",
-    marginVertical: 30,
-    fontSize: 16,
-    color: "grey",
-  },
-
-  loader: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  popupOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
- popupBox: {
-  width: "85%",
-  backgroundColor: "#fff",
-  padding: 25,
-  borderRadius: 16,
-  shadowColor: "#000",
-  shadowOpacity: 0.25,
-  shadowRadius: 10,
-  elevation: 5,
-},
-
-popupTitle: {
-  fontSize: 20,
-  fontWeight: "700",
-  textAlign: "center",
-  marginBottom: 12,
-  color: "#000",
-},
-
-popupPara: {
-  fontSize: 15,
-  lineHeight: 22,
-  textAlign: "center",
-  marginBottom: 12,
-  color: "#444",
-},
-
-boldText: {
-  fontWeight: "700",
-  color: "#000",
-},
-
-popupBtnRow: {
-  flexDirection: "row",
-  justifyContent: "space-around",
-  marginTop: 15,
-},
-
-okBlueBtn: {
-  backgroundColor: "#1E88E5",
-  paddingVertical: 12,
-  paddingHorizontal: 28,
-  borderRadius: 10,
-},
-
-okBlueText: {
-  color: "#fff",
-  fontSize: 16,
-  fontWeight: "700",
-},
-
-cancelRedBtn: {
-  backgroundColor: "#D32F2F",
-  paddingVertical: 12,
-  paddingHorizontal: 24,
-  borderRadius: 10,
-},
-
-cancelRedText: {
-  color: "#fff",
-  fontSize: 16,
-  fontWeight: "700",
-},
-
-});
 

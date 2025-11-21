@@ -89,6 +89,180 @@ export const styles = StyleSheet.create({
     // Android shadow
     elevation: 3,
   },
+  //buycourses
+   heading: {
+    fontSize: 22,
+    fontWeight: "bold",
+    margin: 15,
+    textAlign: "center",
+  },
+
+row: {
+    flexDirection: "row",
+    // flexWrap: "wrap",
+    paddingHorizontal: 10,
+    marginBottom: 10,
+  },
+
+  /** PORTAL BUTTONS **/
+  portalBtn: {
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: "#000",
+    backgroundColor: "#ffffff",
+    marginRight: 12,
+    marginBottom: 12,
+  },
+  portalActive: {
+    backgroundColor: "#2bb8ff", // same as screenshot blue
+    borderColor: "#2bb8ff",
+  },
+  portalText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#000",
+    textAlign: "center",
+  },
+  portalTextActive: {
+    color: "#fff",
+  },
+
+  /** EXAM BUTTONS **/
+  examBtn: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderTopRightRadius: 10,
+    borderTopLeftRadius:10,
+    backgroundColor: "#3c3c3c",
+    marginRight: 12,
+    marginBottom: 12,
+  },
+  examActive: {
+    backgroundColor: "#2bb8ff",
+  },
+  examText: {
+    fontSize: 14,
+    fontWeight: "600",
+     color: "#fff",
+  },
+  examTextActive: {
+    color: "#fff",
+  },
+
+  /** DEPARTMENT BUTTONS **/
+  deptBtn: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: "#3c3c3c",
+    borderRadius: 10,
+    marginRight: 10,
+    marginBottom: 10,
+  },
+  deptActive: {
+    backgroundColor: "#2bb8ff",
+  },
+  deptText: {
+    fontSize: 14,
+    fontWeight: "600",
+     color: "#fff",
+  },
+  deptTextActive: {
+    color: "#fff",
+  },
+
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginLeft: 15,
+    marginTop: 20,
+    marginBottom: 10,
+  },
+
+  noCourses: {
+    textAlign: "center",
+    marginVertical: 30,
+    fontSize: 16,
+    color: "grey",
+  },
+
+  loader: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  popupOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+ popupBox: {
+  width: "85%",
+  backgroundColor: "#fff",
+  padding: 25,
+  borderRadius: 16,
+  shadowColor: "#000",
+  shadowOpacity: 0.25,
+  shadowRadius: 10,
+  elevation: 5,
+},
+
+popupTitle: {
+  fontSize: 20,
+  fontWeight: "700",
+  textAlign: "center",
+  marginBottom: 12,
+  color: "#000",
+},
+
+popupPara: {
+  fontSize: 15,
+  lineHeight: 22,
+  textAlign: "center",
+  marginBottom: 12,
+  color: "#444",
+},
+
+boldText: {
+  fontWeight: "700",
+  color: "#000",
+},
+
+popupBtnRow: {
+  flexDirection: "row",
+  justifyContent: "space-around",
+  marginTop: 15,
+},
+
+okBlueBtn: {
+  backgroundColor: "#1E88E5",
+  paddingVertical: 12,
+  paddingHorizontal: 28,
+  borderRadius: 10,
+},
+
+okBlueText: {
+  color: "#fff",
+  fontSize: 16,
+  fontWeight: "700",
+},
+
+cancelRedBtn: {
+  backgroundColor: "#D32F2F",
+  paddingVertical: 12,
+  paddingHorizontal: 24,
+  borderRadius: 10,
+},
+
+cancelRedText: {
+  color: "#fff",
+  fontSize: 16,
+  fontWeight: "700",
+},
+//buyend
   disabledButton: { backgroundColor: "#444444" },
   submitText: { color: "#fff", fontWeight: "bold", fontSize: 16 },
   popup: {

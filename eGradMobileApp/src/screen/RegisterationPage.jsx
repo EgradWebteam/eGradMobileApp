@@ -29,7 +29,7 @@ const getDOBLimits = (portalId) => {
     case 2: // PG: Age between 21 and 50 years
       return {
         minDate: subtractYears(today, 100),
-        maxDate: subtractYears(today, 21),
+        maxDate: subtractYears(today, 10),
       };
 
     default: // Fallback: Age between 10 and 70 years
