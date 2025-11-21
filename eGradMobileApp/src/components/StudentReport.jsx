@@ -232,9 +232,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   rank: {
-    fontSize: 18,
+    fontSize: 25,
     fontWeight: "bold",
-    color: "#007bff",
+    color: "#000",
     marginVertical: 10,
     textAlign: "center",
   },
