@@ -22,6 +22,8 @@ export const LoginScreen = () => {
     const [showPassword, setShowPassword] = useState(false);
 const [showNewPassword, setShowNewPassword] = useState(false);
 const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const[logging,setLogging] = useState(false);
+  const[isPasswordReseting,setIsPasswordReseting]=useState(false);
 // ---------- password criteria state/helpers ----------
 const [touched, setTouched] = useState({
   newPassword: false,
@@ -49,6 +51,7 @@ const isPasswordValid = (criteria) =>
  const handleLogin = async () => {
 //   console.log("handleLogin called ✅");
   // await AsyncStorage.clear();
+  if(logging) return;
   if (!email || !password) {
     Alert.alert("Validation Error", "Please enter email and password");
     return;
@@ -57,6 +60,7 @@ const isPasswordValid = (criteria) =>
   console.log(password, email, "these r password nd emails");
 console.log("url",frontEndUrl,backEndPort)
   try {
+    setLogging(true);
     const response = await fetch(`${backEndUrl}/login/studentLogin`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -106,9 +110,12 @@ navigation.navigate("studentDashboard", { userId: data.user_Id });
   } catch (error) {
     console.log(error, "error while login");
     Alert.alert("Error", "Something went wrong during login. Please try again.");
+  } finally{
+    setLogging(false);
   }
 };
      const handleSendResetCode = async () => {
+      if(isSendingResetCode) return;
     if (!email) {
       Alert.alert('Validation Error', 'Please enter your email first');
       return;
@@ -129,18 +136,22 @@ navigation.navigate("studentDashboard", { userId: data.user_Id });
       if (response.ok) {
         Alert.alert('Success', 'Reset code sent to your email');
         setIsResetPassword(true);
+         setConfirmPassword("");
+            setNewPassword("");
+            setResetCode("");
       } else {
         console.log()
-        Alert.alert('Error', data.message || 'Failed to send reset code');
+        Alert.alert(data.message || 'Failed to send reset code');
       }
     } catch (err) {
       console.log(err, 'error while sending reset code');
-      Alert.alert('Error', 'Something went wrong');
+      Alert.alert( 'Something went wrong');
     } finally {
       setIsSendingResetCode(false);
     }
   };
   const handleResetPassword = async () => {
+    if(isPasswordReseting) return;
     if (!resetCode || !newPassword || !confirmPassword) {
       Alert.alert("Validation Error", "Please enter reset code, new password, and confirm password.");
       return;
@@ -161,6 +172,7 @@ navigation.navigate("studentDashboard", { userId: data.user_Id });
     console.log("resetPasswordData", resetPasswordData);
 
     try {
+      setIsPasswordReseting(true);
       const response = await fetch(`${backEndUrl}/login/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -210,21 +222,25 @@ Alert.alert(
 );
 
       } else {
-        Alert.alert("Error", data.message || "Something went wrong. Please try again.");
+        Alert.alert(data.message || "Something went wrong. Please try again.");
       }
     } catch (error) {
       console.log("Reset password error:", error);
-      Alert.alert("Error", "Something went wrong. Please try again later.");
+      Alert.alert( "Something went wrong. Please try again later.");
+    } finally {
+       setIsPasswordReseting(false);
     }
   };
  return (
     <View >
       <LoginHomeHeader />
+        <View style={styles.LoginScreen}>
       <Text style={styles.title}>Student Login</Text>
-
+     <View style={styles.LoginScreenConner}>
       {/* 🔹 Normal Login */}
       {!isForgotPassword && !isResetPassword && (
         <>
+        <Text style={styles.label}>Email</Text>
           <TextInput
             style={styles.input}
             placeholder="Email"
@@ -238,6 +254,7 @@ Alert.alert(
             style={styles.input}
             placeholder="Password"
           /> */}
+             <Text style={styles.label}>Password</Text>
           <View style={styles.passwordContainer}>
   <TextInput
     value={password}
@@ -260,9 +277,16 @@ Alert.alert(
 </View>
 
 
-          <TouchableOpacity style={styles.qbBtn} onPress={handleLogin}>
+          <TouchableOpacity style={styles.qbBtn} onPress={handleLogin} disabled={logging}>
             <Text style={styles.btnText}>Login</Text>
           </TouchableOpacity>
+<View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 10 }}>
+  <Text style={styles.normalText}>New here? </Text>
+
+  <TouchableOpacity onPress={() => navigate('register')}>
+    <Text style={styles.linkreg}>Register</Text>
+  </TouchableOpacity>
+</View>
 
           <TouchableOpacity onPress={() => setIsForgotPassword(true)}>
             <Text style={styles.link}>Forgot Password?</Text>
@@ -273,6 +297,7 @@ Alert.alert(
       {/* 🔹 Forgot Password */}
       {isForgotPassword && !isResetPassword && (
         <>
+        <Text style={styles.label}>Email</Text>
           <TextInput
             style={styles.input}
             placeholder="Enter your email"
@@ -299,6 +324,7 @@ Alert.alert(
       {/* 🔹 Reset Password */}
       {isResetPassword && (
         <>
+        <Text style={styles.label}>Reset Code</Text>
 {/* Reset code input (keeps as-is) */}
 <TextInput
   style={styles.input}
@@ -308,6 +334,7 @@ Alert.alert(
 />
 
 {/* NEW PASSWORD */}
+  <Text style={styles.label}>New Password</Text>
 <View style={styles.passwordContainer}>
   <TextInput
     style={styles.passwordInput}
@@ -353,6 +380,7 @@ Alert.alert(
 )}
 
 {/* CONFIRM PASSWORD */}
+<Text style={styles.label}>Confirm Password</Text>
 <View style={styles.passwordContainer}>
   <TextInput
     style={styles.passwordInput}
@@ -382,19 +410,24 @@ Alert.alert(
     styles.qbBtn,
     (!isPasswordValid(passwordCriteria) || newPassword !== confirmPassword) && { opacity: 0.5 }
   ]}
-  disabled={!isPasswordValid(passwordCriteria) || newPassword !== confirmPassword}
+  disabled={!isPasswordValid(passwordCriteria) || newPassword !== confirmPassword || isPasswordReseting}
   onPress={handleResetPassword}
 >
   <Text style={styles.btnText}>Reset Password</Text>
 </TouchableOpacity>
 
 
-          <TouchableOpacity onPress={() => setIsResetPassword(false)}>
+          <TouchableOpacity onPress={() => {setIsResetPassword(false);
+            setConfirmPassword("");
+            setNewPassword("");
+            setResetCode("");
+          }}>
             <Text style={styles.link}>Back to Forgot Password</Text>
           </TouchableOpacity>
         </>
       )}
-
+      </View>
+</View>
       <Footer />
     </View>
   );
@@ -402,7 +435,7 @@ Alert.alert(
 
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'center', padding: 20 },
-  title: { fontSize: 24, marginBottom: 20, textAlign: 'center' },
+  title: { fontSize: 28, marginBottom: 20, textAlign: 'center' ,fontWeight:600},
   input: {
     width: '100%',
     borderWidth: 1,
@@ -410,6 +443,15 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 15,
     borderRadius: 5,
+  },
+  LoginScreen:{
+ backgroundColor: '#fff',
+
+    padding: 24,
+  },
+  label:{
+padding:5,
+fontSize:16,
   },
   qbBtn: {
     backgroundColor: '#007bff',
@@ -419,7 +461,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   btnText: { color: '#fff', fontWeight: 'bold' },
-  link: { color: '#007bff', textAlign: 'center', marginTop: 10 },
+  link: { color: '#007bff', textAlign: 'center', marginTop: 10 ,   textDecorationLine: 'underline'},
   passwordContainer: {
   width: "100%",
   borderWidth: 1,
@@ -430,7 +472,12 @@ const styles = StyleSheet.create({
   alignItems: "center",
   paddingRight: 10,
 },
-
+LoginScreenConner:{
+  minHeight:400
+},
+linkreg: {
+  color:"#007bff"
+},
 passwordInput: {
   flex: 1,
   padding: 10,
