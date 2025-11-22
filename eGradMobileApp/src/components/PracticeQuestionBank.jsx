@@ -262,13 +262,13 @@ const handleStartPractice = async (testId, studentId, courseId) => {
         keyExtractor={(item) => item}
         renderItem={({ item: type }) => {
           const { tests } = filteredGroupedData[type];
-          const validTests = tests.filter((test) => test.test_status === "1");
-          if (validTests.length === 0) return null;
+          // const validTests = tests.filter((test) => test.test_status === "1");
+          // if (validTests.length === 0) return null;
 
           return (
             <View>
               <Text style={styles.sectionHeading}>{type}</Text>
-              {validTests.map((test) => {
+              {tests.map((test) => {
                 const now = new Date();
                 const testStart = getLocalTestDate(
                   test.test_start_date,
@@ -295,39 +295,72 @@ const handleStartPractice = async (testId, studentId, courseId) => {
     </View>
   </View>
 
-  {now < testStart ? (
-    <Text style={styles.testActivation}>
-      Practice Test will be activated on {testStart.toLocaleDateString()} at{" "}
-      {testStart.toLocaleTimeString()}
-    </Text>
-  ) : (
-  <TouchableOpacity
-  style={[
-    styles.startBtn,
+<View style={{ alignItems: 'center', marginTop: 10 }}>
+  {(() => {
+    const now = new Date();
+    const testStart = getLocalTestDate(test.test_start_date, test.test_start_time);
+    
+    // ✅ Case A: test_status = 0
+    if (test.test_status === "0") {
+      return (
+        <Text style={{ color: "#666", textAlign: "center" }}>
+          Practice Test will be activated soon
+        </Text>
+      );
+    }
+    
+    // Upcoming test → show activation message
+    if (now < testStart) {
+      const formattedDate = testStart.toLocaleDateString("en-IN", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+      const formattedTime = testStart.toLocaleTimeString("en-IN", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      return (
+        <Text style={{ color: "#666", textAlign: "center" }}>
+          Practice Test will be activated on{" "}
+          <Text style={{ fontWeight: "bold" }}>{formattedDate}</Text> at{" "}
+          <Text style={{ fontFamily: "monospace" }}>{formattedTime}</Text>
+        </Text>
+      );
+    }
+
+    // Test is active → show button based on attempt status
+    const isCompleted = test.status_version >= test.practice_attempt_count && 
+                       test.practice_attempt_count > 0;
+    
+    return (
+      <TouchableOpacity
+        style={[
+           styles.startBtn,
     isCompleted
       ? styles.completedBtn
       : test.status_version && test.status_version > 0
       ? styles.reAttemptBtn
       : null,
-  ]}
-  disabled={isCompleted}
-  onPress={() =>
-    !isCompleted &&
-    handleStartPracticeWithSession(test.test_id, studentId, course.course_id)
-  }
->
-  <Text style={styles.btnText}>
-    {isCompleted
-      ? "Completed"
-      : !test.status_version || test.status_version === 0
-      ? "Start Practice"
-      : `Re-Attempt (${test.practice_attempt_count - test.status_version})`}
-  </Text>
-</TouchableOpacity>
-
-  )}
+        ]}
+        disabled={isCompleted}
+        onPress={() =>
+          !isCompleted &&
+          handleStartPracticeWithSession(test.test_id, studentId, course.course_id)
+        }
+      >
+        <Text style={styles.btnText}>
+          {isCompleted
+            ? "Completed"
+            : !test.status_version || test.status_version === 0
+            ? "Start Practice"
+            : `Re-Attempt (${test.practice_attempt_count - test.status_version})`}
+        </Text>
+      </TouchableOpacity>
+    );
+  })()}
 </View>
-
+</View>
                 );
               })}
             </View>
