@@ -212,7 +212,25 @@ const TestDetailsContainer = ({ course, testDataLoading, refreshTriggerBundle, s
       Alert.alert("Error", "An error occurred while starting the test");
     }
   };
+  function getLocalTestDate(dateUTC, timeStr) {
+    if (!timeStr) {
+      // No time given, skip or return null
+      console.warn("No time given, skipping the time display")
+      return null;
+    }
+    // Always interpret dateUTC as UTC, then convert to local date parts
+    const utcDate = new Date(dateUTC);
+    const [hours, minutes, seconds] = timeStr.split(":").map(Number);
 
+    return new Date(
+      utcDate.getFullYear(),
+      utcDate.getMonth(),
+      utcDate.getDate(),
+      hours,
+      minutes,
+      seconds
+    );
+  }
 
   const handleViewReport = async (test) => {
       const isValid = await validateSession();
@@ -332,31 +350,99 @@ const TestDetailsContainer = ({ course, testDataLoading, refreshTriggerBundle, s
                     </View>
                   </View>
 
-                  {test.test_status !== "0" && (
-                    <TouchableOpacity
-                      style={{
-                        marginTop: 10,
-                        padding: 10,
-                        width: "10px",
-                        backgroundColor: attemptStatus === "completed" ? "#2ecc71" : attemptStatus === "started" || attemptStatus === "resumed" ? "#e67e22" : "#06b6d4",
-                        borderRadius: 5,
-                      }}
-                      onPress={() =>
-                        attemptStatus === "completed"
-                          ? handleViewReport(test)
-                          : handleStartTestClick(test)
-                      }
-                    >
-                      <Text style={{ color: "#fff", textAlign: "center" }}>
-                        {attemptStatus === "completed"
-                          ? "View Report"
-                          : attemptStatus === "started" || attemptStatus === "resumed"
-                            ? "Resume Test"
-                            : "Start Test"}
-                      </Text>
-                    </TouchableOpacity>
-                  )}
+                 {(() => {
+  const now = new Date();
+  const testStart = getLocalTestDate(test.test_start_date, test.test_start_time);
+  const status = test.test_status?.toLowerCase().trim();
+  const attemptStatus = test.test_attempt_status?.toLowerCase().trim();
 
+  if (status === "0") {
+    return (
+      <View style={{ marginTop: 10 }}>
+        <Text style={{ color: "#666", textAlign: "center" }}>
+          The test will be activated soon.
+        </Text>
+      </View>
+    );
+  }
+  
+  if (now < testStart) {
+    const formattedDate = testStart.toLocaleDateString("en-IN", {
+      year: "numeric",
+      month: "short",
+      day: "numeric"
+    });
+
+    const formattedTime = testStart.toLocaleTimeString("en-IN", {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+    
+    return (
+      <View style={{ marginTop: 10 }}>
+        <Text style={{ color: "#666", textAlign: "center" }}>
+          The test will start on {" "}
+          <Text style={{ fontWeight: "bold" }}>
+            {formattedDate}
+          </Text> {" "} at {" "}
+          <Text style={{ fontFamily: "monospace" }}>
+            {formattedTime}
+          </Text>
+        </Text>
+      </View>
+    );
+  }
+
+  if (attemptStatus === 'completed') {
+    return (
+      <TouchableOpacity
+        style={{
+          marginTop: 10,
+          padding: 10,
+          backgroundColor: "#2ecc71",
+          borderRadius: 5,
+        }}
+        onPress={() => handleViewReportClickMycourses(test.test_id, test)}
+      >
+        <Text style={{ color: "#fff", textAlign: "center" }}>
+          View Report
+        </Text>
+      </TouchableOpacity>
+    );
+  } else if (attemptStatus === 'started' || attemptStatus === 'resumed') {
+    return (
+      <TouchableOpacity
+        style={{
+          marginTop: 10,
+          padding: 10,
+          backgroundColor: "#e67e22",
+          borderRadius: 5,
+        }}
+        onPress={() => handleStartTestClick(test)}
+      >
+        <Text style={{ color: "#fff", textAlign: "center" }}>
+          Resume Test
+        </Text>
+      </TouchableOpacity>
+    );
+  } else {
+    return (
+      <TouchableOpacity
+        style={{
+          marginTop: 10,
+          padding: 10,
+          backgroundColor: "#06b6d4",
+          borderRadius: 5,
+        }}
+        onPress={() => handleStartTestClick(test)}
+      >
+        <Text style={{ color: "#fff", textAlign: "center" }}>
+          Start Test
+        </Text>
+      </TouchableOpacity>
+    );
+  }
+})()}
                 </View>
               );
             })}
