@@ -564,7 +564,7 @@ export const RegisterationPage = ({ navigation }) => {
       const data = await resp.json();
       console.log(`${backEndUrl}/navbar/get-logo`, data);
       // setPortalId(data.portalId);
-      setPortalId(2); // Stub for UI path
+      setPortalId(data.portalId); // Stub for UI path
     })();
   }, []);
   const handleEmailBlur = async () => {
