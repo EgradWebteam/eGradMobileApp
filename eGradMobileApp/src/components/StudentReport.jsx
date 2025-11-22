@@ -50,7 +50,7 @@ console.log("subjectMarkssssss",subjectMarks);
     totalAttemptedStudents,
     test_total_marks,
     totalQuestions,
-    test_total_Questions,
+    test_total_questions,
     totalCorrect,
     totalWrong,
     sumStatus1,
@@ -62,7 +62,7 @@ console.log("subjectMarkssssss",subjectMarks);
   const timeSpentSec = totalDurationSec - timeLeftSec;
 
   const notAttempted =
-    (totalQuestions ?? test_total_Questions ?? 0) -
+    (totalQuestions ?? test_total_questions ?? 0) -
     (totalCorrect ?? 0) -
     (totalWrong ?? 0);
 
