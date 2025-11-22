@@ -7,6 +7,7 @@ import { LoginHomeHeader } from '../components/LoginHomeHeader';
 import { backEndPort, frontEndUrl,backEndUrl } from '../apiConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useStudent } from '../hooks/StudentContext';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 export const LoginScreen = () => {
     const navigation = useNavigation();
     const [email, setEmail] = useState("");
@@ -18,6 +19,32 @@ export const LoginScreen = () => {
     const [isResetPassword, setIsResetPassword] = useState(false);
     const [failedAttempts, setFailedAttempts] = useState(0);
     const [isSendingResetCode, setIsSendingResetCode] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+const [showNewPassword, setShowNewPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+// ---------- password criteria state/helpers ----------
+const [touched, setTouched] = useState({
+  newPassword: false,
+  confirmPassword: false,
+});
+
+const checkPasswordCriteria = (password) => ({
+  length: password.length >= 8,
+  uppercase: /[A-Z]/.test(password),
+  lowercase: /[a-z]/.test(password),
+  number: /\d/.test(password),
+  specialChar: /[^A-Za-z0-9]/.test(password),
+});
+
+const passwordCriteria = checkPasswordCriteria(newPassword);
+
+const isPasswordValid = (criteria) =>
+  criteria.length &&
+  criteria.uppercase &&
+  criteria.lowercase &&
+  criteria.number &&
+  criteria.specialChar;
+
  const { setStudentData } = useStudent();
  const handleLogin = async () => {
 //   console.log("handleLogin called ✅");
@@ -125,10 +152,10 @@ navigation.navigate("studentDashboard", { userId: data.user_Id });
     }
 
     const resetPasswordData = {
-      email: username,
+      email: email,
       resetCode,
       newPassword,
-      instituteOrDomain: frontEndURL,
+      instituteOrDomain: frontEndUrl,
     };
 
     console.log("resetPasswordData", resetPasswordData);
@@ -151,9 +178,37 @@ navigation.navigate("studentDashboard", { userId: data.user_Id });
       }
 
       if (response.ok) {
-        Alert.alert("Success", "Password has been reset successfully. You can now log in.", [
-          { text: "OK", onPress: () => navigation.navigate("Login") },
-        ]);
+Alert.alert(
+  "Success",
+  "Password has been reset successfully. You can now log in.",
+  [
+    {
+      text: "OK",
+      onPress: () => {
+        console.log("OK pressed → running reset state");
+
+        // Delay is required for React Native Alert onPress to work reliably
+        setTimeout(() => {
+          console.log("Clearing all reset states...");
+
+          setIsForgotPassword(false);
+          setIsResetPassword(false);
+
+          setNewPassword("");
+          setConfirmPassword("");
+          setResetCode("");
+
+          setShowNewPassword(false);
+          setShowConfirmPassword(false);
+          setShowPassword(false);
+
+          console.log("All states cleared!");
+        }, 50);
+      }
+    }
+  ]
+);
+
       } else {
         Alert.alert("Error", data.message || "Something went wrong. Please try again.");
       }
@@ -165,7 +220,7 @@ navigation.navigate("studentDashboard", { userId: data.user_Id });
  return (
     <View >
       <LoginHomeHeader />
-      <Text style={styles.title}>Login Screen</Text>
+      <Text style={styles.title}>Student Login</Text>
 
       {/* 🔹 Normal Login */}
       {!isForgotPassword && !isResetPassword && (
@@ -176,13 +231,34 @@ navigation.navigate("studentDashboard", { userId: data.user_Id });
             value={email}
             onChangeText={setEmail}
           />
-          <TextInput
+          {/* <TextInput
             value={password}
             secureTextEntry
             onChangeText={setPassword}
             style={styles.input}
             placeholder="Password"
-          />
+          /> */}
+          <View style={styles.passwordContainer}>
+  <TextInput
+    value={password}
+    secureTextEntry={!showPassword}
+    onChangeText={setPassword}
+    style={styles.passwordInput}
+    placeholder="Password"
+  />
+
+  <TouchableOpacity
+    onPress={() => setShowPassword(!showPassword)}
+    style={styles.eyeIcon}
+  >
+    <Ionicons
+      name={showPassword ? "eye-off" : "eye"}
+      size={22}
+      color="#555"
+    />
+  </TouchableOpacity>
+</View>
+
 
           <TouchableOpacity style={styles.qbBtn} onPress={handleLogin}>
             <Text style={styles.btnText}>Login</Text>
@@ -223,30 +299,95 @@ navigation.navigate("studentDashboard", { userId: data.user_Id });
       {/* 🔹 Reset Password */}
       {isResetPassword && (
         <>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter reset code"
-            value={resetCode}
-            onChangeText={setResetCode}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="New Password"
-            value={password}
-            secureTextEntry
-            onChangeText={setPassword}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            secureTextEntry
-            onChangeText={setConfirmPassword}
-          />
+{/* Reset code input (keeps as-is) */}
+<TextInput
+  style={styles.input}
+  placeholder="Enter reset code"
+  value={resetCode}
+  onChangeText={setResetCode}
+/>
 
-          <TouchableOpacity style={styles.qbBtn} onPress={handleResetPassword}>
-            <Text style={styles.btnText}>Reset Password</Text>
-          </TouchableOpacity>
+{/* NEW PASSWORD */}
+<View style={styles.passwordContainer}>
+  <TextInput
+    style={styles.passwordInput}
+    placeholder="New Password"
+    value={newPassword}
+    secureTextEntry={!showNewPassword}
+    onChangeText={setNewPassword}
+    onBlur={() => setTouched(prev => ({ ...prev, newPassword: true }))}
+  />
+
+  <TouchableOpacity
+    onPress={() => setShowNewPassword(!showNewPassword)}
+    style={styles.eyeIcon}
+  >
+    <Ionicons
+      name={showNewPassword ? "eye-off" : "eye"}
+      size={22}
+      color="#555"
+    />
+  </TouchableOpacity>
+</View>
+
+{/* Password Criteria Checklist */}
+{newPassword.length > 0 && (
+  <View style={styles.criteriaList}>
+    {Object.entries(passwordCriteria).map(([key, valid]) => (
+      <Text
+        key={key}
+        style={{
+          color: valid ? "green" : touched.newPassword ? "red" : "#999",
+          marginLeft: 6,
+          marginTop: 3,
+        }}
+      >
+        {key === "length" && "• At least 8 characters"}
+        {key === "uppercase" && "• At least one uppercase letter"}
+        {key === "lowercase" && "• At least one lowercase letter"}
+        {key === "number" && "• At least one number"}
+        {key === "specialChar" && "• At least one special character"}
+      </Text>
+    ))}
+  </View>
+)}
+
+{/* CONFIRM PASSWORD */}
+<View style={styles.passwordContainer}>
+  <TextInput
+    style={styles.passwordInput}
+    placeholder="Confirm Password"
+    value={confirmPassword}
+    secureTextEntry={!showConfirmPassword}
+    onChangeText={setConfirmPassword}
+    onBlur={() => setTouched(prev => ({ ...prev, confirmPassword: true }))}
+  />
+
+  <TouchableOpacity
+    onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+    style={styles.eyeIcon}
+  >
+    <Ionicons
+      name={showConfirmPassword ? "eye-off" : "eye"}
+      size={22}
+      color="#555"
+    />
+  </TouchableOpacity>
+</View>
+
+
+
+<TouchableOpacity
+  style={[
+    styles.qbBtn,
+    (!isPasswordValid(passwordCriteria) || newPassword !== confirmPassword) && { opacity: 0.5 }
+  ]}
+  disabled={!isPasswordValid(passwordCriteria) || newPassword !== confirmPassword}
+  onPress={handleResetPassword}
+>
+  <Text style={styles.btnText}>Reset Password</Text>
+</TouchableOpacity>
+
 
           <TouchableOpacity onPress={() => setIsResetPassword(false)}>
             <Text style={styles.link}>Back to Forgot Password</Text>
@@ -279,4 +420,28 @@ const styles = StyleSheet.create({
   },
   btnText: { color: '#fff', fontWeight: 'bold' },
   link: { color: '#007bff', textAlign: 'center', marginTop: 10 },
+  passwordContainer: {
+  width: "100%",
+  borderWidth: 1,
+  borderColor: "#ccc",
+  borderRadius: 5,
+  marginBottom: 15,
+  flexDirection: "row",
+  alignItems: "center",
+  paddingRight: 10,
+},
+
+passwordInput: {
+  flex: 1,
+  padding: 10,
+},
+
+eyeIcon: {
+  padding: 4,
+},
+criteriaList: {
+  marginTop: 6,
+  marginBottom: 6,
+},
+
 });

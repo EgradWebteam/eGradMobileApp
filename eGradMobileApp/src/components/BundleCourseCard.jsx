@@ -15,7 +15,9 @@ import { useSession } from '../hooks/SessionContext';
 const images = [image1, image2, image3];
 
 const BundleCourseCard = ({ exam_id, exam_name, Portal2data, onGoToCourse, setCourseIds }) => {
-  const imageToShow = images[exam_id % images.length];
+  // const imageToShow = images[exam_id % images.length];
+  const imageToShow = images[Math.floor(Math.random() * images.length)];
+
   const { validateSession } = useSession();
 
   const handleGoToCourse = async () => {
