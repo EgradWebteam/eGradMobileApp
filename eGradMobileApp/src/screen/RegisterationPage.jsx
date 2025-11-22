@@ -123,7 +123,7 @@ export const RegisterationPage = ({ navigation }) => {
   const [collegeModalVisible, setCollegeModalVisible] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
 
-
+const [marksType, setMarksType] = useState("Percentage");
   const validateForm = () => {
     const validationErrors = {};
     const requiredFields = [
@@ -155,141 +155,6 @@ export const RegisterationPage = ({ navigation }) => {
 
     return validationErrors;
   };
-
-
-  // before proper validations
-  // const handleChange = (name, value) => {
-  //   let error = "";
-
-  //   // 📁 File handling
-  //   if (["uploadedPhoto", "proof"].includes(name) && value && typeof value === "object" && value.size) {
-  //     const file = value;
-  //     const fileSizeKB = file.size / 1024;
-  //     const rules = FILE_SIZE_RULES[name];
-
-  //     if (rules && (fileSizeKB < rules.min || fileSizeKB > rules.max)) {
-  //       Alert.alert("File Error", rules.message);
-
-  //       // if (name === "uploadedPhoto" && photoInputRef?.current) {
-  //       //   photoInputRef.current.clear(); // Use .clear() for RN file inputs if supported
-  //       //   setPhotoPreview(null);
-  //       // }
-
-  //       // if (name === "proof" && proofInputRef?.current) {
-  //       //   proofInputRef.current.clear();
-  //       //   setProofPreview(null);
-  //       // }
-
-  //       // setFormData((prev) => ({ ...prev, [name]: null }));
-
-  //       return;
-  //     }
-
-  //     // Valid file
-  //     setFormData((prev) => ({ ...prev, [name]: file }));
-  //     setErrors((prev) => ({ ...prev, [name]: "" }));
-
-  //     // In React Native, preview handling depends on image picker library
-  //     // setPhotoPreview(...) or setProofPreview(...) can be set with file.uri
-  //     // const previewURL = file.uri || null;
-  //     // if (name === "uploadedPhoto") setPhotoPreview(previewURL);
-  //     // if (name === "proof") setProofPreview(previewURL);
-  //     // return;
-  //   }
-
-  //   // 📍 State change
-  //   if (name === "state") {
-  //     const selectedState = stateList.find((s) => s.state_name === value);
-  //     const stateId = selectedState?.state_id;
-  //     const districts = stateId && districtsMap[stateId] ? Object.entries(districtsMap[stateId]) : [];
-
-  //     setDistrictOptions(districts);
-  //     setFormData((prev) => ({ ...prev, state: value, districts: "" }));
-  //     setErrors((prev) => ({ ...prev, state: "", districts: "" }));
-  //     return;
-  //   }
-
-  //   // 🎓 Qualification change
-  //   if (name === "qualifications") {
-  //     setFormData((prev) => ({ ...prev, qualifications: value, stream: "" }));
-  //     return;
-  //   }
-
-  //   // 📆 Date of Birth validation
-  //   if (name === "dateOfBirth") {
-  //     const selectedDate = new Date(value);
-  //     const today = new Date();
-  //     today.setFullYear(today.getFullYear() - 10);
-  //     if (selectedDate > today) {
-  //       error = "You must be at least 10 years old.";
-  //     }
-  //   }
-
-  //   // 🔤 Text fields with specific limits
-  //   if (["candidateName", "fatherName"].includes(name)) {
-  //     if (!/^[A-Za-z\s]*$/.test(value)) {
-  //       error = `${name === "candidateName" ? "Candidate Name" : "Father Name"} must contain only letters and spaces.`;
-  //     } else if (value.length > 40) {
-  //       error = `${name === "candidateName" ? "Candidate Name" : "Father Name"} cannot exceed 40 characters.`;
-  //     }
-  //   }
-
-  //   if (["nameOfCollege", "qualificationsOther", "streamOther"].includes(name)) {
-  //     if (!/^[A-Za-z\s]*$/.test(value)) {
-  //       error = `${name} must contain only letters and spaces.`;
-  //     } else if (value.length > 50) {
-  //       error = `${name} cannot exceed 50 characters.`;
-  //     }
-  //   }
-
-  //   if (["city", "districts"].includes(name)) {
-  //     if (!/^[A-Za-z\s]*$/.test(value)) {
-  //       error = `${name} must contain only letters and spaces.`;
-  //     } else if (value.length > 30) {
-  //       error = `${name} cannot exceed 30 characters.`;
-  //     }
-  //   }
-
-  //   if (name === "line1" && value.length > 60) {
-  //     error = "Address Line 1 cannot exceed 60 characters.";
-  //   }
-
-  //   // 📞 Contact and mobile numbers
-  //   if (["contactNo", "mobileNo"].includes(name)) {
-  //     if (/[^0-9]/.test(value)) {
-  //       error = "Only numbers are allowed.";
-  //     } else if (value.length !== 10) {
-  //       error = "Number must be exactly 10 digits.";
-  //     }
-  //   }
-
-  //   // 📮 Pincode
-  //   if (name === "pincode") {
-  //     if (/[^0-9]/.test(value)) {
-  //       error = "Only numbers are allowed.";
-  //     } else if (value.length !== 6) {
-  //       error = "Pincode must be exactly 6 digits.";
-  //     }
-  //   }
-
-  //   // 📊 Marks
-  //   if (name === "marks") {
-  //     const numericValue = parseFloat(value);
-  //     if (isNaN(numericValue) || numericValue < 0 || numericValue > 100) {
-  //       error = "Percentage must be between 0 and 100.";
-  //     }
-  //   }
-
-  //   // 🔄 Update state if no error
-  //   // if (!error) {
-  //     setFormData((prev) => ({ ...prev, [name]: value }));
-  //   // } else {
-  //     setErrors((prev) => ({ ...prev, [name]: error }));
-  //     //   Alert.alert("Validation Error", error);
-  //   // }
-
-  //   return error;
-  // };
 
   // after proper validations
   const handleChange = (name, value) => {
@@ -414,23 +279,30 @@ export const RegisterationPage = ({ navigation }) => {
     }
 
     // 📊 Marks
-    if (name === "marks") {
-      const originalValue = value;
-      value = value.replace(/[^0-9.]/g, "");
+if (name === "marks") {
 
-      if (originalValue !== value) {
-        error = "Marks must be a number.";
-      }
+  if (portalId !== 1) {   // ✅ apply rules ONLY if portal is not 1
+    const originalValue = value;
+    value = value.replace(/[^0-9.]/g, "");
 
-      if (value.length > 6) {
-        value = value.slice(0, 6); // prevent too long numbers like 1234567
-      }
-
-      const numericValue = parseFloat(value);
-      if (isNaN(numericValue) || numericValue < 0 || numericValue > 100) {
-        error = "Percentage must be between 0 and 100.";
-      }
+    if (originalValue !== value) {
+      error = "Marks must be a number.";
     }
+
+    if (value.length > 6) {
+      value = value.slice(0, 6);
+    }
+
+    const numericValue = parseFloat(value);
+    if (isNaN(numericValue) || numericValue < 0 || numericValue > 100) {
+      error = "Percentage must be between 0 and 100.";
+    }
+  } else {
+    // portalId === 1 → marks not required
+    value = "";     // optional: keep empty
+    error = "";     // ensure no error
+  }
+}
 
     // 🔄 Always update with sanitized + trimmed value
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -563,8 +435,9 @@ export const RegisterationPage = ({ navigation }) => {
       });
       const data = await resp.json();
       console.log(`${backEndUrl}/navbar/get-logo`, data);
-      // setPortalId(data.portalId);
-      setPortalId(data.portalId); // Stub for UI path
+      setPortalId(data.portalId);
+      // console.log("portal id",data.portalId);
+      // setPortalId(2); // Stub for UI path
     })();
   }, []);
   const handleEmailBlur = async () => {
@@ -657,7 +530,11 @@ export const RegisterationPage = ({ navigation }) => {
   );
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView 
+    style={styles.container}
+     contentContainerStyle={{ paddingBottom: 50 }}
+  showsVerticalScrollIndicator={false}
+    >
       <Text style={styles.heading}>Student Registration</Text>
 
       {/* Personal Info */}
@@ -811,18 +688,35 @@ export const RegisterationPage = ({ navigation }) => {
 
       {/* Academic Details */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Academic Details</Text>
+        <Text style={styles.sectionTitle}>Education Details</Text>
 
 
 
 
         {portalId === 1 && (
-          <>
-            <Text style={styles.label}>Qualifications *</Text>
-            {renderRadioGroup(["Appearing XII", "Passed XII"], formData.qualifications, val => handleChange("qualifications", val))}
-            {errors.qualifications && <Text style={styles.error}>{errors.qualifications}</Text>}
-          </>
+          <View style={styles.section}>
+            <Text style={styles.label}>
+              Current Study <Text style={{ color: "red" }}>*</Text>
+            </Text>
+
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={formData.qualifications}
+                onValueChange={(value) => handleChange("qualifications", value)}
+              >
+                <Picker.Item label="-Select-" value="" />
+                <Picker.Item label="Class XI" value="Class 11" />
+                <Picker.Item label="Class XII" value="Class 12" />
+                <Picker.Item label="Passed XII" value="Passed 12" />
+              </Picker>
+            </View>
+
+            {errors.qualifications && (
+              <Text style={styles.error}>{errors.qualifications}</Text>
+            )}
+          </View>
         )}
+
 
         {/* === PORTAL ID === 2 === */}
         {portalId === 2 && (
@@ -903,14 +797,80 @@ export const RegisterationPage = ({ navigation }) => {
           </Picker>
         </View>
         {errors.passingYear && <Text style={styles.error}>{errors.passingYear}</Text>}
-        <Text style={styles.label}>Marks(%)</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Percentage Marks"
-          value={formData.marks}
-          onChangeText={text => handleChange("marks", text)}
-          keyboardType="numeric"
-        />
+
+        {portalId !== 1 && (
+          <View style={styles.section}>
+            <Text style={styles.label}>
+              Marks <Text style={{ color: "red" }}>*</Text>
+            </Text>
+
+            {/* === Radio Buttons for Percentage / CGPA === */}
+            <View style={{ flexDirection: "row", marginBottom: 2 }}>
+
+              {/* Percentage */}
+              <TouchableOpacity
+                style={{ flexDirection: "row", alignItems: "center", marginRight: 20 }}
+                onPress={() => {
+                  setMarksType("Percentage");
+                  setFormData((prev) => ({ ...prev, marks: "" }));
+                }}
+              >
+                <View style={styles.radioOuter}>
+                  {marksType === "Percentage" && <View style={styles.radioInner} />}
+                </View>
+                <Text>Percentage</Text>
+              </TouchableOpacity>
+
+              {/* CGPA */}
+              <TouchableOpacity
+                style={{ flexDirection: "row", alignItems: "center" }}
+                onPress={() => {
+                  setMarksType("CGPA");
+                  setFormData((prev) => ({ ...prev, marks: "" }));
+                }}
+              >
+                <View style={styles.radioOuter}>
+                  {marksType === "CGPA" && <View style={styles.radioInner} />}
+                </View>
+                <Text>CGPA</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* === Input Depending on Marks Type === */}
+            {marksType === "Percentage" && (
+              <>
+                <Text style={styles.label}>
+                  Percentage (%) <Text style={{ color: "red" }}>*</Text>
+                </Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter Percentage (%)"
+                  value={formData.marks}
+                  onChangeText={(text) => handleChange("marks", text)}
+                  keyboardType="numeric"
+                />
+              </>
+            )}
+
+            {marksType === "CGPA" && (
+              <>
+                <Text style={styles.label}>
+                  CGPA <Text style={{ color: "red" }}>*</Text>
+                </Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter CGPA"
+                  value={formData.marks}
+                  onChangeText={(text) => handleChange("marks", text)}
+                  keyboardType="numeric"
+                />
+              </>
+            )}
+
+            {errors.marks && <Text style={styles.error}>{errors.marks}</Text>}
+          </View>
+        )}
+
         {errors.marks && <Text style={styles.error}>{errors.marks}</Text>}
       </View>
 
@@ -936,9 +896,9 @@ export const RegisterationPage = ({ navigation }) => {
 
       {/* Terms & Conditions */}
       <View style={styles.section}>
-        <TouchableOpacity style={styles.termsButton} 
-        // onPress={() => setOpenTermsAndConditions(true)}
-        onPress={() => navigation.navigate("TermsAndConditions")}
+        <TouchableOpacity style={styles.termsButton}
+          // onPress={() => setOpenTermsAndConditions(true)}
+          onPress={() => navigation.navigate("TermsAndConditions")}
         >
           <Text style={styles.termsButtonText}>
             {showTerms ? "Hide Terms and Conditions" : "Show Terms and Conditions"}
@@ -990,8 +950,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   container: { flex: 1, padding: 20, backgroundColor: "#fff" },
-  heading: { fontSize: 24, fontWeight: "bold", marginBottom: 20, textAlign: "center" },
-  section: { marginBottom: 25 },
+  heading: { fontSize: 24, fontWeight: "bold", marginBottom: 20, textAlign: "center" ,textTransform: "uppercase"},
+  section: { marginBottom: 10 },
   sectionTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
   input: { borderWidth: 1, borderColor: "#ccc", borderRadius: 5, padding: 10, marginBottom: 5 },
   error: { color: "red", marginBottom: 10 },
@@ -1011,4 +971,22 @@ const styles = StyleSheet.create({
   submitButton: { backgroundColor: "#28a745", padding: 15, borderRadius: 5, alignItems: "center" },
   disabledButton: { backgroundColor: "#6c757d" },
   submitButtonText: { color: "#fff", fontWeight: "bold" },
+  radioOuter: {
+  height: 20,
+  width: 20,
+  borderRadius: 10,
+  borderWidth: 1,
+  borderColor: "#000",
+  alignItems: "center",
+  marginRight: 5,
+},
+radioInner: {
+  height: 16,
+  // margin: 3,
+  width: 16,
+  textAlign: "center",
+  borderRadius: 8,
+  backgroundColor: "#007AFF",
+},
+
 });
