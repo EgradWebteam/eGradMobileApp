@@ -436,7 +436,7 @@ if (name === "marks") {
       const data = await resp.json();
       console.log(`${backEndUrl}/navbar/get-logo`, data);
       setPortalId(data.portalId);
-      console.log("portal id",data.portalId);
+      // console.log("portal id",data.portalId);
       // setPortalId(2); // Stub for UI path
     })();
   }, []);
