@@ -87,9 +87,9 @@ const BundleCourseContainer = ({
       }
     };
 
-    if (activeSection === "test" && studentId) {
+    // if (activeSection === "test" && studentId) {
       fetchTestDetails();
-    }
+    // }
   }, [activeSection, studentId, courseIds, refreshTriggerBundle]);
 
   // Restore last chapter
