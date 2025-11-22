@@ -30,6 +30,7 @@ const StudentDashboardBuyCourses = ({ setActiveSection, studentId, preselectedPo
 
   const [showDualPopup, setShowDualPopup] = useState(false);
   const [pendingPurchase, setPendingPurchase] = useState(null);
+  console.log("preselected portal iddddd",preselectedPortalId)
   const fetchCoursesInBuyCourses = async () => {
     try {
       setLoading(true);
@@ -122,11 +123,17 @@ const StudentDashboardBuyCourses = ({ setActiveSection, studentId, preselectedPo
 
     return exam.departments || [];
   }, [structuredCourses, selectedPortal, selectedExam]);
+
   useEffect(() => {
     if (portalList.length > 0) {
-      setSelectedPortal(portalList[0][0]);
+      setSelectedPortal((prevPortal) =>
+        portalList.some(([id]) => id === prevPortal)
+          ? prevPortal
+          : portalList[0][0]
+      );
     }
   }, [portalList]);
+
 
   useEffect(() => {
     if (examNames.length > 0) {
@@ -472,25 +479,26 @@ console.log( orderData, razorpayKey)
       {/* Departments */}
       {departments.length > 0 && (
         <View style={styles.row}>
-          {departments.map((dept, idx) => (
-          <Pressable
-  style={[
-    styles.deptBtn,
-    selectedDepartment === dept.department_name && styles.deptActive
-  ]}
-  onPress={() => setSelectedDepartment(dept.department_name)}
->
-  <Text
+       {departments.map((dept) => (
+  <Pressable
+    key={dept.department_id}
     style={[
-      styles.deptText,
-      selectedDepartment === dept.department_name && styles.deptTextActive
+      styles.deptBtn,
+      selectedDepartment === dept.department_name && styles.deptActive
     ]}
+    onPress={() => setSelectedDepartment(dept.department_name)}
   >
-    {dept.department_name}
-  </Text>
-</Pressable>
+    <Text
+      style={[
+        styles.deptText,
+        selectedDepartment === dept.department_name && styles.deptTextActive
+      ]}
+    >
+      {dept.department_name}
+    </Text>
+  </Pressable>
+))}
 
-          ))}
         </View>
       )}
 

@@ -204,32 +204,32 @@ const BundleCourseContainer = ({
       </TouchableOpacity>
 
       {/* Section Buttons */}
-      <View style={styles.sectionButtons}>
-        <TouchableOpacity
-          style={[styles.sectionBtn, activeSection === "orvl" && styles.activeBtn]}
-          onPress={() => handleSectionChange("orvl")}
-        >
-          <Text style={[
-            styles.btnText,
-            activeSection === "orvl" && styles.activeBtnText, // 👈 add this
-          ]}>
-            Recorded Lectures</Text>
-        </TouchableOpacity>
-         {/* Show Test Button Only If Tests Exist */}
-        {data?.test_details?.length > 0 && (
-        <TouchableOpacity
-          style={[styles.sectionBtn, activeSection === "test" && styles.activeBtn]}
-          onPress={() => handleSectionChange("test")}
-        >
-          <Text style={[
-            styles.btnText,
-            activeSection === "test" && styles.activeBtnText, // 👈 add this
-          ]}>
-            My Tests
-          </Text>
-        </TouchableOpacity>
-        )}
-      </View>
+<View style={styles.sectionButtons}>
+  <TouchableOpacity
+    style={[
+      styles.sectionBtn,
+      { marginRight: data?.test_details?.length > 0 ? 8 : 0 },
+      activeSection === "orvl" && styles.activeBtn
+    ]}
+    onPress={() => handleSectionChange("orvl")}
+  >
+    <Text style={styles.btnText}>Recorded Lectures</Text>
+  </TouchableOpacity>
+
+  {data?.test_details?.length > 0 && (
+    <TouchableOpacity
+      style={[
+        styles.sectionBtn,
+        { marginRight: 0 },
+        activeSection === "test" && styles.activeBtn
+      ]}
+      onPress={() => handleSectionChange("test")}
+    >
+      <Text style={styles.btnText}>My Tests</Text>
+    </TouchableOpacity>
+  )}
+</View>
+
 
       {/* Test Section */}
       {activeSection === "test" && (
@@ -341,25 +341,33 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 
-  sectionButtons: {
-    flexDirection: "row",
-    borderRadius: 10,
-    overflow: "hidden",
-    marginBottom: 16,
-  },
-  sectionBtn: {
-    flex: 1,
-    paddingVertical: 12,
-    backgroundColor: "#e5e5e5",
-    alignItems: "center",
-  },
-  activeBtn: {
-    backgroundColor: "#00aaff",
-  },
-  btnText: {
-    fontWeight: "600",
-    color: "#222",
-  },
+ sectionButtons: {
+  flexDirection: "row",
+  marginBottom: 16,
+  // backgroundColor: "#e5e5e5",
+},
+
+sectionBtn: {
+  paddingVertical: 12,
+  paddingHorizontal: 20,
+  backgroundColor: "#3a3a3a",
+  alignItems: "center",
+  borderTopLeftRadius: 14,
+  borderTopRightRadius: 14,
+  marginRight: 8,
+},
+
+
+activeBtn: {
+  backgroundColor: "#27B5FF", // Blue active like your image
+},
+
+btnText: {
+  fontWeight: "700",
+  color: "#fff",
+  fontSize: 14,
+},
+
   activeBtnText: {
     color: "#fff", // White when active
   },
@@ -370,8 +378,8 @@ const styles = StyleSheet.create({
   subjectBtn: {
     paddingVertical: 8,
     paddingHorizontal: 14,
-    backgroundColor: "#e5e5e5",
-    borderRadius: 20,
+    backgroundColor: "#3a3a3a",
+    borderRadius: 10,
     marginRight: 10,
   },
   activeSubjectBtn: {

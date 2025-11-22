@@ -341,7 +341,7 @@ const {validateSession} = useSession()
                 }}
               >
                 <Text style={styles.breadcrumbText}>
-                  {selectedTestCourse.course_name || "MINI / MICRO COURSES"}
+                  {selectedTestCourse.course_name || "ONLINE VIDEO COURSES"}
                 </Text>
               </TouchableOpacity>
             </>

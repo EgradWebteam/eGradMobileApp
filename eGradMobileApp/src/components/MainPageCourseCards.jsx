@@ -9,8 +9,8 @@ const MainPageCourseCards = memo(({ CardsportalId, LandingPage = false, onCourse
 
   const courses = [
     { title: "TEST SERIES", image: require("../images/otsImg.png"), portalId: 1 },
-    { title: "MINI / MICRO COURSES", image: require("../images/microcourses.png"), portalId: 2 },
-    { title: "PRACTICE QUESTION BANK", image: require("../images/pqb.png"), portalId: 3 },
+    { title: "ONLINE VIDEO COURSES", image: require("../images/microcourses.png"), portalId: 2 },
+    { title: "ONLINE QUESTION BANK", image: require("../images/pqb.png"), portalId: 3 },
   ];
  // 👇 Equivalent of location.pathname.startsWith("/StudentDashboard")
     const route = useRoute();
@@ -35,7 +35,7 @@ console.log("studnt dashhhhhboarddddd",isOnStudentDashboard)
 
   const getCourseContent = (title) => {
     switch (title) {
-      case "MINI / MICRO COURSES":
+      case "ONLINE VIDEO COURSES":
         return [
           { icon: <Icon name="laptop" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#09bffc"} />, text: "Recorded Video Lectures" },
           { icon: <Icon name="clock-o" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#09bffc"} />, text: "Real Time Mock Tests" },
@@ -49,7 +49,7 @@ console.log("studnt dashhhhhboarddddd",isOnStudentDashboard)
           { icon: <Icon name="video-camera" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#09bffc"} />, text: "Video Solutions" },
           { icon: <Icon name="tasks" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#09bffc"} />, text: "Performance Analytics" },
         ];
-      case "PRACTICE QUESTION BANK":
+      case "ONLINE QUESTION BANK":
         return [
           { icon: <Icon name="question" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#09bffc"} />, text: "Challenging Questions" },
           { icon: <Icon name="lightbulb-o" size={16} color={CardsportalId === 1 ? "cornflowerblue" : "#09bffc"} />, text: "Hints, Tips and Tricks" },

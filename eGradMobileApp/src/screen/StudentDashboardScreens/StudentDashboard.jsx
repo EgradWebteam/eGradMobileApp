@@ -41,11 +41,10 @@ const { studentData } = useStudent();
   const navigation = useNavigation();
   const logoutHandledRef = useRef(false);
   const { validateSession } = useSession();
+ const [preselectedPortalId, setPreselectedPortalId] = useState(null);
 
-
-const handleSectionChange = useCallback(
-  async (section, portalId = null) => {
-        const isValid = await validateSession();
+const handleSectionChange = useCallback(async(section, portalId = null) => {
+    const isValid = await validateSession();
   if (!isValid) return;
     setActiveSection(section);
 
@@ -53,16 +52,13 @@ const handleSectionChange = useCallback(
 
     if (portalId) {
       state.preselectedPortalId = portalId;
+      setPreselectedPortalId(portalId);
+    } else {
+      setPreselectedPortalId(null); // ✅ Reset selection
     }
 
-    try {
-      await AsyncStorage.setItem("studentDashboardState", JSON.stringify(state));
-    } catch (err) {
-      console.error("Failed to save dashboard state:", err);
-    }
-  },
-  []
-);
+    sessionStorage.setItem("studentDashboardState", JSON.stringify(state));
+  }, [validateSession]);
 
 // useEffect(() => {
 //   const restoreDashboardState = async () => {
@@ -174,13 +170,13 @@ useEffect(() => {
             studentName={studentData?.userDetails?.candidate_name}
             portalId={portalData.portalId}
             logoText={portalData.logoText}
-            handleSectionChange={setActiveSection} 
+            handleSectionChange={handleSectionChange} 
           />
         );
       case 'myCourses':
         return <StudentDashboardMyCourses studentId={studentData?.userDetails?.student_registration_id} userData={studentData?.userDetails}/>;
       case 'buyCourses':
-        return <StudentDashboardBuyCourses studentId={studentData?.userDetails?.student_registration_id} setActiveSection={setActiveSection} />;
+        return <StudentDashboardBuyCourses studentId={studentData?.userDetails?.student_registration_id} setActiveSection={setActiveSection} preselectedPortalId={preselectedPortalId}/>;
       case 'results':
         return <StudentDashboardMyResults studentId={studentData?.userDetails?.student_registration_id} userData={studentData?.userDetails}/>;
       case 'bookmarks':
