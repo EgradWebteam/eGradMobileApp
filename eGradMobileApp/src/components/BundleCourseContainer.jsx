@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
- import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig";
+import { backEndUrl, frontEndUrl, backEndPort } from "../apiConfig";
 import TestDetailsContainer from "./TestDetailsContainer";
 import OrvlCourseTopic from "./OrvlCourseTopic";
 import { useSession } from "../hooks/SessionContext";
@@ -34,7 +34,7 @@ const BundleCourseContainer = ({
   const [refreshTriggerBundle, setRefreshTriggerBundle] = useState(false);
   const [courseId, setCourseId] = useState(null);
   const { validateSession } = useSession();
-console.log("user dataaaa bundleeee",userData)
+  console.log("user dataaaa bundleeee", userData)
   // Fetch ORVL (bundle) data
   useEffect(() => {
     const fetchTotalCourseData = async () => {
@@ -79,7 +79,7 @@ console.log("user dataaaa bundleeee",userData)
           { courseIds, studentId }
         );
         setData(response.data);
-        console.log("test dataaaaa in bundleee",response.data);
+        console.log("test dataaaaa in bundleee", response.data);
       } catch (error) {
         console.error("Error fetching test details", error);
       } finally {
@@ -87,9 +87,9 @@ console.log("user dataaaa bundleeee",userData)
       }
     };
 
-    if (activeSection === "test" && studentId) {
+    // if (activeSection === "test" && studentId) {
       fetchTestDetails();
-    }
+    // }
   }, [activeSection, studentId, courseIds, refreshTriggerBundle]);
 
   // Restore last chapter
@@ -143,7 +143,7 @@ console.log("user dataaaa bundleeee",userData)
           showQuizContainer: false,
           showTestContainer: false,
           courseContainer: true,
-          selectedExamId:selectedExamId,
+          selectedExamId: selectedExamId,
           selectedCourseId: courseCreationId,
           selectedChapterName: response.data.chapter_name || null,
           selectedChapterId: response.data.chapter_id || null,
@@ -186,7 +186,7 @@ console.log("user dataaaa bundleeee",userData)
               showTestContainer: false,
               courseContainer: true,
               selectedTestCourse: courseIds,
-              selectedExamId:selectedExamId,
+              selectedExamId: selectedExamId,
             })
           );
         }}
@@ -209,22 +209,26 @@ console.log("user dataaaa bundleeee",userData)
           style={[styles.sectionBtn, activeSection === "orvl" && styles.activeBtn]}
           onPress={() => handleSectionChange("orvl")}
         >
-          <Text   style={[
-        styles.btnText,
-        activeSection === "orvl" && styles.activeBtnText, // 👈 add this
-      ]}>
-        Recorded Lectures</Text>
+          <Text style={[
+            styles.btnText,
+            activeSection === "orvl" && styles.activeBtnText, // 👈 add this
+          ]}>
+            Recorded Lectures</Text>
         </TouchableOpacity>
+         {/* Show Test Button Only If Tests Exist */}
+        {data?.test_details?.length > 0 && (
         <TouchableOpacity
           style={[styles.sectionBtn, activeSection === "test" && styles.activeBtn]}
           onPress={() => handleSectionChange("test")}
         >
-          <Text  style={[
-        styles.btnText,
-        activeSection === "test" && styles.activeBtnText, // 👈 add this
-      ]}>
-        My Tests</Text>
+          <Text style={[
+            styles.btnText,
+            activeSection === "test" && styles.activeBtnText, // 👈 add this
+          ]}>
+            My Tests
+          </Text>
         </TouchableOpacity>
+        )}
       </View>
 
       {/* Test Section */}
@@ -257,11 +261,11 @@ console.log("user dataaaa bundleeee",userData)
                     ]}
                     onPress={() => setSelectedSubject(subject)}
                   >
-                    <Text  style={[
-          styles.btnText,
-          selectedSubject === subject && styles.activeBtnText, 
-        ]}>
-          {subject}</Text>
+                    <Text style={[
+                      styles.btnText,
+                      selectedSubject === subject && styles.activeBtnText,
+                    ]}>
+                      {subject}</Text>
                   </TouchableOpacity>
                 ))}
               </ScrollView>
@@ -271,16 +275,16 @@ console.log("user dataaaa bundleeee",userData)
             {orvlDetails.length > 0 ? (
               (selectedSubject
                 ? Object.entries(
-                    orvlDetails
-                      .filter((item) => item.subject_name === selectedSubject)
-                      .reduce((acc, item) => {
-                        if (!acc[item.topic_id]) {
-                          acc[item.topic_id] = { topic_name: item.topic_name, chapters: [] };
-                        }
-                        acc[item.topic_id].chapters.push(item);
-                        return acc;
-                      }, {})
-                  )
+                  orvlDetails
+                    .filter((item) => item.subject_name === selectedSubject)
+                    .reduce((acc, item) => {
+                      if (!acc[item.topic_id]) {
+                        acc[item.topic_id] = { topic_name: item.topic_name, chapters: [] };
+                      }
+                      acc[item.topic_id].chapters.push(item);
+                      return acc;
+                    }, {})
+                )
                 : []
               ).map(([topicId, topicData]) => (
                 <View key={topicId} style={styles.topicContainer}>
@@ -319,23 +323,23 @@ const styles = StyleSheet.create({
   },
 
   goBackBtn: {
-  backgroundColor: "#028a0f",
-  paddingVertical: 10,
-  paddingHorizontal: 16,
-  borderRadius: 8,
-  alignSelf: "flex-end",  
-  marginBottom: 16,
-  shadowColor: "#000",
-  shadowOpacity: 0.1,
-  shadowRadius: 4,
-  shadowOffset: { width: 0, height: 2 },
-  elevation: 3,
-},
-goBackText: {
-  color: "#fff",
-  fontWeight: "600",
-  fontSize: 14,
-},
+    backgroundColor: "#028a0f",
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignSelf: "flex-end",
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
+  },
+  goBackText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 14,
+  },
 
   sectionButtons: {
     flexDirection: "row",
@@ -356,9 +360,9 @@ goBackText: {
     fontWeight: "600",
     color: "#222",
   },
-activeBtnText: {
-  color: "#fff", // White when active
-},
+  activeBtnText: {
+    color: "#fff", // White when active
+  },
   /* Subject filter pills */
   subjectFilter: {
     marginBottom: 16,
@@ -406,7 +410,7 @@ activeBtnText: {
     fontSize: 17,
     marginBottom: 8,
     color: "#222",
-    textAlign:"center",
+    textAlign: "center",
   },
   chapterInfo: {
     fontSize: 14,

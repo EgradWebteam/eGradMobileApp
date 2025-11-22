@@ -318,7 +318,12 @@ const TestDetailsContainer = ({ course, testDataLoading, refreshTriggerBundle, s
         </Text>
       )}
       {Object.entries(groupedFilteredTests)
-        .sort(([, a], [, b]) => a.typeId - b.typeId)
+        // .sort(([, a], [, b]) => a.typeId - b.typeId)
+         .sort(([, a], [, b]) => {
+    const typeA = a[0]?.typeId ?? 9999;
+    const typeB = b[0]?.typeId ?? 9999;
+    return typeA - typeB;
+  })
         .map(([typeName, tests]) => (
 
           <View key={typeName}>

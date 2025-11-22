@@ -18,7 +18,7 @@ import BundleCourseContainer from './BundleCourseContainer';
 import PracticeQuestionBank from './PracticeQuestionBank';
 import { backEndUrl } from '../apiConfig';
 import { styles } from '../styles/StudentDashboardStyles';
-
+import { useSession } from '../hooks/SessionContext';
 const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
   const [loading, setLoading] = useState(true);
   const [selectedTestCourse, setSelectedTestCourse] = useState(null);
@@ -31,7 +31,7 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
   const [selectedExamId, setSelectedExamId] = useState(null);
   const [chapterdetails, setChapterdetails] = useState(null);
   const [selectedDepartment, setSelectedDepartment] = useState("");
-
+const {validateSession} = useSession()
   // Fetch purchased courses
   useEffect(() => {
     const fetchPurchasedCourses = async () => {
@@ -176,6 +176,8 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
   }, [selectedExam, examHasDepartments, examDepartments]);
 
   const handleGoToTest = async (course) => {
+      const isValid = await validateSession();
+    if (!isValid) return;
     setSelectedTestCourse(course);
     setShowQuizContainer(false);
     setShowTestContainer(selectedPortalId === 1);
@@ -202,6 +204,8 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
   };
 
   const handleBackToCourses = async () => {
+      const isValid = await validateSession();
+    if (!isValid) return;
     setSelectedTestCourse(null);
     setShowQuizContainer(true);
     setShowTestContainer(false);
@@ -225,7 +229,9 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
     }
   };
 
-  const handlePortalChange = (portalId) => {
+  const handlePortalChange = async (portalId) => {
+      const isValid = await validateSession();
+    if (!isValid) return;
     setSelectedPortalId(portalId);
     
     const portal = portals.find(p => p.course_portal_id === portalId);
@@ -242,7 +248,9 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
     }
   };
 
-  const handleExamChange = (examId) => {
+  const handleExamChange = async (examId) => {
+      const isValid = await validateSession();
+    if (!isValid) return;
     setSelectedExamId(examId);
     
     const exam = selectedPortal?.exams?.find(e => e.exam_id === examId);
@@ -268,6 +276,8 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
               <Icon name="chevron-right" size={16} color="#000" />
               <TouchableOpacity
                 onPress={async () => {
+                    const isValid = await validateSession();
+    if (!isValid) return;
                   setSelectedTestCourse(null);
                   setChapterdetails(null);
                   setShowTestContainer(false);
@@ -302,6 +312,8 @@ const StudentDashboardMyCourses = ({ studentId, userData, activeSection }) => {
               <Icon name="chevron-right" size={16} color="#000" />
               <TouchableOpacity
                 onPress={async () => {
+                    const isValid = await validateSession();
+    if (!isValid) return;
                   if (!selectedTestCourse.course_name) {
                     setShowTestContainer(false);
                     setCourseContainer(true);
