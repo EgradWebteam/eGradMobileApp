@@ -407,7 +407,7 @@ const TestDetailsContainer = ({ course, testDataLoading, refreshTriggerBundle, s
           backgroundColor: "#2ecc71",
           borderRadius: 5,
         }}
-        onPress={() => handleViewReportClickMycourses(test.test_id, test)}
+        onPress={() => handleViewReport(test)}
       >
         <Text style={{ color: "#fff", textAlign: "center" }}>
           View Report
