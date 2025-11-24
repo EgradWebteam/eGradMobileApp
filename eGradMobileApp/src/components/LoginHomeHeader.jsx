@@ -1,15 +1,15 @@
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { Image, View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-
-export const LoginHomeHeader = () => {
+const portalImageDefault = require('../assets/EGTLogoExamHeaderCompressed.png');
+export const LoginHomeHeader = ({portalData}) => {
      const navigation = useNavigation();
     return (
         <View style={styles.pc}>
             <TouchableOpacity   onPress={() => navigation.navigate("Home")}>
-            <View style={styles.container}>
+            <View style={styles.containerheader}>
                 <Image
-                    source={require('../assets/EGTLogoExamHeaderCompressed.png')}
+                   source={portalData.logoImg ? { uri: portalData.logoImg } : portalImageDefault}
                     style={styles.logo}
                     resizeMode="contain"
                 />
@@ -40,13 +40,15 @@ const styles = StyleSheet.create({
         // Android shadow
         elevation: 5,
     },
-    container: {
+    containerheader: {
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#fff', // optional
     },
     logo: {
         width: 190,  // adjust as needed
+         height: undefined,
+        aspectRatio: 3, // maintains aspect ratio
     },
     button: {
         backgroundColor: '#000', // black background

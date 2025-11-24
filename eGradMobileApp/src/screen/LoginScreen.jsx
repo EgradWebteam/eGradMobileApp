@@ -1,13 +1,15 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import Footer from '../components/Footer';
 import { LoginHomeHeader } from '../components/LoginHomeHeader';
-import { backEndPort, frontEndUrl,backEndUrl } from '../apiConfig';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useStudent } from '../hooks/StudentContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { backEndUrl, frontEndUrl } from "../apiConfig.js";
+import MobileFooter from './StudentDashboardScreens/MobileFooter.jsx';
 export const LoginScreen = () => {
     const navigation = useNavigation();
     const [email, setEmail] = useState("");
@@ -29,7 +31,36 @@ const [touched, setTouched] = useState({
   newPassword: false,
   confirmPassword: false,
 });
-
+         const [portalData, setPortalData] = useState({
+             portalId: null,
+             logoText: 'eGRADTutor',
+             logoImg: null,
+           });
+        const fetchPortalData = async () => {
+          try {
+            const response = await fetch(`${backEndUrl}/navbar/get-logo`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ domain: frontEndUrl }),
+            });
+            const data = await response.json();
+            if (data.portalId) {
+              setPortalData({
+                portalId: data.portalId,
+                logoText: data.instituteName || 'eGRADTutor',
+                logoImg: data.logo,
+              });
+            }
+          } catch (error) {
+            console.error('Failed to fetch portal info:', error);
+          }
+        };
+      
+        useEffect(() => {
+      
+          fetchPortalData();
+      
+        }, []);
 const checkPasswordCriteria = (password) => ({
   length: password.length >= 8,
   uppercase: /[A-Z]/.test(password),
@@ -58,7 +89,7 @@ const isPasswordValid = (criteria) =>
   }
 
   console.log(password, email, "these r password nd emails");
-console.log("url",frontEndUrl,backEndPort)
+
   try {
     setLogging(true);
     const response = await fetch(`${backEndUrl}/login/studentLogin`, {
@@ -70,7 +101,7 @@ console.log("url",frontEndUrl,backEndPort)
         instituteOrDomain: `${frontEndUrl}`
       }),
     });
-console.log("url",frontEndUrl,backEndPort)
+
     const data = await response.json();
     console.log(data.message, "this is the responseee");
 
@@ -233,8 +264,8 @@ Alert.alert(
     }
   };
  return (
-    <View >
-      <LoginHomeHeader />
+    <View style={styles.container}>
+      <LoginHomeHeader portalData={portalData}/>
         <View style={styles.LoginScreen}>
      <Text style={styles.title}>
   {isForgotPassword ? `Forget Password` : `Student Login`}
@@ -434,13 +465,16 @@ Alert.alert(
       )}
       </View>
 </View>
-      <Footer />
+      <MobileFooter portalData={portalData} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 20 },
+ container: {
+        flex: 1,
+        backgroundColor: '#ffffffff',
+    },
   title: { fontSize: 28, marginBottom: 20, textAlign: 'center' ,fontWeight:600},
   input: {
     width: '100%',

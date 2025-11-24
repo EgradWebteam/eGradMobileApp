@@ -1,82 +1,210 @@
-import React,{useEffect} from 'react'
-import { View, Text, Image, TouchableOpacity, Dimensions } from 'react-native'
-import { homeScreenStyles } from '../styles/HomeScreenStyles'
+import React ,{useState,useEffect}from 'react';
+import { View, Text, Image, TouchableOpacity, Dimensions, StyleSheet } from 'react-native';
 import Footer from '../components/Footer';
-import { LoginHomeHeader } from '../components/LoginHomeHeader'
-const { width } = Dimensions.get('window')
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { useNavigation } from '@react-navigation/native';
+import { LoginHomeHeader } from '../components/LoginHomeHeader';
+import { backEndUrl, frontEndUrl } from "../apiConfig.js";
+
+import MobileFooter from './StudentDashboardScreens/MobileFooter.jsx';
+const { width, height } = Dimensions.get('window');
+const portalImageDefault = require('../assets/EGTLogoExamHeaderCompressed.png');
+
 const HomeScreen = (props) => {
-    // console.log(props, "these r props");
-      // const navigation = useNavigation();
-  // useEffect(() => {
-  //   const checkStudentData = async () => {
-  //     try {
-  //       const keys = ['accessToken', 'decryptedId', 'sessionId', 'userId', 'studentData'];
-  //       const values = await AsyncStorage.multiGet(keys);
-  //       console.log(values);
-  //       const hasAllKeys = values.every(([_, value]) => value !== null && value !== '');
-
-  //       if (hasAllKeys) {
-  //         // Navigate to Student Dashboard
-  //         const userId = values.find(([key]) => key === 'userId')[1];
-  //         console.log("Navigating to Student Dashboard with userId:", userId);
-  //         navigation.reset({
-  //           index: 0,
-  //           routes: [{ name: 'studentDashboard', params: { userId } }],
-  //         });
-  //       } else {
-  //         console.log('Missing some AsyncStorage keys. Stay on Home.');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error checking AsyncStorage:', error);
-  //     }
-  //   };
-
-  //   checkStudentData();
-  // }, []);
     const isTablet = width > 768;
+      const [portalData, setPortalData] = useState({
+        portalId: null,
+        logoText: 'eGRADTutor',
+        logoImg: null,
+      });
+   const fetchPortalData = async () => {
+     try {
+       const response = await fetch(`${backEndUrl}/navbar/get-logo`, {
+         method: 'POST',
+         headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify({ domain: frontEndUrl }),
+       });
+       const data = await response.json();
+       if (data.portalId) {
+         setPortalData({
+           portalId: data.portalId,
+           logoText: data.instituteName || 'eGRADTutor',
+           logoImg: data.logo,
+         });
+       }
+     } catch (error) {
+       console.error('Failed to fetch portal info:', error);
+     }
+   };
+ 
+   useEffect(() => {
+ 
+     fetchPortalData();
+ 
+   }, []);
     return (
-        <>
-        <LoginHomeHeader/>
-        <View style={homeScreenStyles.container}>
-            {/* <LandingHeader /> */}
-            <View style={[homeScreenStyles.headdingDiv, isTablet ? homeScreenStyles.headdingDivTablet : homeScreenStyles.headdingDivMobile]}>
-                <Image source={require('../images/capImg.png')}
-                    style={[homeScreenStyles.capImg, homeScreenStyles.boxShadow]}
-                />
-                <View style={homeScreenStyles.welcomeDiv}>
-                    <Text style={homeScreenStyles.headLine}>Weclome to eGRADTutor</Text>
-                    <View style={[homeScreenStyles.tutoringDiv]}>
-                        <Text style={[homeScreenStyles.tutoringHeadLine, isTablet ? homeScreenStyles.tutoringHeadLineT : homeScreenStyles.tutoringHeadLineM]}>...tutoring by GRAD's from IIT's/IISc</Text>
-                    </View>
+        <View style={styles.container}>
+            {/* <LoginHomeHeader /> */}
+            
+            {/* Main Content */}
+            <View style={styles.mainContent}>
+                {/* Logo/Brand Section */}
+           
+
+                {/* Welcome Text */}
+                <View style={styles.welcomeSection}>
+                    <Text style={styles.welcomeText}>Welcome to</Text>
+                       <View style={styles.logoSection}>
+                    
+                                <Image
+                                    source={portalData.logoImg ? { uri: portalData.logoImg } : portalImageDefault}
+                                    style={styles.logo}
+                                  
+                                />
+                            </View>
+              
                 </View>
 
-            </View>
-            <View style={homeScreenStyles.qbBtnContainer}>
-                <TouchableOpacity style={homeScreenStyles.qbBtn} onPress={() => props.navigation.navigate('QBScreen', {
-                    name: "VeenaRagi"
-                })}>
-                    <Text style={homeScreenStyles.qbBtnText} >
-                        Go to QuestionBank Page
-                    </Text>
+                {/* Action Buttons */}
+                <View style={styles.buttonsContainer}>
+                    <TouchableOpacity 
+                        style={[styles.button, styles.loginButton]}
+                        onPress={() => props.navigation.navigate("login")}
+                    >
+                        <Text style={styles.loginButtonText}>LOGIN</Text>
+                    </TouchableOpacity>
 
-                </TouchableOpacity>
-                <TouchableOpacity  style={homeScreenStyles.qbBtn} onPress={()=>props.navigation.navigate("login")}>
-                    <Text >
-                        Login
-                    </Text>
-                </TouchableOpacity>
-                   <TouchableOpacity  style={homeScreenStyles.qbBtn} onPress={()=>props.navigation.navigate("register")}>
-                    <Text >
-                        Register
-                    </Text>
-                </TouchableOpacity>
+                    <TouchableOpacity 
+                        style={[styles.button, styles.registerButton]}
+                        onPress={() => props.navigation.navigate("register")}
+                    >
+                        <Text style={styles.registerButtonText}>REGISTER</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity 
+                        style={[styles.button, styles.mockTestButton]}
+                        onPress={() => props.navigation.navigate('QBScreen', { name: "VeenaRagi" })}
+                    >
+                        <Text style={styles.mockTestButtonText}>MOCKTEST</Text>
+                    </TouchableOpacity>
+                </View>
+
+                {/* Footer Text */}
+                {/* <View style={styles.footerTextContainer}>
+                   <Text style={styles.footerText}>
+  By using {portalData.logoText}, you agree to our{' '}
+  <Text style={styles.linkText}>Terms and Conditions</Text>,{' '}
+  <Text style={styles.linkText}>Privacy Policy</Text>,
+  and <Text style={styles.linkText}>Refund Policy</Text>.
+</Text>
+
+                </View> */}
+                <MobileFooter portalData={portalData}/>
             </View>
-            <Footer />
+
+            {/* <Footer /> */}
         </View>
-        </>
-    )
-}
+    );
+};
 
-export default HomeScreen
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#ffffffff',
+    },
+    mainContent: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+    },
+logoSection: {
+  alignItems: 'center',
+  width: width,    // full device width
+  marginBottom: 30,
+},
+ container: {
+        flex: 1,
+        backgroundColor: '#ffffffff',
+    },
+logo: {
+width: width*0.7,
+  height: undefined,    // AUTO height
+  aspectRatio: 3,
+  resizeMode: 'contain',
+},
+
+
+    welcomeSection: {
+        alignItems: 'center',
+        width: '100%',
+        marginBottom: 50,
+    },
+    welcomeText: {
+        fontSize: 26,
+        color: '#666',
+        marginBottom: 5,
+        fontFamily: 'System',
+    },
+    brandText: {
+        fontSize: 32,
+        fontWeight: 'bold',
+        color: '#2c3e50',
+        marginBottom: 8,
+        fontFamily: 'System',
+    },
+    tagline: {
+        fontSize: 16,
+        color: '#7f8c8d',
+        fontFamily: 'System',
+        letterSpacing: 1,
+    },
+    buttonsContainer: {
+        width: '100%',
+        maxWidth: 300,
+        marginBottom: 40,
+    },
+    button: {
+        paddingVertical: 15,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+        marginVertical: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 3,
+    },
+    loginButton: {
+        backgroundColor: '#3498db',
+    },
+    registerButton: {
+        backgroundColor: '#6c757d',
+    },
+    mockTestButton: {
+        backgroundColor: '#6c757d',
+    },
+    loginButtonText: {
+        color: '#ffffff',
+        fontSize: 16,
+        fontWeight: 'bold',
+        fontFamily: 'System',
+    },
+    registerButtonText: {
+        color: '#ffffff',
+        fontSize: 16,
+        fontWeight: 'bold',
+        fontFamily: 'System',
+    },
+    mockTestButtonText: {
+        color: '#ffffff',
+        fontSize: 16,
+        fontWeight: 'bold',
+        fontFamily: 'System',
+    }
+});
+
+export default HomeScreen;
