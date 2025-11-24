@@ -205,7 +205,8 @@ Alert.alert(
 
           setIsForgotPassword(false);
           setIsResetPassword(false);
-
+          setEmail("");
+            setPassword("")
           setNewPassword("");
           setConfirmPassword("");
           setResetCode("");
@@ -235,7 +236,10 @@ Alert.alert(
     <View >
       <LoginHomeHeader />
         <View style={styles.LoginScreen}>
-      <Text style={styles.title}>Student Login</Text>
+     <Text style={styles.title}>
+  {isForgotPassword ? `Forget Password` : `Student Login`}
+</Text>
+
      <View style={styles.LoginScreenConner}>
       {/* 🔹 Normal Login */}
       {!isForgotPassword && !isResetPassword && (
@@ -315,7 +319,9 @@ Alert.alert(
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => setIsForgotPassword(false)}>
+          <TouchableOpacity onPress={() => {setIsForgotPassword(false);
+            setEmail("");
+            setPassword("")}}>
             <Text style={styles.link}>Back to Login</Text>
           </TouchableOpacity>
         </>
@@ -473,7 +479,7 @@ fontSize:16,
   paddingRight: 10,
 },
 LoginScreenConner:{
-  minHeight:400
+  minHeight:300
 },
 linkreg: {
   color:"#007bff"
