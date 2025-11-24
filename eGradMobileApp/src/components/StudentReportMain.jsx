@@ -282,6 +282,7 @@ console.log("dataaa",route.params)
             userData={userData}
             course_id={course_id}
             questionData={questionData}
+            loading={loading}
           />
         )}
       </View>

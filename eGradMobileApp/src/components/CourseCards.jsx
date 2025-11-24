@@ -36,12 +36,12 @@ const CourseCards = React.memo(
 
     const testLabel = portalId === 3 ? "Worksheets" : "Tests";
 
-const formatCount = (num) => String(num).padStart(2, "0");
+    const formatCount = (num) => String(num).padStart(2, "0");
 
     return (
       <View style={styles.cardContainer}>
         <View style={styles.card}>
-          
+
           {/* HEADER */}
           <View style={styles.cardHeader}>
             <Text style={styles.cardTitle}>{title}</Text>
@@ -58,153 +58,156 @@ const formatCount = (num) => String(num).padStart(2, "0");
 
           {/* BUY SECTION */}
           {showBuySection && (
-            <View style={styles.detailsContainer}>
+            <View>
+              <View style={styles.detailsContainer}>
 
-              {/* ---------------- TEST COURSES [Portal 1 / 3] ---------------- */}
-              {(portalId === 1 || portalId === 3) && (
-                <View>
+                {/* ---------------- TEST COURSES [Portal 1 / 3] ---------------- */}
+                {(portalId === 1 || portalId === 3) && (
+                  <View>
 
-           <View style={styles.iconList}>
+                    <View style={styles.iconList}>
 
-  {chapterWiseTestCount > 0 && (
-    <View style={styles.featureRow}>
-      <Icon name="book-open" size={18} color="#2bb8ff" style={styles.iconFix} />
-      <View style={styles.alignBlock}>
-        <Text style={styles.countText}>{formatCount(chapterWiseTestCount)}</Text>
-        <Text style={styles.labelText}>Chapterwise {testLabel}</Text>
-      </View>
-    </View>
-  )}
+                      {chapterWiseTestCount > 0 && (
+                        <View style={styles.featureRow}>
+                          <Icon name="book-open" size={18} color="#2bb8ff" style={styles.iconFix} />
+                          <View style={styles.alignBlock}>
+                            <Text style={styles.countText}>{formatCount(chapterWiseTestCount)}</Text>
+                            <Text style={styles.labelText}>Chapterwise {testLabel}</Text>
+                          </View>
+                        </View>
+                      )}
 
-  {topicWiseTestCount > 0 && (
-    <View style={styles.featureRow}>
-      <Icon name="list-ul" size={18} color="#2bb8ff" style={styles.iconFix} />
-      <View style={styles.alignBlock}>
-        <Text style={styles.countText}>{formatCount(topicWiseTestCount)}</Text>
-        <Text style={styles.labelText}>Topicwise {testLabel}</Text>
-      </View>
-    </View>
-  )}
+                      {topicWiseTestCount > 0 && (
+                        <View style={styles.featureRow}>
+                          <Icon name="list-ul" size={18} color="#2bb8ff" style={styles.iconFix} />
+                          <View style={styles.alignBlock}>
+                            <Text style={styles.countText}>{formatCount(topicWiseTestCount)}</Text>
+                            <Text style={styles.labelText}>Topicwise {testLabel}</Text>
+                          </View>
+                        </View>
+                      )}
 
-  {subjectWiseTestCount > 0 && (
-    <View style={styles.featureRow}>
-      <Icon name="book" size={18} color="#2bb8ff" style={styles.iconFix} />
-      <View style={styles.alignBlock}>
-        <Text style={styles.countText}>{formatCount(subjectWiseTestCount)}</Text>
-        <Text style={styles.labelText}>Subjectwise {testLabel}</Text>
-      </View>
-    </View>
-  )}
+                      {subjectWiseTestCount > 0 && (
+                        <View style={styles.featureRow}>
+                          <Icon name="book" size={18} color="#2bb8ff" style={styles.iconFix} />
+                          <View style={styles.alignBlock}>
+                            <Text style={styles.countText}>{formatCount(subjectWiseTestCount)}</Text>
+                            <Text style={styles.labelText}>Subjectwise {testLabel}</Text>
+                          </View>
+                        </View>
+                      )}
 
-  {partTestCount > 0 && (
-    <View style={styles.featureRow}>
-      <Icon name="puzzle-piece" size={18} color="#2bb8ff" style={styles.iconFix} />
-      <View style={styles.alignBlock}>
-        <Text style={styles.countText}>{formatCount(partTestCount)}</Text>
-        <Text style={styles.labelText}>Part {testLabel}</Text>
-      </View>
-    </View>
-  )}
+                      {partTestCount > 0 && (
+                        <View style={styles.featureRow}>
+                          <Icon name="puzzle-piece" size={18} color="#2bb8ff" style={styles.iconFix} />
+                          <View style={styles.alignBlock}>
+                            <Text style={styles.countText}>{formatCount(partTestCount)}</Text>
+                            <Text style={styles.labelText}>Part {testLabel}</Text>
+                          </View>
+                        </View>
+                      )}
 
-  {fullTestCount > 0 && (
-    <View style={styles.featureRow}>
-      <Icon name="bullseye" size={18} color="#2bb8ff" style={styles.iconFix} />
-      <View style={styles.alignBlock}>
-        <Text style={styles.countText}>{formatCount(fullTestCount)}</Text>
-        <Text style={styles.labelText}>Full {testLabel}</Text>
-      </View>
-    </View>
-  )}
+                      {fullTestCount > 0 && (
+                        <View style={styles.featureRow}>
+                          <Icon name="bullseye" size={18} color="#2bb8ff" style={styles.iconFix} />
+                          <View style={styles.alignBlock}>
+                            <Text style={styles.countText}>{formatCount(fullTestCount)}</Text>
+                            <Text style={styles.labelText}>Full {testLabel}</Text>
+                          </View>
+                        </View>
+                      )}
 
-</View>
+                    </View>
 
 
-                  {/* PRICE */}
-                  <View style={styles.priceRow}>
-                    <Text style={styles.priceRed}>Rs {price}/-</Text>
-                    <Text style={styles.validity}>Valid till exam 2026</Text>
+                    {/* PRICE */}
+                    <View style={styles.priceRow}>
+                      <Text style={styles.priceRed}>Rs {price}/-</Text>
+                      <Text style={styles.validity}>Valid till exam 2026</Text>
+                    </View>
+
+                    {/* <TouchableOpacity
+                      style={styles.buyBtn}
+                      onPress={() => onBuy(price)}
+                    >
+                      <Text style={styles.buyBtnTxt}>
+                        {isUpgrade ? "Upgrade" : "Buy Now"}
+                      </Text>
+                    </TouchableOpacity> */}
                   </View>
+                )}
 
-                  <TouchableOpacity
-                    style={styles.buyBtn}
-                    onPress={() => onBuy(price)}
-                  >
-                    <Text style={styles.buyBtnTxt}>
-                      {isUpgrade ? "Upgrade" : "Buy Now"}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              )}
+                {/* ---------------- VIDEO COURSES [Portal 2] ---------------- */}
+                {portalId === 2 && (
+                  <View>
 
-              {/* ---------------- VIDEO COURSES [Portal 2] ---------------- */}
-              {portalId === 2 && (
-                <View>
+                    <Text style={styles.heading}>Instructor</Text>
 
-                  <Text style={styles.heading}>Instructor</Text>
+                    {Array.isArray(courseInstructor) &&
+                      courseInstructor.length > 0 ? (
+                      courseInstructor[0]
+                        .split(",")
+                        .map((inst, i) => (
+                          <Text key={i} style={styles.instructorName}>
+                            {inst.trim()}
+                          </Text>
+                        ))
+                    ) : (
+                      <Text>N/A</Text>
+                    )}
 
-                  {Array.isArray(courseInstructor) &&
-                  courseInstructor.length > 0 ? (
-                    courseInstructor[0]
-                      .split(",")
-                      .map((inst, i) => (
-                        <Text key={i} style={styles.instructorName}>
-                          {inst.trim()}
-                        </Text>
-                      ))
-                  ) : (
-                    <Text>N/A</Text>
-                  )}
+                    <View style={styles.iconList}>
 
-<View style={styles.iconList}>
+                      {VideoLectures > 0 && (
+                        <View style={styles.featureRow}>
+                          <Icon name="video" size={18} color="#2bb8ff" style={styles.iconFix} />
+                          <View style={styles.alignBlock}>
+                            <Text style={styles.countText}>{formatCount(VideoLectures)}</Text>
+                            <Text style={styles.labelText}>Lectures</Text>
+                          </View>
+                        </View>
+                      )}
 
-  {VideoLectures > 0 && (
-    <View style={styles.featureRow}>
-      <Icon name="video" size={18} color="#2bb8ff" style={styles.iconFix} />
-      <View style={styles.alignBlock}>
-        <Text style={styles.countText}>{formatCount(VideoLectures)}</Text>
-        <Text style={styles.labelText}>Lectures</Text>
-      </View>
-    </View>
-  )}
+                      {totalPracticeQuestions > 0 && (
+                        <View style={styles.featureRow}>
+                          <Icon name="question-circle" size={18} color="#2bb8ff" style={styles.iconFix} />
+                          <View style={styles.alignBlock}>
+                            <Text style={styles.countText}>{formatCount(totalPracticeQuestions)}</Text>
+                            <Text style={styles.labelText}>Practice Questions</Text>
+                          </View>
+                        </View>
+                      )}
 
-  {totalPracticeQuestions > 0 && (
-    <View style={styles.featureRow}>
-      <Icon name="question-circle" size={18} color="#2bb8ff" style={styles.iconFix} />
-      <View style={styles.alignBlock}>
-        <Text style={styles.countText}>{formatCount(totalPracticeQuestions)}</Text>
-        <Text style={styles.labelText}>Practice Questions</Text>
-      </View>
-    </View>
-  )}
+                      {studyMaterialCount > 0 && (
+                        <View style={styles.featureRow}>
+                          <Icon name="file-alt" size={18} color="#2bb8ff" style={styles.iconFix} />
+                          <View style={styles.alignBlock}>
+                            <Text style={styles.countText}>{formatCount(studyMaterialCount)}</Text>
+                            <Text style={styles.labelText}>Study Materials</Text>
+                          </View>
+                        </View>
+                      )}
 
-  {studyMaterialCount > 0 && (
-    <View style={styles.featureRow}>
-      <Icon name="file-alt" size={18} color="#2bb8ff" style={styles.iconFix} />
-      <View style={styles.alignBlock}>
-        <Text style={styles.countText}>{formatCount(studyMaterialCount)}</Text>
-        <Text style={styles.labelText}>Study Materials</Text>
-      </View>
-    </View>
-  )}
+                    </View>
 
-</View>
+                    {/* PRICE */}
+                    <View style={styles.priceRow}>
+                      <Text style={styles.priceRed}>Rs {price}/-</Text>
+                      <Text style={styles.validity}>Valid till exam 2026</Text>
+                    </View>
 
-                  {/* PRICE */}
-                  <View style={styles.priceRow}>
-                    <Text style={styles.priceRed}>Rs {price}/-</Text>
-                    <Text style={styles.validity}>Valid till exam 2026</Text>
+
                   </View>
-
-                  <TouchableOpacity
-                    style={styles.buyBtn}
-                    onPress={() => onBuy(price)}
-                  >
-                    <Text style={styles.buyBtnTxt}>
-                      {isUpgrade ? "Upgrade" : "Buy Now"}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              )}
+                )}
+              </View>
+              <TouchableOpacity
+                style={styles.buyBtn}
+                onPress={() => onBuy(price)}
+              >
+                <Text style={styles.buyBtnTxt}>
+                  {isUpgrade ? "Upgrade" : "Buy Now"}
+                </Text>
+              </TouchableOpacity>
             </View>
           )}
 
@@ -230,66 +233,102 @@ export default CourseCards;
 
 const styles = StyleSheet.create({
   cardContainer: {
-    margin: 12,
+    margin: 10,
   },
 
+  /* Same card style as BundleCourseCard */
   card: {
-    borderWidth: 1.2,
-    borderColor: "#3c3c3c",
-    borderRadius: 10,
-    backgroundColor: "#fff",
+    width: 300,
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#66666670",
+    // borderRadius: 8,
     overflow: "hidden",
+
+    elevation: 8,
     shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    // elevation: 5,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
   },
 
+  /* Same top header */
   cardHeader: {
-    backgroundColor: "#3c3c3c",
-    paddingVertical: 10,
-    paddingHorizontal: 10,
+    backgroundColor: "#444444",
+    paddingVertical: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    height: 60,
+    marginHorizontal: 5,
+    marginTop: 5,
   },
 
   cardTitle: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#fff",
+    color: "#FFFFFF",
+    fontSize: 20,
     textAlign: "center",
+    textTransform: "uppercase",
+    fontFamily: "Arial",
   },
 
+  /* Same image wrapper behavior */
   imageContainer: {
-    alignItems: "center",
+    flex: 1,
     justifyContent: "center",
-    paddingVertical: 5,
+    alignItems: "center",
+    marginTop: 5,
+    marginBottom: 5,
   },
 
   image: {
-    width: "95%",
-    height: 180,
-    borderRadius: 5,
+    // borderWidth: 1,
+    // borderColor: "#66666670",
+    // borderRadius: 8,
+    width: 290,
+    height: 110,
+    resizeMode: "center",
   },
 
   detailsContainer: {
     paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingBottom: 10,
+    paddingTop: 5,
   },
 
   iconList: {
-    marginVertical: 10,
-  },
-
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
     marginVertical: 5,
   },
 
-  testLine: {
-    fontSize: 17,
-    fontWeight: "600",
-    color: "#3c3c3c",
+  featureRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 6,
+  },
+
+  iconFix: {
+    width: 24,
+    textAlign: "center",
+  },
+
+  alignBlock: {
+    flexDirection: "row",
+    alignItems: "center",
     marginLeft: 10,
+  },
+
+  countText: {
+    fontSize: 17,
+    fontWeight: "bold",
+    color: "#3c3c3c",
+    width: 30,
+    textAlign: "right",
+  },
+
+  labelText: {
+    fontSize: 17,
+    color: "#3c3c3c",
+    fontWeight: "600",
+    marginLeft: 8,
   },
 
   priceRow: {
@@ -311,18 +350,22 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 
+  /* SAME BLUE BOTTOM BAR AS BundleCourseCard */
   buyBtn: {
-    marginTop: 12,
-    backgroundColor: "#2bb8ff",
-    paddingVertical: 10,
-    borderRadius: 8,
+    backgroundColor: "#32b6ef",
+    height: 40,
+    justifyContent: "center",
     alignItems: "center",
+    marginHorizontal: 5,
+    marginBottom: 5,
+    // borderRadius: 5,
+    marginTop: 10,
   },
 
   buyBtnTxt: {
-    color: "#fff",
+    color: "#ffffff",
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: "600",
   },
 
   heading: {
@@ -339,37 +382,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
- featureRow: {
-  flexDirection: "row",
-  alignItems: "center",
-  marginVertical: 6,
-},
-
-iconFix: {
-  width: 24,       // FIXED WIDTH FOR ICONS (ALIGN EVERYTHING)
-  textAlign: "center",
-},
-
-alignBlock: {
-  flexDirection: "row",
-  alignItems: "center",
-  marginLeft: 10,
-},
-
-countText: {
-  fontSize: 17,
-  fontWeight: "bold",
-  color: "#3c3c3c",
-  width: 30,        // FIXED WIDTH FOR COUNT
-  textAlign: "right",
-},
-
-labelText: {
-  fontSize: 17,
-  color: "#3c3c3c",
-  fontWeight: "600",
-  marginLeft: 8,
-},
-
-
 });

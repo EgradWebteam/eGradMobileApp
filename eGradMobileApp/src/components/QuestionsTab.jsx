@@ -7,8 +7,9 @@ import {
   FlatList,
   ScrollView,
 } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
 
-const QuestionsTab = ({ testId, studentId, userData, course_id, questionData }) => {
+const QuestionsTab = ({ testId, studentId, userData, course_id, questionData,loading }) => {
   const [selectedSubjectId, setSelectedSubjectId] = useState(null);
   const [selectedSectionId, setSelectedSectionId] = useState(null);
 
@@ -48,13 +49,14 @@ const QuestionsTab = ({ testId, studentId, userData, course_id, questionData }) 
     [selectedSubject, selectedSectionId]
   );
 
-  if (!questionData?.subjects?.length) {
-    return (
-      <View style={styles.centered}>
-        <Text>No question performance data available.</Text>
-      </View>
-    );
-  }
+  // if (!questionData?.subjects?.length) {
+  //   return (
+  //     <View style={styles.centered}>
+  //       <Text>No question performance data available.</Text>
+  //     </View>
+  //   );
+  // }
+
 
   // Render Subject Buttons
   const renderSubjectButtons = () =>
@@ -130,6 +132,21 @@ const QuestionsTab = ({ testId, studentId, userData, course_id, questionData }) 
     </View>
   );
 
+if (loading) {
+  return (
+    <View style={styles.centered}>
+      <ActivityIndicator size="large" color="#007bff" />
+    </View>
+  );
+}
+  
+  if (!questionData || !questionData.subjects || questionData.subjects.length === 0) {
+  return (
+    <View style={styles.centered}>
+      <Text>No question performance data available.</Text>
+    </View>
+  );
+}
   return (
     <ScrollView style={styles.container}>
       {/* Subject Buttons */}
@@ -140,7 +157,11 @@ const QuestionsTab = ({ testId, studentId, userData, course_id, questionData }) 
 
       {/* Questions List */}
      {/* Questions List */}
-{selectedSection?.questions?.length ? (
+{!selectedSection ? (
+  <View style={styles.centered}>
+    <ActivityIndicator size="small" color="#007bff" />
+  </View>
+) : selectedSection?.questions?.length ? (
   <ScrollView horizontal showsHorizontalScrollIndicator>
     <View>
       {/* Table Header */}
