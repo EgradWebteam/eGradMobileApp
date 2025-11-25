@@ -268,7 +268,12 @@ const StudentDashboardBookMarks = ({ studentId }) => {
                                 {question.solution?.video_solution_link && (
                                   <TouchableOpacity
                                     style={styles.solutionBtn}
-                                    onPress={() => setVideoPopup(question.question_id)}
+                                    onPress={() => {setVideoPopup(question.question_id);
+                                           setVisibleSolutions((prev) => ({
+                                             ...prev,
+                                        [question.question_id]: false,
+                                    }));
+                                    }}
                                   >
                                     <Text style={styles.solutionBtnText}>
                                       View Video Solution

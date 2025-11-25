@@ -488,7 +488,7 @@ height: 45,
     marginBottom: 10,
   },
   closeButton: {
-    backgroundColor: '#01c3ff',
+    backgroundColor:"red",
     paddingVertical: 6,
     paddingHorizontal: 14,
     borderRadius: 6,

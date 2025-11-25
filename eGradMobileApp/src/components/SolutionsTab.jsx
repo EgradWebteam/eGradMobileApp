@@ -170,18 +170,23 @@ const SolutionsTab = ({
             <Text style={styles.btnText}>
               {visibleSolutions[item.question_id]
                 ? "Hide Solution"
-                : "View Solution"}
+                : "Solution"}
             </Text>
           </TouchableOpacity>
         )}
        {item.solution?.video_solution_link && (
           <TouchableOpacity
               style={styles.solutionBtn}
-            onPress={() =>
-              setVideoPopup(videoPopup === item.question_id ? null : item.question_id)
+            onPress={() => {
+              setVideoPopup(videoPopup === item.question_id ? null : item.question_id);
+         setVisibleSolutions((prev) => ({
+    ...prev,
+    [item.question_id]: false,
+  }));
             }
+          }
           >
-            <Text style={styles.btnText}>View Video Solution</Text>
+            <Text style={styles.btnText}>Video Solution</Text>
           </TouchableOpacity>
         )}</View>
         {visibleSolutions[item.question_id] && item.solution?.solutionImgName && (

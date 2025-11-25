@@ -9,7 +9,7 @@ import {
   Alert,
   ImageBackground,
 } from 'react-native';
-import { useSession } from '../../hooks/SessionContext';
+// import { useSession } from '../../hooks/SessionContext';
 import { styles } from '../../styles/OTSStyles';
 // import axios from 'axios';
 import QuestionOptionsContainer from './QuestionOptionsContainer';
