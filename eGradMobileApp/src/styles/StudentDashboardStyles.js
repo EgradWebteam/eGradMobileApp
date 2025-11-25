@@ -297,7 +297,7 @@ cancelRedText: {
   activePortalButton: { backgroundColor: "#4CAF50" },
   portalButtonText: { color: "#000" },
   scrollContent: { flex: 1 },
-  testBlock: { marginBottom: 20, padding: 10, backgroundColor: "#f9f9f9" },
+  testBlock: { marginBottom: 20, padding: 10},
   testTitle: { fontSize: 18, fontWeight: "600", marginBottom: 10 },
   questionBlock: {
     marginBottom: 15,
