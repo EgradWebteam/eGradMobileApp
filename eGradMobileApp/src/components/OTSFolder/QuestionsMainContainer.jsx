@@ -17,7 +17,7 @@ import { backEndUrl, frontEndUrl,backEndPort } from "../../apiConfig";
 // import Icon from 'react-native-vector-icons/FontAwesome';
 // import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import ResponsiveImage from './ResponsiveImage';
-
+import { useSession } from "../../hooks/SessionContext.jsx";
 
 
 
@@ -52,6 +52,7 @@ const backgroundImages = {
   AnsMarkedForReview: require('../../images/AnsMarkedForReview.png'),
   NotVisitedBehaviourBtns: require('../../images/Visited.png'),
 };
+  const { validateSessionWithoutNavigation } = useSession();
   const savedAnswer = userAnswers?.[String(question?.question_id)];
   const subject = testData?.subjects?.find(
     (sub) => sub.SubjectName === activeSubject
@@ -71,6 +72,8 @@ useEffect(() => {
 
   }
 }, [activeQuestionIndex, activeSection, activeSubject]);
+
+console.log("COMPONENT RENDERED, activeQuestionIndex =", activeQuestionIndex);
 
   const verticalRef = useRef(null);
   const horizontalRef = useRef(null);
@@ -106,9 +109,15 @@ useEffect(() => {
   }, [activeSubject, activeSection, activeQuestionIndex, userAnswers]);
 
   const handleQuestionClick = async (index) => {
+    console.log("indexxxx",index)
         if(activeQuestionIndex === index) return;
     // Commented session validation for now
-    const isValid = await validateSessionWithoutNavigation();
+    // const isValid = await validateSessionWithoutNavigation();
+      const isValid = await validateSessionWithoutNavigation();
+  if (!isValid) {
+    window.close();
+    return;
+  }
 await autoSaveNATIfNeeded();
     const question = section?.questions?.[index];
     if (!question) return;
