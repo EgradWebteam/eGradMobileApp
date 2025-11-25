@@ -516,7 +516,7 @@ LoginScreenConner:{
   minHeight:300
 },
 linkreg: {
-  color:"#007bff"
+  color:"#01c3ff"
 },
 passwordInput: {
   flex: 1,

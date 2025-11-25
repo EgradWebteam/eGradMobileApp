@@ -38,7 +38,7 @@ console.log("subjectMarkssssss",subjectMarks);
   if (!data) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color="#007bff" />
+        <ActivityIndicator size="large" color="#01c3ff" />
       </View>
     );
   }

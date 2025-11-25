@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   popupButton: {
-    backgroundColor: "#007bff",
+    backgroundColor: "#01c3ff",
     paddingVertical: 8,
     paddingHorizontal: 20,
     borderRadius: 5

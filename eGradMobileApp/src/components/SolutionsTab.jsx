@@ -15,6 +15,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { WebView } from "react-native-webview";
 import { backEndUrl } from "../apiConfig";
 import AutoSizedImage from "./AutoSizedImage";
+import { styles } from "../styles/StudentDashboardStyles";
 import ResponsiveImage from './OTSFolder/ResponsiveImage';  
 import renderVideo from "./renderVideo";
 const SolutionsTab = ({
@@ -159,11 +160,11 @@ const SolutionsTab = ({
             </View>
           </View>
         </ScrollView>
-
+    <View style={styles.solutionButtons}>
         {/* Solution Section (outside scroll so it sticks below) */}
         {item.solution?.solutionImgName && (
           <TouchableOpacity
-            style={styles.solutionButton}
+            style={styles.solutionBtn}
             onPress={() => toggleSolutionVisibility(item.question_id)}
           >
             <Text style={styles.btnText}>
@@ -173,7 +174,16 @@ const SolutionsTab = ({
             </Text>
           </TouchableOpacity>
         )}
-
+       {item.solution?.video_solution_link && (
+          <TouchableOpacity
+              style={styles.solutionBtn}
+            onPress={() =>
+              setVideoPopup(videoPopup === item.question_id ? null : item.question_id)
+            }
+          >
+            <Text style={styles.btnText}>View Video Solution</Text>
+          </TouchableOpacity>
+        )}</View>
         {visibleSolutions[item.question_id] && item.solution?.solutionImgName && (
           <ScrollView
             horizontal
@@ -188,17 +198,8 @@ const SolutionsTab = ({
           </ScrollView>
         )}
 
-        {/* Video Solution */}
-        {item.solution?.video_solution_link && (
-          <TouchableOpacity
-            style={styles.solutionButton}
-            onPress={() =>
-              setVideoPopup(videoPopup === item.question_id ? null : item.question_id)
-            }
-          >
-            <Text style={styles.btnText}>View Video Solution</Text>
-          </TouchableOpacity>
-        )}
+    
+ 
       </View>
     );
   };
@@ -290,57 +291,3 @@ const SolutionsTab = ({
 
 export default SolutionsTab;
 
-const styles = StyleSheet.create({
-  questionContainer: {
-    backgroundColor: "#fff",
-    padding: 12,
-    margin: 8,
-    borderRadius: 8,
-    elevation: 2,
-  },
-  headerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 6,
-  },
-  questionImage: {
-    marginVertical: 10,
-    resizeMode: "contain",
-  },
-  paragraphImage: {
-    marginVertical: 6,
-    resizeMode: "contain",
-  },
-  solutionImage: {
-    marginTop: 10,
-    resizeMode: "contain",
-  },
-  optionRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 4,
-  },
-  optionImage: {
-    width: "100%",
-    height: 60,
-    marginLeft: 8,
-    resizeMode: "contain",
-  },
-  solutionButton: {
-    backgroundColor: "#007bff",
-    padding: 8,
-    borderRadius: 6,
-    marginTop: 10,
-    alignItems: "center",
-  },
-  btnText: { color: "#fff" },
-  modalContent: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: "#fff",
-  },
-  closeBtn: {
-    alignSelf: "flex-end",
-    marginBottom: 10,
-  },
-});

@@ -129,7 +129,7 @@ const StudentDashboardMyResults = ({ studentId, userData }) => {
       <Text style={styles.heading}>My Results</Text>
 
       {loading ? (
-        <ActivityIndicator size="large" color="#007bff" />
+        <ActivityIndicator size="large" color="#01c3ff" />
       ) : testData.length === 0 ? (
         <View style={styles.noResultsContainer}>
           <Text style={styles.noResultsText}>

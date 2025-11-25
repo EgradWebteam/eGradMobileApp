@@ -135,7 +135,7 @@ const QuestionsTab = ({ testId, studentId, userData, course_id, questionData,loa
 if (loading) {
   return (
     <View style={styles.centered}>
-      <ActivityIndicator size="large" color="#007bff" />
+      <ActivityIndicator size="large" color="#01c3ff" />
     </View>
   );
 }
@@ -159,7 +159,7 @@ if (loading) {
      {/* Questions List */}
 {!selectedSection ? (
   <View style={styles.centered}>
-    <ActivityIndicator size="small" color="#007bff" />
+    <ActivityIndicator size="small" color="#01c3ff" />
   </View>
 ) : selectedSection?.questions?.length ? (
   <ScrollView horizontal showsHorizontalScrollIndicator>
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ddd",
     borderRadius: 6,
   },
-  activeButton: { backgroundColor: "#007bff" },
+  activeButton: { backgroundColor: "#01c3ff" },
   buttonText: { color: "#000" },
   activeButtonText: { color: "#fff", fontWeight: "bold" },
   row: {

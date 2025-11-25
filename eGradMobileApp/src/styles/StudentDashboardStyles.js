@@ -22,6 +22,18 @@ export const styles = StyleSheet.create({
     backgroundColor: "#cce4ff", // light blue shade
     alignItems: "center",
   },
+   questionContainer: {
+    backgroundColor: "#fff",
+    padding: 12,
+    margin: 8,
+    borderRadius: 8,
+    elevation: 2,
+  },
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 6,
+  },
   back:{
    marginTop: 10 ,
    backgroundColor:"#15803d",
@@ -32,7 +44,7 @@ export const styles = StyleSheet.create({
      alignItems: 'center', 
    justifyContent:'center'
   },
-  activeButton: {    backgroundColor: "#09bffc",
+  activeButton: {    backgroundColor: "#01c3ff",
     color:'#fff',}, // darker blue
   buttonText: { color: "#fff", fontWeight: "bold" },
   detailsContainer: {
@@ -116,8 +128,8 @@ row: {
     marginBottom: 12,
   },
   portalActive: {
-    backgroundColor: "#2bb8ff", // same as screenshot blue
-    borderColor: "#2bb8ff",
+    backgroundColor: "#01c3ff", // same as screenshot blue
+    borderColor: "#01c3ff",
   },
   portalText: {
     fontSize: 15,
@@ -140,7 +152,7 @@ row: {
     marginBottom: 12,
   },
   examActive: {
-    backgroundColor: "#2bb8ff",
+    backgroundColor: "#01c3ff",
   },
   examText: {
     fontSize: 14,
@@ -161,7 +173,7 @@ row: {
     marginBottom: 10,
   },
   deptActive: {
-    backgroundColor: "#2bb8ff",
+    backgroundColor: "#01c3ff",
   },
   deptText: {
     fontSize: 14,
@@ -238,7 +250,7 @@ popupBtnRow: {
 },
 
 okBlueBtn: {
-  backgroundColor: "#1E88E5",
+  backgroundColor: "#01c3ff",
   paddingVertical: 12,
   paddingHorizontal: 28,
   borderRadius: 10,
@@ -321,7 +333,7 @@ cancelRedText: {
   optionImage: { width: "100%", height: 60, resizeMode: "contain", marginLeft: 5 },
   solutionButtons: { flexDirection: "row", marginTop: 10 },
   solutionBtn: {
-    backgroundColor: "#2196F3",
+    backgroundColor: "#01c3ff",
     padding: 8,
     borderRadius: 5,
     marginRight: 10,
@@ -397,7 +409,7 @@ cancelRedText: {
     borderRadius: 5,
   },
   activeButton: {
-   backgroundColor: "#09bffc",
+   backgroundColor: "#01c3ff",
     color:'#fff',
   },
   noCourses: {
@@ -440,7 +452,7 @@ containerMyresults: {
     backgroundColor: "#f0f0f0",
     marginRight: 8,
   },
-  activeButton: { backgroundColor: "#007bff" },
+  activeButton: { backgroundColor: "#01c3ff" },
   portalButtontext: {
     color: "#333",
     fontWeight: "bold",
@@ -502,7 +514,7 @@ containerMyresults: {
   },
 
   viewReportButton: {
-    backgroundColor: "#2bb8ff",
+    backgroundColor: "#01c3ff",
     paddingVertical: 14,
     borderRadius: 30,
     alignItems: "center",

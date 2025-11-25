@@ -454,7 +454,7 @@ reAttemptBtn: { backgroundColor: "#e67e22" },
   popupHeading: { fontSize: 18, fontWeight: "bold", marginBottom: 8 },
   popupText: { marginBottom: 16 },
   modalActions: { flexDirection: "row", justifyContent: "space-between" },
-  modalBtn: { flex: 1, padding: 12, backgroundColor: "#007BFF", marginHorizontal: 4, borderRadius: 8, alignItems: "center" },
+  modalBtn: { flex: 1, padding: 12, backgroundColor: "#01c3ff", marginHorizontal: 4, borderRadius: 8, alignItems: "center" },
 });
 
 export default PracticeQuestionBank;

@@ -728,7 +728,7 @@ const styles = StyleSheet.create({
   },
   btn: {
     padding: 10,
-    backgroundColor: "#007bff",
+    backgroundColor: "#01c3ff",
     color: "#fff",
     borderRadius: 6,
   },
