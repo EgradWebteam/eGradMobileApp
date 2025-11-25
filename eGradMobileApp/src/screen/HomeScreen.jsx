@@ -23,6 +23,7 @@ const HomeScreen = (props) => {
          body: JSON.stringify({ domain: frontEndUrl }),
        });
        const data = await response.json();
+       console.log("dataa landing page",data);
        if (data.portalId) {
          setPortalData({
            portalId: data.portalId,
@@ -40,6 +41,14 @@ const HomeScreen = (props) => {
      fetchPortalData();
  
    }, []);
+
+   console.log("portal data",portalData)
+   const programType = portalData.portalId === 1 
+  ? "UG" 
+  : portalData.portalId === 2 
+  ? "PG" 
+  : "";
+
     return (
         <View style={styles.container}>
             {/* <LoginHomeHeader /> */}
@@ -51,7 +60,10 @@ const HomeScreen = (props) => {
 
                 {/* Welcome Text */}
                 <View style={styles.welcomeSection}>
-                    <Text style={styles.welcomeText}>Welcome to</Text>
+                    <Text style={styles.welcomeText}>Welcome to {programType}</Text>
+                     {/* {programType !== "" && (
+        <Text style={styles.programTypeText}>{programType}</Text>
+    )} */}
                        <View style={styles.logoSection}>
                     
                                 <Image
@@ -204,7 +216,15 @@ width: width*0.7,
         fontSize: 16,
         fontWeight: 'bold',
         fontFamily: 'System',
-    }
+    },
+    programTypeText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 10,
+    fontFamily: 'System',
+},
+
 });
 
 export default HomeScreen;
