@@ -16,9 +16,9 @@ export const LoginHomeHeader = ({portalData}) => {
             </View>
             </TouchableOpacity>
             <View>
-                <TouchableOpacity  onPress={() => navigation.navigate('login')}style={styles.button} >
+                {/* <TouchableOpacity  onPress={() => navigation.navigate('login')}style={styles.button} >
                     <Text style={styles.buttonText}> Login </Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
         </View>
     );
