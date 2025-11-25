@@ -14,7 +14,8 @@ import { Picker } from "@react-native-picker/picker";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { WebView } from "react-native-webview";
 import { backEndUrl } from "../apiConfig";
-import AutoSizedImage from "./AutoSizedImage";  
+import AutoSizedImage from "./AutoSizedImage";
+import ResponsiveImage from './OTSFolder/ResponsiveImage';  
 import renderVideo from "./renderVideo";
 const SolutionsTab = ({
   testId,
@@ -114,18 +115,17 @@ const SolutionsTab = ({
                 <Text style={{ fontWeight: "bold", marginBottom: 4 }}>
                   Paragraph:
                 </Text>
-                <AutoSizedImage
+                 <ResponsiveImage
                   uri={item.paragraph.paragraphImgName}
-                  style={styles.paragraphImage}
+              
                 />
               </View>
             )}
 
             {/* Question */}
             {item.questionImgName && (
-              <AutoSizedImage
-                uri={item.questionImgName}
-                style={styles.questionImage}
+             <ResponsiveImage
+                 uri={item.questionImgName}
               />
             )}
 
@@ -148,9 +148,9 @@ const SolutionsTab = ({
                       {icon} ({option.option_index})
                     </Text>
                     {option.optionImgName && (
-                      <AutoSizedImage
+                      <ResponsiveImage
                         uri={option.optionImgName}
-                        style={styles.optionImage}
+                    
                       />
                     )}
                   </View>
@@ -181,9 +181,9 @@ const SolutionsTab = ({
             nestedScrollEnabled={true}
             style={{ marginTop: 10 }}
           >
-            <AutoSizedImage
+            <ResponsiveImage
               uri={item.solution.solutionImgName}
-              style={styles.solutionImage}
+         
             />
           </ScrollView>
         )}

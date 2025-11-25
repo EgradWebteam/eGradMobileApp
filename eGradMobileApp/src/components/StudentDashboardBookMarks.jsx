@@ -15,6 +15,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { backEndUrl } from "../apiConfig";
 import { styles } from "../styles/StudentDashboardStyles";
+import ResponsiveImage from './OTSFolder/ResponsiveImage';  
 import AutoSizedImage from "./AutoSizedImage";
 import renderVideo from "./renderVideo";
 const StudentDashboardBookMarks = ({ studentId }) => {
@@ -139,7 +140,14 @@ const StudentDashboardBookMarks = ({ studentId }) => {
     <View style={styles.containerBookMarks}>
       <Text style={styles.heading}>Bookmarks</Text>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.portalButtons}>
+   
+
+      {loading ? (
+        <ActivityIndicator size="large" style={{ marginTop: 20 }} />
+      ) :
+        filteredTests.length > 0 ? (
+          <View>
+     <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.portalButtons}>
         {uniquePortals.map((portal) => (
           <TouchableOpacity
             key={portal.portalId}
@@ -156,11 +164,7 @@ const StudentDashboardBookMarks = ({ studentId }) => {
           </TouchableOpacity>
         ))}
       </ScrollView>
-
-      {loading ? (
-        <ActivityIndicator size="large" style={{ marginTop: 20 }} />
-      ) :
-        filteredTests.length > 0 ? (
+         
           <ScrollView style={styles.scrollContent}>
             {filteredTests.map((portal, portalIndex) =>
               portal.tests.map((test, testIndex) => {
@@ -212,18 +216,18 @@ const StudentDashboardBookMarks = ({ studentId }) => {
                                   {question.paragraph?.paragraphImgName && (
                                     <View style={styles.paragraphContainer}>
                                       <Text style={styles.paragraphTag}>Paragraph:</Text>
-                                      <AutoSizedImage
+                                      <ResponsiveImage
                                         uri={question.paragraph.paragraphImgName}
-                                        style={styles.paragraphImage}
+                           
                                       />
                                     </View>
                                   )}
 
                                   {/* Question Image */}
                                   {question.questionImgName && (
-                                    <AutoSizedImage
+                                    <ResponsiveImage
                                       uri={question.questionImgName}
-                                      style={styles.image}
+                                
                                     />
                                   )}
 
@@ -238,9 +242,9 @@ const StudentDashboardBookMarks = ({ studentId }) => {
                                         style={styles.optionRow}
                                       >
                                         <Text>({option.option_index})</Text>
-                                        <AutoSizedImage
+                                        <ResponsiveImage
                                           uri={option.optionImgName}
-                                          style={styles.optionImage}
+                                  
                                         />
                                       </View>
                                     ))}
@@ -281,9 +285,9 @@ const StudentDashboardBookMarks = ({ studentId }) => {
                                   nestedScrollEnabled={true}
                                   style={{ marginTop: 10 }}
                                 >
-                                  <AutoSizedImage
+                                  <ResponsiveImage
                                     uri={question.solution.solutionImgName}
-                                    style={styles.solutionImage}
+                                
                                   />
                                 </ScrollView>
                               )}
@@ -319,6 +323,7 @@ const StudentDashboardBookMarks = ({ studentId }) => {
               })
             )}
           </ScrollView>
+             </View>
         ) : (
           <Text style={styles.emptyMsg}>You haven't bookmarked anything yet!</Text>
         )}
