@@ -586,7 +586,7 @@ containerMyresults: {
    backgroundColor: 'transparent',
   },
   activeSidebarItem: {
-    backgroundColor: '#09bffc',
+    backgroundColor: '#01c3ff',
   },
   lefticon: {
     // marginRight: 10,
@@ -636,7 +636,7 @@ containerMyresults: {
     margin:10,
   },
   btn: {
-    backgroundColor: "#09bffc",
+    backgroundColor: "#01c3ff",
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 6,

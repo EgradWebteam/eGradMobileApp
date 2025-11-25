@@ -13,11 +13,9 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useStudent } from '../../hooks/StudentContext';
- import { backEndUrl, frontEndUrl,backEndPort } from "../../apiConfig";
-// import LoadingSpinner from '../../ContextFolder/LoadingSpinner';
-// import { closeTestWindowIfOpen } from '../../ContextFolder/windowManager';
+import { backEndUrl, frontEndUrl, backEndPort } from "../../apiConfig";
 import StudentDashboardHeader from '../../components/StudentDashboardHeader';
-import StudentDashboardLeftSidebar from '../../components/StudentDashboardLeftSidebar';
+import StudentDashboardBottomToolbar from '../../components/StudentDashboardBottomToolbar.jsx'; // New component
 import { useSession } from '../../hooks/SessionContext';
 // Dummy components to simulate lazy-loaded
 import StudentDashboardHome from '../../components/StudentDashboardHome';
@@ -37,15 +35,15 @@ export const StudentDashboard = () => {
     logoText: 'eGRADTutor',
     logoImg: null,
   });
-const { studentData } = useStudent();
+  const { studentData } = useStudent();
   const navigation = useNavigation();
   const logoutHandledRef = useRef(false);
   const { validateSession } = useSession();
- const [preselectedPortalId, setPreselectedPortalId] = useState(null);
+  const [preselectedPortalId, setPreselectedPortalId] = useState(null);
 
-const handleSectionChange = useCallback(async(section, portalId = null) => {
+  const handleSectionChange = useCallback(async (section, portalId = null) => {
     const isValid = await validateSession();
-  if (!isValid) return;
+    if (!isValid) return;
     setActiveSection(section);
 
     const state = { activeSection: section };
@@ -60,28 +58,7 @@ const handleSectionChange = useCallback(async(section, portalId = null) => {
     sessionStorage.setItem("studentDashboardState", JSON.stringify(state));
   }, [validateSession]);
 
-// useEffect(() => {
-//   const restoreDashboardState = async () => {
-//     try {
-//       const savedState = await AsyncStorage.getItem("studentDashboardState");
-//       if (savedState) {
-//         const { activeSection, preselectedPortalId } = JSON.parse(savedState);
-//         if (activeSection) setActiveSection(activeSection);
-//         if (preselectedPortalId) {
-//           // setPreselectedPortalId(preselectedPortalId);
-//         }
-//       }
-//     } catch (err) {
-//       console.error("Failed to restore dashboard state:", err);
-//     }
-//   };
-
-
-//   fetchPortalData();
-//   restoreDashboardState();
-//   setIsLoading(false);
-// }, []);
-useEffect(() => {
+  useEffect(() => {
     const restoreDashboardState = async () => {
       try {
         const savedState = await AsyncStorage.getItem("studentDashboardState");
@@ -102,8 +79,6 @@ useEffect(() => {
     fetchPortalData();
     restoreDashboardState();
   }, []);
-
-
 
   const handleLogout = async () => {
     try {
@@ -144,22 +119,6 @@ useEffect(() => {
     }
   };
 
-  useEffect(() => {
-
-    fetchPortalData();
-    setIsLoading(false);
-  }, []);
-
-  // Auto-logout on inactivity (AppState-based)
-  // useEffect(() => {
-  //   const subscription = AppState.addEventListener('change', (nextState) => {
-  //     if (nextState === 'background') {
-  //       handleLogout();
-  //     }
-  //   });
-  //   return () => subscription.remove();
-  // }, []);
-
   console.log("Dashboard activeSection:", activeSection);
 
   const renderSection = () => {
@@ -170,15 +129,15 @@ useEffect(() => {
             studentName={studentData?.userDetails?.candidate_name}
             portalId={portalData.portalId}
             logoText={portalData.logoText}
-            handleSectionChange={handleSectionChange} 
+            handleSectionChange={handleSectionChange}
           />
         );
       case 'myCourses':
-        return <StudentDashboardMyCourses studentId={studentData?.userDetails?.student_registration_id} userData={studentData?.userDetails}/>;
+        return <StudentDashboardMyCourses studentId={studentData?.userDetails?.student_registration_id} userData={studentData?.userDetails} />;
       case 'buyCourses':
-        return <StudentDashboardBuyCourses studentId={studentData?.userDetails?.student_registration_id} setActiveSection={setActiveSection} preselectedPortalId={preselectedPortalId}/>;
+        return <StudentDashboardBuyCourses studentId={studentData?.userDetails?.student_registration_id} setActiveSection={setActiveSection} preselectedPortalId={preselectedPortalId} />;
       case 'results':
-        return <StudentDashboardMyResults studentId={studentData?.userDetails?.student_registration_id} userData={studentData?.userDetails}/>;
+        return <StudentDashboardMyResults studentId={studentData?.userDetails?.student_registration_id} userData={studentData?.userDetails} />;
       case 'bookmarks':
         return <StudentDashboardBookMarks studentId={studentData?.userDetails?.student_registration_id} />;
       case 'account':
@@ -194,16 +153,13 @@ useEffect(() => {
     }
   };
 
-  // if (isLoading) return <LoadingSpinner />;
-  // ⛔️ Don’t render until state restored
-if (isLoading || !activeSection) {
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <ActivityIndicator size="large" color="#3399cc" />
-    </View>
-  );
-}
-
+  if (isLoading || !activeSection) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#3399cc" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -215,12 +171,19 @@ if (isLoading || !activeSection) {
       />
 
       <View style={styles.body}>
-        <StudentDashboardLeftSidebar
-          activeSection={activeSection}
-          handleSectionChange={handleSectionChange}
-        />
-        <ScrollView contentContainerStyle={styles.contentArea}>{renderSection()}</ScrollView>
+        <ScrollView 
+          style={styles.contentArea}
+          contentContainerStyle={styles.contentContainer}
+        >
+          {renderSection()}
+        </ScrollView>
       </View>
+
+      {/* Bottom Toolbar */}
+      <StudentDashboardBottomToolbar
+        activeSection={activeSection}
+        handleSectionChange={handleSectionChange}
+      />
     </View>
   );
 };
@@ -231,11 +194,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   body: {
-    flexDirection: 'row',
     flex: 1,
   },
   contentArea: {
+    flex: 1,
+  },
+  contentContainer: {
     flexGrow: 1,
     padding: 16,
+    paddingBottom: 80, // Add padding to avoid content being hidden behind toolbar
   },
 });
