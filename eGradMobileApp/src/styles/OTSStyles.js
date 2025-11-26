@@ -209,11 +209,11 @@ height: 45,
     flex: 1,
     marginRight: 10,
   },
-  disabledButton: {
-    backgroundColor: '#ccc',
+  // disabledButton: {
+  //   backgroundColor: '#ccc',
 
-    opacity: 0.6,
-  },
+  //   opacity: 0.6,
+  // },
   buttonText: {
     color: '#fff',
     textAlign: 'center',
@@ -711,13 +711,13 @@ height:"100%"
 //     fontWeight: '600',
 //     textAlign: 'center',
 //   },
-  disabledButtonText: {
-       color: '#666',
-  },
-  disabledButtonTextopt: {
-       color: '#999',
-       fontSize:15,
-  },
+  // disabledButtonText: {
+  //      color: '#666',
+  // },
+  // disabledButtonTextopt: {
+  //      color: '#999',
+  //      fontSize:15,
+  // },
   submitBtnCls: {
    flexDirection: 'row',
      gap:'10',

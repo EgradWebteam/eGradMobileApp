@@ -172,7 +172,7 @@ const handleViewReport = async () => {
             await AsyncStorage.removeItem('examSubmitted');
       await AsyncStorage.removeItem('autoSubmitted');
       await AsyncStorage.removeItem('examSummaryEntered');
-   setShowExamSummary(false);
+  //  setShowExamSummary(false);
     if (userId) {
      
     navigation.reset({
