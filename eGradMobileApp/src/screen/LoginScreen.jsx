@@ -465,7 +465,7 @@ Alert.alert(
       )}
       </View>
 </View>
-      <MobileFooter portalData={portalData} />
+      {/* <MobileFooter portalData={portalData} /> */}
     </View>
   );
 };

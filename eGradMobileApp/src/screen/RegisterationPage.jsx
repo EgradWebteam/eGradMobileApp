@@ -346,10 +346,7 @@ const pickImage = (field) => {
 
     // Validate size
     if (fileSizeKB < min || fileSizeKB > max) {
-      setErrors(prev => ({
-        ...prev,
-        [field]: `${message} (Selected: ${fileSizeKB}KB)`
-      }));
+    Alert.alert(message);
       return;
     }
 
@@ -945,14 +942,14 @@ const pickImage = (field) => {
 
       {/* Terms & Conditions */}
       <View style={styles.section}>
-        <TouchableOpacity style={styles.termsButton}
+        {/* <TouchableOpacity style={styles.termsButton}
           // onPress={() => setOpenTermsAndConditions(true)}
           onPress={() => navigation.navigate("TermsAndConditions")}
         >
           <Text style={styles.termsButtonText}>
             {showTerms ? "Hide Terms and Conditions" : "Show Terms and Conditions"}
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         {/* {showTerms && <TermsAndConditions />} */}
         <View style={styles.checkboxContainer}>
          <TouchableOpacity
@@ -972,7 +969,7 @@ const pickImage = (field) => {
 </TouchableOpacity>
 
           <Text>
-            I accept the terms and Conditions
+            I accept the  <Text style={styles.link}    onPress={() => navigation.navigate("TermsAndConditions")}>Terms and Conditions </Text>
           </Text>
         </View>
 
@@ -1022,7 +1019,7 @@ const styles = StyleSheet.create({
   uploadButton: { backgroundColor: "#01c3ff", padding: 10, borderRadius: 5, marginVertical: 10, alignItems: "center" },
   uploadButtonText: { color: "#fff", fontWeight: "bold" },
   previewImage: { width: 100, height: 100, marginVertical: 10, borderRadius: 5 },
-  termsButton: { backgroundColor: "#6c757d", padding: 10, borderRadius: 5, marginBottom: 10, alignItems: "center" },
+  termsButton: { backgroundColor: "transparent",  },
   termsButtonText: { color: "#fff", fontWeight: "bold" },
   checkboxContainer: { flexDirection: "row", alignItems: "center", marginBottom: 10 },
   checkbox: { width: 20, height: 20, borderWidth: 1, borderColor: "#000", marginRight: 10, justifyContent: "center", alignItems: "center" },
@@ -1047,5 +1044,8 @@ radioInner: {
   borderRadius: 8,
   backgroundColor: "#007AFF",
 },
-
+link: {
+  color: "#007AFF",
+  textDecorationLine: "underline"
+}
 });
