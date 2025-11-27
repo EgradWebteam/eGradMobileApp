@@ -318,7 +318,7 @@ Alert.alert(
 <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 10 }}>
   <Text style={styles.normalText}>New here? </Text>
 
-  <TouchableOpacity onPress={() => navigate('register')}>
+  <TouchableOpacity onPress={() => navigation.navigate('register')}>
     <Text style={styles.linkreg}>Register</Text>
   </TouchableOpacity>
 </View>

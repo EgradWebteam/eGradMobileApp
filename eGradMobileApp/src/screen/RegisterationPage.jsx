@@ -130,7 +130,7 @@ const [marksType, setMarksType] = useState("Percentage");
       "candidateName", "dateOfBirth", "gender", "category",
       "emailId", "confirmEmailId", "contactNo", "fatherName",
       "EmailId", "mobileNo", "line1", "city", "state", "pincode",
-      "nameOfCollege", "passingYear", "marks", "uploadedPhoto", "proof",
+      "nameOfCollege", "passingYear","qualifications", "uploadedPhoto", "proof",
     ];
 
     requiredFields.forEach(field => {
@@ -139,7 +139,9 @@ const [marksType, setMarksType] = useState("Percentage");
       }
     });
 
-
+      if(Number(portalId) === 2) {
+        validationErrors.marks = "Marks is required..";
+      }
     if (formData.mobileNo?.length !== 10) {
       validationErrors.mobileNo = "Mobile number must be exactly 10 digits.";
     }
@@ -191,6 +193,7 @@ const [marksType, setMarksType] = useState("Percentage");
     // 🎓 Qualification change
     if (name === "qualifications") {
       setFormData((prev) => ({ ...prev, qualifications: value, stream: "" }));
+       setErrors((prev) => ({ ...prev, [name]: "" }));
       return;
     }
 
@@ -281,7 +284,7 @@ const [marksType, setMarksType] = useState("Percentage");
     // 📊 Marks
 if (name === "marks") {
 
-  if (portalId !== 1) {   // ✅ apply rules ONLY if portal is not 1
+  if (portalId === 2) {   // ✅ apply rules ONLY if portal is not 1
     const originalValue = value;
     value = value.replace(/[^0-9.]/g, "");
 
@@ -306,24 +309,64 @@ if (name === "marks") {
 
     // 🔄 Always update with sanitized + trimmed value
     setFormData((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: error }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
 
     return error;
   };
 
 
-  const pickImage = (field) => {
-    launchImageLibrary({ mediaType: 'photo', quality: 1 }, response => {
-      if (response.didCancel) return;
-      if (response.errorCode) {
-        Alert.alert('Error', response.errorMessage);
-        return;
-      }
-      const file = response.assets[0];
-      setFormData(prev => ({ ...prev, [field]: file }));
-      field === "uploadedPhoto" ? setPhotoPreview(file.uri) : setProofPreview(file.uri);
-    });
-  };
+const sizeRules = {
+  uploadedPhoto: {
+    min: 15,
+    max: 200,
+    message: "Uploaded Photo must be between 15KB and 200KB.",
+  },
+  proof: {
+    min: 15,
+    max: 200,
+    message: "Proof must be between 15KB and 200KB.",
+  },
+};
+
+const pickImage = (field) => {
+  launchImageLibrary({ mediaType: 'photo', quality: 1 }, response => {
+    if (response.didCancel) return;
+
+    if (response.errorCode) {
+      Alert.alert('Error', response.errorMessage);
+      return;
+    }
+
+    const file = response.assets?.[0];
+    if (!file) return;
+
+    const fileSizeKB = Math.round(file.fileSize / 1024);
+
+    const { min, max, message } = sizeRules[field];
+
+    // Validate size
+    if (fileSizeKB < min || fileSizeKB > max) {
+      setErrors(prev => ({
+        ...prev,
+        [field]: `${message} (Selected: ${fileSizeKB}KB)`
+      }));
+      return;
+    }
+
+    // If valid → save file
+    setFormData(prev => ({ ...prev, [field]: file }));
+
+    if (field === "uploadedPhoto") {
+      setPhotoPreview(file.uri);
+    } else {
+      setProofPreview(file.uri);
+    }
+
+    // Clear previous errors
+    setErrors(prev => ({ ...prev, [field]: "" }));
+  });
+};
+
   const clearFormData = () => {
     setFormData({
 
@@ -339,6 +382,9 @@ if (name === "marks") {
       uploadedPhoto: null, proof: null,
       termsAccepted: false,
     });
+        setPhotoPreview(null);
+  
+      setProofPreview(null);
     setErrors({});
   };
   const { minDate, maxDate } = getDOBLimits(portalId);
@@ -372,8 +418,9 @@ if (name === "marks") {
     formDataToSend.append("stream", formData.stream);
     formDataToSend.append("nameOfCollege", formData.nameOfCollege);
     formDataToSend.append("passingYear", formData.passingYear);
+      if(Number(portalId) === 2) {
     formDataToSend.append("marks", formData.marks);
-
+      }
     if (formData.uploadedPhoto) {
       formDataToSend.append("uploadedPhoto", formData.uploadedPhoto);
     }
@@ -436,7 +483,7 @@ if (name === "marks") {
       const data = await resp.json();
       console.log(`${backEndUrl}/navbar/get-logo`, data);
       setPortalId(data.portalId);
-      // console.log("portal id",data.portalId);
+      console.log("portal id",data.portalId);
       // setPortalId(2); // Stub for UI path
     })();
   }, []);
@@ -798,7 +845,7 @@ if (name === "marks") {
         </View>
         {errors.passingYear && <Text style={styles.error}>{errors.passingYear}</Text>}
 
-        {portalId !== 1 && (
+        {portalId === 2 && (
           <View style={styles.section}>
             <Text style={styles.label}>
               Marks <Text style={{ color: "red" }}>*</Text>
@@ -871,7 +918,7 @@ if (name === "marks") {
           </View>
         )}
 
-        {errors.marks && <Text style={styles.error}>{errors.marks}</Text>}
+        {/* {errors.marks && <Text style={styles.error}>{errors.marks}</Text>} */}
       </View>
 
       {/* College Selection Modal */}
@@ -880,7 +927,9 @@ if (name === "marks") {
       {/* Uploads */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Upload Documents</Text>
-
+<Text style={styles.notephoto}>
+ ** Note : File size must be between 15KB and 200KB. Only JPG, JPEG, or PNG formats are allowed. **
+</Text>
         <TouchableOpacity style={styles.uploadButton} onPress={() => pickImage("uploadedPhoto")}>
           <Text style={styles.uploadButtonText}>Upload Photo</Text>
         </TouchableOpacity>
@@ -906,12 +955,21 @@ if (name === "marks") {
         </TouchableOpacity>
         {/* {showTerms && <TermsAndConditions />} */}
         <View style={styles.checkboxContainer}>
-          <TouchableOpacity
-            style={styles.checkbox}
-            onPress={() => setFormData(prev => ({ ...prev, termsAccepted: !prev.termsAccepted }))}
-          >
-            {formData.termsAccepted && <View style={styles.checkedBox} />}
-          </TouchableOpacity>
+         <TouchableOpacity
+  style={styles.checkbox}
+  onPress={() => {
+    setFormData(prev => ({ 
+      ...prev, 
+      termsAccepted: !prev.termsAccepted 
+    }));
+    setErrors(prev => ({ 
+      ...prev, 
+      termsAccepted: "" 
+    }));
+  }}
+>
+  {formData.termsAccepted && <View style={styles.checkedBox} />}
+</TouchableOpacity>
 
           <Text>
             I accept the terms and Conditions
@@ -955,6 +1013,7 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
   input: { borderWidth: 1, borderColor: "#ccc", borderRadius: 5, padding: 10, marginBottom: 5 },
   error: { color: "red", marginBottom: 10 },
+  notephoto: { color: "red",fontSize:9 },
   label: { fontWeight: "bold", marginTop: 10, marginBottom: 5 },
   option: { padding: 10, marginVertical: 3, marginRight: 5, borderWidth: 1, borderColor: "#ccc", borderRadius: 5 },
   selectedOption: { backgroundColor: "#cce5ff", borderColor: "#01c3ff" },
