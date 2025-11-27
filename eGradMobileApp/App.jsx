@@ -19,7 +19,9 @@ import GeneralInstructionsScreen from './src/screen/GeneralInstructionsScreen';
 import StudyMaterial from './src/components/StudyMaterial';
 import PracticeScreen from './src/screen/PracticeScreen';
 import PracticeInstruction from './src/screen/PracticeInstruction';
-
+import FooterTermsAndConditions from "./src/screen/FooterTermsAndConditions.jsx";
+import FooterPrivacyPolicy from "./src/screen/FooterPrivacyPolicy.jsx";
+import FooterRefundPolicy from "./src/screen/FooterRefundPolicy.jsx";
 import StudentProvider from './src/hooks/StudentContext';
 import { SessionProvider } from './src/hooks/SessionContext';
 import { backEndUrl } from "./src/apiConfig";
@@ -107,7 +109,9 @@ const App = () => {
           <Stack.Screen name="login" component={LoginScreen} />
           <Stack.Screen name="register" component={RegisterationPage} />
           <Stack.Screen name="QBScreen" component={QBScreen} />
-          <Stack.Screen name="TermsAndConditions" component={TermsAndConditions} />
+          <Stack.Screen name="TermsAndConditions" component={FooterTermsAndConditions} />
+ <Stack.Screen name="PrivacyPolicy" component={FooterPrivacyPolicy} />
+  <Stack.Screen name="RefundPolicy" component={FooterRefundPolicy} />
 
 
           {/* Private Screens wrapped with SessionProvider */}
