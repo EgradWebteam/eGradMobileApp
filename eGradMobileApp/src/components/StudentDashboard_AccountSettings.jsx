@@ -27,7 +27,7 @@ const StudentDashboard_AccountSettings = ({ userData, setActiveSubSection, activ
   const studentName = userData?.candidate_name;
   const studentEmail = userData?.email_id;
   const studentContact = userData?.mobile_no;
-  const studentProfile = userData?.uploaded_photo || defaultImage;
+  const studentProfile = userData?.uploaded_photo;
 
   const checkPasswordCriteria = (password) => ({
     length: password.length >= 8,
@@ -88,33 +88,33 @@ const StudentDashboard_AccountSettings = ({ userData, setActiveSubSection, activ
   return (
     <ScrollView style={styles.container}>
       <View style={styles.profileContainer}>
-        <Image source={{ uri: studentProfile }} style={styles.profileImage} />
+        <Image source={studentProfile ? { uri: studentProfile } : defaultImage } style={styles.profileImage} />
 
         <View style={styles.subSectionButtons}>
           <TouchableOpacity
             style={[styles.button, activeSubSection === "profile" && styles.activeButton]}
             onPress={() => setActiveSubSection("profile")}
           >
-            <Text>Profile Info</Text>
+            <Text style={[styles.btntext, activeSubSection === "profile" && styles.btntextactive]}>Profile Info</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.button, activeSubSection === "password" && styles.activeButton]}
             onPress={() => setActiveSubSection("password")}
           >
-            <Text>Change Password</Text>
+            <Text style={[styles.btntext, activeSubSection === "profile" && styles.btntextactive]}>Change Password</Text>
           </TouchableOpacity>
         </View>
 
         {activeSubSection === "profile" && (
           <View style={styles.detailsContainer}>
-            <Text style={styles.detailText}>Name: {studentName}</Text>
-            <Text style={styles.detailText}>Email: {studentEmail}</Text>
-            <Text style={styles.detailText}>Mobile: {studentContact}</Text>
+            <Text style={styles.detailText}><Text style={styles.labelBold}>Name: </Text>{studentName}</Text>
+            <Text style={styles.detailText}><Text style={styles.labelBold}>Email: </Text>{studentEmail}</Text>
+            <Text style={styles.detailText}><Text style={styles.labelBold}>Mobile: </Text>{studentContact}</Text>
           </View>
         )}
 
         {activeSubSection === "password" && (
-          <View>
+          <View style={styles.detailsContainer}>
             <Text style={styles.label}>Enter New Password</Text>
             <View style={styles.inputContainer}>
               <TextInput
@@ -128,6 +128,40 @@ const StudentDashboard_AccountSettings = ({ userData, setActiveSubSection, activ
                 <Icon name={showPassword.new ? "eye-off-outline" : "eye-outline"} size={24} />
               </TouchableOpacity>
             </View>
+{newPassword && (
+  <View style={styles.criteriaContainer}>
+    {Object.entries(passwordCriteria).map(([key, valid]) => {
+      const isTouched = touched.newPassword;
+      // Only render if valid or field is touched
+      if (!valid && !isTouched) return null;
+
+      let text = "";
+      switch (key) {
+        case "length":
+          text = "At least 8 characters";
+          break;
+        case "uppercase":
+          text = "At least one uppercase letter";
+          break;
+        case "lowercase":
+          text = "At least one lowercase letter";
+          break;
+        case "number":
+          text = "At least one number";
+          break;
+        case "specialChar":
+          text = "At least one special character";
+          break;
+      }
+
+      return (
+        <Text key={key} style={{ color: valid ? "green" : "red" }}>
+          {text}
+        </Text>
+      );
+    })}
+  </View>
+)}
 
             <Text style={styles.label}>Confirm Password</Text>
             <View style={styles.inputContainer}>
@@ -144,19 +178,7 @@ const StudentDashboard_AccountSettings = ({ userData, setActiveSubSection, activ
             </View>
 
             {/* Password criteria checklist */}
-            {newPassword && (
-              <View style={styles.criteriaContainer}>
-                {Object.entries(passwordCriteria).map(([key, valid]) => (
-                  <Text key={key} style={{ color: valid ? "green" : touched.newPassword ? "red" : "#999" }}>
-                    {key === "length" && "At least 8 characters"}
-                    {key === "uppercase" && "At least one uppercase letter"}
-                    {key === "lowercase" && "At least one lowercase letter"}
-                    {key === "number" && "At least one number"}
-                    {key === "specialChar" && "At least one special character"}
-                  </Text>
-                ))}
-              </View>
-            )}
+            
 
             {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
 
@@ -202,15 +224,17 @@ const styles = StyleSheet.create({
     padding: 12,
     marginHorizontal: 5,
     borderRadius: 8,
-    backgroundColor: "#cce4ff", // light blue shade
+    backgroundColor: "#424242", // light blue shade
     alignItems: "center",
   },
-  activeButton: { backgroundColor: "#3399ff" }, // darker blue
+  activeButton: { backgroundColor: "#01c3ff" }, // darker blue
   buttonText: { color: "#fff", fontWeight: "bold" },
   detailsContainer: {
     width: "100%",
     padding: 15,
     borderRadius: 10,
+    flexDirection:"column",
+    gap:10,
     backgroundColor: "#fff",
     marginBottom: 20,
     // iOS shadow
@@ -221,7 +245,7 @@ const styles = StyleSheet.create({
     // Android shadow
     elevation: 3,
   },
-  detailText: { fontSize: 16, marginBottom: 5 },
+  detailText: { fontSize: 16, padding: 10 ,backgroundColor:"#f5f3f3"},
   label: { fontWeight: "bold", marginBottom: 5 },
   inputContainer: {
     flexDirection: "row",
@@ -238,6 +262,9 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     // Android shadow
     elevation: 2,
+  },
+  labelBold: {
+    fontWeight: "bold",
   },
   input: {
     flex: 1,
@@ -261,6 +288,7 @@ const styles = StyleSheet.create({
     // Android shadow
     elevation: 3,
   },
+  btntext: { color: "#fff", fontWeight: "bold" },
   disabledButton: { backgroundColor: "#444444" },
   submitText: { color: "#fff", fontWeight: "bold", fontSize: 16 },
   popup: {

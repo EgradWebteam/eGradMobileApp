@@ -418,12 +418,21 @@ const pickImage = (field) => {
       if(Number(portalId) === 2) {
     formDataToSend.append("marks", formData.marks);
       }
-    if (formData.uploadedPhoto) {
-      formDataToSend.append("uploadedPhoto", formData.uploadedPhoto);
-    }
-    if (formData.proof) {
-      formDataToSend.append("proof", formData.proof);
-    }
+   if (formData.uploadedPhoto) {
+    formDataToSend.append("uploadedPhoto", {
+      uri: formData.uploadedPhoto.uri,
+      type: formData.uploadedPhoto.type || "image/jpeg",
+      name: formData.uploadedPhoto.fileName || "photo.jpg",
+    });
+  }
+
+  if (formData.proof) {
+    formDataToSend.append("proof", {
+      uri: formData.proof.uri,
+      type: formData.proof.type || "image/jpeg",
+      name: formData.proof.fileName || "proof.jpg",
+    });
+  }
 
     formDataToSend.append("termsAccepted", formData.termsAccepted.toString());
     formDataToSend.append("instituteOrDomain", `${frontEndUrl}`);

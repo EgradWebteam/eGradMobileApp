@@ -40,23 +40,23 @@ export const StudentDashboard = () => {
   const logoutHandledRef = useRef(false);
   const { validateSession } = useSession();
   const [preselectedPortalId, setPreselectedPortalId] = useState(null);
+const handleSectionChange = useCallback(async (section, portalId = null) => {
+  const isValid = await validateSession();
+  if (!isValid) return;
 
-  const handleSectionChange = useCallback(async (section, portalId = null) => {
-    const isValid = await validateSession();
-    if (!isValid) return;
-    setActiveSection(section);
+  setActiveSection(section);
 
-    const state = { activeSection: section };
+  const state = { activeSection: section };
 
-    if (portalId) {
-      state.preselectedPortalId = portalId;
-      setPreselectedPortalId(portalId);
-    } else {
-      setPreselectedPortalId(null); // ✅ Reset selection
-    }
+  if (portalId) {
+    state.preselectedPortalId = portalId;
+    setPreselectedPortalId(portalId);
+  } else {
+    setPreselectedPortalId(null);
+  }
 
-    sessionStorage.setItem("studentDashboardState", JSON.stringify(state));
-  }, [validateSession]);
+  await AsyncStorage.setItem("studentDashboardState", JSON.stringify(state)); // ✅ fix here
+}, [validateSession]);
 
   useEffect(() => {
     const restoreDashboardState = async () => {
@@ -191,7 +191,7 @@ export const StudentDashboard = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+   backgroundColor:"#fff",
   },
   body: {
     flex: 1,
