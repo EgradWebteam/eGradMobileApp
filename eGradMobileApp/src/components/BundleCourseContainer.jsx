@@ -154,6 +154,27 @@ const BundleCourseContainer = ({
     }
   };
 
+  // Handle TestDetailsContainer back action
+  const handleTestContainerBack = async () => {
+    const isValid = await validateSession();
+    if (!isValid) return;
+
+    
+    await AsyncStorage.setItem(
+      "studentDashboardState",
+      JSON.stringify({
+        activeSection: "myCourses",
+        selectedPortalId: 2,
+        showQuizContainer: false,
+        showTestContainer: false, // Important: Set to false
+        courseContainer: true,
+        selectedTestCourse: courseIds,
+        selectedExamId: selectedExamId,
+        orvlbtnsection: "test", // Keep the section as test
+      })
+    );
+  };
+
   const orvlDetails = bundleData?.orvlDetails || [];
   const subjectList = Array.from(new Set(orvlDetails.map((item) => item.subject_name))).sort(
     (a, b) => a.localeCompare(b)
@@ -236,6 +257,7 @@ const BundleCourseContainer = ({
         <TestDetailsContainer
           studentId={studentId}
           data={data}
+          onBack={handleTestContainerBack}
           refreshTriggerBundle={refreshTriggerBundle}
           setRefreshTriggerBundle={setRefreshTriggerBundle}
           userData={userData}
@@ -414,7 +436,7 @@ btnText: {
     elevation: 3,
   },
   chapterTitle: {
-    fontWeight: "800",
+    fontWeight: 800,
     fontSize: 17,
     marginBottom: 8,
     color: "#222",
