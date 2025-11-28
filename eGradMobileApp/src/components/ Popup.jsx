@@ -268,7 +268,7 @@ const Popup = ({
             <Text style={styles.title}>
               {exercise ? exercise.exercise_name : lecture?.orvl_lecture_name}
             </Text>
-            <TouchableOpacity onPress={onClose}>
+            <TouchableOpacity onPress={onClose} style={styles.headerclose}>
               <Text style={styles.closeBtn}>✕</Text>
             </TouchableOpacity>
 
@@ -676,14 +676,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     padding: 12,
-    // height: 40,
-    // borderBottomWidth: 1,
-    // borderColor: "#ccc",
+   
   },
   exerciseQuestionContainers: {
     padding: 10
   },
-  title: { fontSize: 18, fontWeight: "600" },
+
+  right: {
+    flex: 1,
+  },
+  title: { fontSize: 18, fontWeight: 600, flex: 9 },
+  headerclose:{flex:1, alignItems:"center",justifyContent:"center"},
   closeBtn: { fontSize: 20, color: "red" },
   questionText: { fontSize: 16, margin: 10 },
   input: {
