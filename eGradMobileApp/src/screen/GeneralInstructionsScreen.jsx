@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { styles } from '../styles/OTSStyles.js';
+// import { styles } from '../styles/OTSStyles.js';
 import { Dimensions } from 'react-native';
 import OTSHeader from "../components/OTSFolder/OTSHeader"; // Assume this is a RN component or replace with your header
 import { Intstruction_content } from "../components/OTSFolder/Intstruction_content.js";
@@ -21,7 +21,7 @@ import adminCapImg from "../images/logoCap.jpeg"; // You may need to import thes
 import defaultImage from "../images/studentimage.png";
 import { useStudent } from "../hooks/StudentContext";
 import { useSession } from "../hooks/SessionContext.jsx";
-import {encryptBatch,decryptBatch as decryptDataBatch,} from "../utils/CryptoUtils";
+import { encryptBatch, decryptBatch as decryptDataBatch, } from "../utils/CryptoUtils";
 
 const GeneralInstructions = () => {
   const route = useRoute();
@@ -45,49 +45,49 @@ const GeneralInstructions = () => {
 
   const adminRole = AsyncStorage.getItem("adminRole"); // AsyncStorage returns Promise, will handle below
   const [isAdmin, setIsAdmin] = useState(false);
-const backgroundImages = {
-  AnswerdBtnCls: require('../images/Answered.png'),
-  NotAnsweredBtnCls: require('../images/NotAnswered.png'),
-  MarkedForReview: require('../images/MarkedForReview.png'),
-  AnsMarkedForReview: require('../images/AnsMarkedForReview.png'),
-  NotVisitedBehaviourBtns: require('../images/Visited.png'),
-};
+  const backgroundImages = {
+    AnswerdBtnCls: require('../images/Answered.png'),
+    NotAnsweredBtnCls: require('../images/NotAnswered.png'),
+    MarkedForReview: require('../images/MarkedForReview.png'),
+    AnsMarkedForReview: require('../images/AnsMarkedForReview.png'),
+    NotVisitedBehaviourBtns: require('../images/Visited.png'),
+  };
   // Load adminRole from AsyncStorage
   useEffect(() => {
     AsyncStorage.getItem("adminRole").then((role) => {
       setIsAdmin(role === "admin");
     });
   }, []);
-useEffect(() => {
-  const onBackPress = async() => {
-     const userId = await AsyncStorage.getItem('userId');
-    Alert.alert(
-      "Exit General Instructions",
-      "Are you sure you want to exit the General Instructions?",
-      [
-        {
-          text: "No",
-          onPress: () => {},
-          style: "cancel"
-        },
-        {
-          text: "Yes",
-          onPress: async() => {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'studentDashboard', params: { userId } }],
-            });
+  useEffect(() => {
+    const onBackPress = async () => {
+      const userId = await AsyncStorage.getItem('userId');
+      Alert.alert(
+        "Exit General Instructions",
+        "Are you sure you want to exit the General Instructions?",
+        [
+          {
+            text: "No",
+            onPress: () => { },
+            style: "cancel"
+          },
+          {
+            text: "Yes",
+            onPress: async () => {
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'studentDashboard', params: { userId } }],
+              });
+            }
           }
-        }
-      ]
-    );
-    return true; // Block the default behavior
-  };
-  BackHandler.addEventListener("hardwareBackPress", onBackPress);
-  return () => {
-    BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-  };
-}, []);
+        ]
+      );
+      return true; // Block the default behavior
+    };
+    BackHandler.addEventListener("hardwareBackPress", onBackPress);
+    return () => {
+      BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    };
+  }, []);
   // Decrypt params on mount
   useEffect(() => {
     const decryptParams = async () => {
@@ -213,50 +213,51 @@ useEffect(() => {
             {/* The "table of buttons" */}
             <View style={styles.tableOfButtons}>
               {[
-                 {
-                   number: 1,
-                   text: Intstruction_content[0].Intstruction_content_points_p1,
-                   image: backgroundImages.NotVisitedBehaviourBtns,
-                   textStyle: styles.questionBtnText,
-                 },
-                 {
-                   number: 3,
-                   text: Intstruction_content[0].Intstruction_content_points_p2,
-                   image: backgroundImages.NotAnsweredBtnCls,
-                   textStyle: [styles.questionBtnText, styles.whiteText],
-                 },
-                 {
-                   number: 5,
-                   text: Intstruction_content[0].Intstruction_content_points_p3,
-                   image: backgroundImages.AnswerdBtnCls,
-                   textStyle: [styles.questionBtnText, styles.whiteText],
-                 },
-                 {
-                   number: 7,
-                   text: Intstruction_content[0].Intstruction_content_points_p4,
-                   image: backgroundImages.MarkedForReview,
-                   textStyle: [styles.questionBtnText, styles.whiteText],
-                 },
-                 {
-                   number: 9,
-                   text: Intstruction_content[0].Intstruction_content_points_p5,
-                   image: backgroundImages.AnsMarkedForReview,
-                   textStyle: [styles.questionBtnText, styles.whiteText],
-                 },
-               ].map((item, index) => (
-                 <View key={index} style={styles.row}>
-                   <ImageBackground
-                     source={item.image}
-                     style={{ width: 45, height: 45, justifyContent: 'center', alignItems: 'center' }}
-                     imageStyle={{ resizeMode: 'contain' }}
-                   >
-                     <Text style={item.textStyle}>{item.number}</Text>
-                   </ImageBackground>
-                   <Text style={styles.statusText}>{item.text}</Text>
-                 </View>
-               ))}
-             
+                {
+                  number: 1,
+                  text: Intstruction_content[0].Intstruction_content_points_p1,
+                  image: backgroundImages.NotVisitedBehaviourBtns,
+                  textStyle: styles.questionBtnText,
+                },
+                {
+                  number: 3,
+                  text: Intstruction_content[0].Intstruction_content_points_p2,
+                  image: backgroundImages.NotAnsweredBtnCls,
+                  textStyle: [styles.questionBtnText, styles.whiteText],
+                },
+                {
+                  number: 5,
+                  text: Intstruction_content[0].Intstruction_content_points_p3,
+                  image: backgroundImages.AnswerdBtnCls,
+                  textStyle: [styles.questionBtnText, styles.whiteText],
+                },
+                {
+                  number: 7,
+                  text: Intstruction_content[0].Intstruction_content_points_p4,
+                  image: backgroundImages.MarkedForReview,
+                  textStyle: [styles.questionBtnText, styles.whiteText],
+                },
+                {
+                  number: 9,
+                  text: Intstruction_content[0].Intstruction_content_points_p5,
+                  image: backgroundImages.AnsMarkedForReview,
+                  textStyle: [styles.questionBtnText, styles.whiteText],
+                },
+              ].map((item, index) => (
+                <View key={index} style={styles.row}>
+                  <ImageBackground
+                    source={item.image}
+                    style={styles.iconWrap}
+                    imageStyle={{ resizeMode: "contain" }}
+                  >
+                    <Text style={item.textStyle}>{item.number}</Text>
+                  </ImageBackground>
+
+                  <Text style={styles.statusText}>{item.text}</Text>
+                </View>
+              ))}
             </View>
+
 
             <View style={styles.listItem}>
               <Text style={styles.listItemText}>
@@ -333,8 +334,14 @@ useEffect(() => {
             </Text>
             <View style={styles.listItem}>
               <Text>{Intstruction_content[0].Intstruction_content_points_9}</Text>
+            </View>
+            <View style={styles.listItem}>
               <Text>{Intstruction_content[0].Intstruction_content_points_10}</Text>
+            </View>
+            <View style={styles.listItem}>
               <Text>{Intstruction_content[0].Intstruction_content_points_11}</Text>
+            </View>
+            <View style={styles.listItem}>
               <Text>{Intstruction_content[0].Intstruction_content_points_12}</Text>
             </View>
           </View>
@@ -363,22 +370,22 @@ useEffect(() => {
           </View>
         </View> */}
 
-    
+
       </ScrollView>
-          <View style={styles.footerContainergi}>
-          <TouchableOpacity
-            onPress={handleNextClick}
-            disabled={isSaving}
-            style={[
-              styles.nextBtn,
-              { backgroundColor: isSaving ? "#ccc" : "rgb(64 173 242)" },
-            ]}
-          >
-            <Text style={styles.nextBtnText}>
-              Next <Text style={styles.nextBtnArrow}>&rarr;</Text>
-            </Text>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.footerContainergi}>
+        <TouchableOpacity
+          onPress={handleNextClick}
+          disabled={isSaving}
+          style={[
+            styles.nextBtn,
+            { backgroundColor: isSaving ? "#ccc" : "rgb(64 173 242)" },
+          ]}
+        >
+          <Text style={styles.nextBtnText}>
+            Next <Text style={styles.nextBtnArrow}>&rarr;</Text>
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -386,3 +393,133 @@ useEffect(() => {
 
 
 export default GeneralInstructions;
+
+export const styles = StyleSheet.create({
+  containergi: {
+    flex: 1,
+    backgroundColor: "#ffffff",
+  },
+
+  scrollViewContent: {
+    padding: 20,
+    paddingBottom: 120,
+  },
+
+  instructionContainer: {
+    paddingVertical: 10,
+  },
+
+
+  heading: {
+    fontSize: 26,
+    fontWeight: "700",
+    color: "#222",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+
+  subHeading: {
+    fontSize: 18,
+    textAlign: "center",
+    color: "#444",
+    marginBottom: 20,
+  },
+
+  subHeadingSecondary: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#333",
+    marginTop: 25,
+    marginBottom: 10,
+  },
+
+  listItem: {
+    marginBottom: 15,
+  },
+
+  listItemText: {
+    fontSize: 16,
+    color: "#444",
+    lineHeight: 22,
+  },
+
+  /* ===========================
+     TABLE ICON BLOCK
+     =========================== */
+
+  tableOfButtons: {
+    marginTop: 10,
+    marginBottom: 20,
+  },
+
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+    // gap: 2,
+  },
+
+  iconWrap: {
+    width: 48,
+    height: 48,
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
+  },
+
+  questionBtnText: {
+    fontWeight: "700",
+    fontSize: 18,
+    textAlign: "center",
+    includeFontPadding: false,
+    textAlignVertical: "center",
+    flexShrink: 1,
+    maxWidth: "100%",
+  },
+
+  whiteText: {
+    color: "#fff",
+  },
+
+
+  statusText: {
+    flex: 1,
+    fontSize: 16,
+    color: "#333",
+    lineHeight: 22,
+    marginLeft: 5,
+  },
+
+
+
+  /* ===========================
+     FOOTER
+     =========================== */
+
+  footerContainergi: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 15,
+    backgroundColor: "#fff",
+    borderTopColor: "#eee",
+    borderTopWidth: 1,
+  },
+
+  nextBtn: {
+    paddingVertical: 14,
+    alignItems: "center",
+    borderRadius: 8,
+  },
+
+  nextBtnText: {
+    fontSize: 18,
+    color: "#fff",
+    fontWeight: "700",
+  },
+
+  nextBtnArrow: {
+    fontSize: 20,
+  },
+});
