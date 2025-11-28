@@ -620,7 +620,7 @@ console.log( orderData, razorpayKey)
   </>
 ) : (
   <Text style={{ textAlign: "center", marginTop: 20 }}>
-    No courses available.
+    No courses available at this moment.
   </Text>
 )}
 
