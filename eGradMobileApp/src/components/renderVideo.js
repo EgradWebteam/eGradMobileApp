@@ -1,44 +1,72 @@
 import React from "react";
 import { WebView } from "react-native-webview";
+import YoutubePlayer from "react-native-youtube-iframe";
 
- const renderVideo = (url) => {
-    if (!url) return null;
-    const lowerUrl = url.toLowerCase();
-    let embedUrl = url;
+const renderVideo = (url) => {
+  if (!url || typeof url !== "string") return null;
 
-    if (lowerUrl.includes("youtube.com") || lowerUrl.includes("youtu.be")) {
-      let videoId = "";
-      if (url.includes("youtu.be")) {
-        videoId = url.split("youtu.be/")[1]?.split("?")[0];
-      } else if (url.includes("watch?v=")) {
-        videoId = url.split("watch?v=")[1]?.split("&")[0];
-      }
-      if (videoId) embedUrl = `https://www.youtube.com/embed/${videoId}`;
-    } else if (lowerUrl.includes("vimeo.com")) {
-      const videoId = url.split("/").pop();
-      embedUrl = `https://player.vimeo.com/video/${videoId}`;
-    } else if (lowerUrl.includes("drive.google.com/file/d/")) {
-      const fileId = url.split("/d/")[1]?.split("/")[0];
-      if (fileId) embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
-    } else if (lowerUrl.match(/\.(mp4|webm|ogg)$/)) {
+  const lower = url.toLowerCase();
+  let embedUrl = url;
+
+  // ------- YOUTUBE (use YoutubePlayer instead of WebView) -------
+  if (lower.includes("youtube.com") || lower.includes("youtu.be")) {
+    let videoId = "";
+
+    if (url.includes("youtu.be")) {
+      videoId = url.split("youtu.be/")[1]?.split("?")[0];
+    } else if (url.includes("watch?v=")) {
+      videoId = url.split("watch?v=")[1]?.split("&")[0];
+    } else if (url.includes("/v/")) {
+      videoId = url.split("/v/")[1]?.split("?")[0];
+    }
+
+    if (videoId) {
       return (
-        <WebView
-          source={{ uri: url }}
-          style={{ width: "100%", height: 300 }}
-          mediaPlaybackRequiresUserAction={false}
-          allowsFullscreenVideo
+        <YoutubePlayer
+            height={300}
+          play={false}
+          videoId={videoId}
         />
       );
     }
+  }
 
+  // ------- VIMEO -------
+  if (lower.includes("vimeo.com")) {
+    const id = url.split("/").pop();
+    embedUrl = `https://player.vimeo.com/video/${id}`;
+  }
+
+  // ------- GOOGLE DRIVE -------
+  if (lower.includes("drive.google.com/file/d/")) {
+    const id = url.split("/d/")[1]?.split("/")[0];
+    if (id) {
+      embedUrl = `https://drive.google.com/file/d/${id}/preview`;
+    }
+  }
+
+  // ------- DIRECT MP4 / WEBM / OGG -------
+  if (lower.match(/\.(mp4|webm|ogg)$/)) {
     return (
       <WebView
-        source={{ uri: embedUrl }}
+        source={{ uri: url }}
         style={{ width: "100%", height: 300 }}
-        javaScriptEnabled
         allowsFullscreenVideo
+        mediaPlaybackRequiresUserAction={false}
       />
     );
-  };
+  }
 
-  export default renderVideo;
+  // ------- DEFAULT WEBVIEW (Vimeo, Drive, Others) -------
+  return (
+    <WebView
+      source={{ uri: embedUrl }}
+      style={{ width: "100%", height: 300 }}
+      javaScriptEnabled
+      domStorageEnabled
+      allowsFullscreenVideo
+    />
+  );
+};
+
+export default renderVideo;
