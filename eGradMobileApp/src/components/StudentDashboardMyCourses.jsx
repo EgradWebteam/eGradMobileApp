@@ -145,11 +145,12 @@ const {validateSession} = useSession()
         if (savedState) {
           const parsed = JSON.parse(savedState);
           if (parsed.activeSection === 'myCourses') {
+            console.log(parsed.courseIds,"hgh");
             setSelectedTestCourse(parsed.selectedTestCourse || null);
             setShowQuizContainer(parsed.showQuizContainer ?? true);
             setShowTestContainer(parsed.showTestContainer ?? false);
             setSelectedPortalId(parsed.selectedPortalId || null);
-            setCourseIds(parsed.courseIds || []); // Fixed: use courseIds instead of selectedTestCourse
+            setCourseIds(parsed.selectedTestCourse || []); // Fixed: use courseIds instead of selectedTestCourse
             setSelectedExamId(parsed.selectedExamId || null);
             setCourseContainer(parsed.courseContainer ?? false);
             setSelectedDepartment(parsed.selectedDepartment || "");
