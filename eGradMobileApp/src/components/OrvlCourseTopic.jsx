@@ -528,8 +528,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    padding:10,
+    backgroundColor:"#424242",
+    color:"#fff",
     marginBottom: 10,
   },
-  chapterName: { fontSize: 20, fontWeight: "bold" },
+  chapterName: { fontSize: 20, fontWeight: "bold",color:"#fff" },
   content: { flex: 1 },
 });
