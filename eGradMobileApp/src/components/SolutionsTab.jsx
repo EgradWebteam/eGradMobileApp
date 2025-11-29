@@ -212,8 +212,9 @@ const SolutionsTab = ({
 
   return (
     <View style={{ flex: 1 }}>
-      {/* Subject Picker */}
+    <View style={styles.pickerContainer}>
       <Picker
+   
         selectedValue={
           selectedSubjectSection
             ? (() => {
@@ -257,7 +258,7 @@ const SolutionsTab = ({
         )}
       </Picker>
 
-
+</View>
       {/* Questions */}
      <FlatList
   data={selectedSubjectSection?.questions || []}
@@ -278,7 +279,7 @@ const SolutionsTab = ({
       >
         <Text style={{ fontSize: 18 }}>✖ Close</Text>
       </TouchableOpacity>
-      <View style={{ backgroundColor: "#fff", height: Dimensions.get("window").height - 80 }}>
+      <View style={{ backgroundColor: "#fff"}}>
         {renderVideo(
           selectedSubjectSection.questions.find(
             (q) => q.question_id === videoPopup

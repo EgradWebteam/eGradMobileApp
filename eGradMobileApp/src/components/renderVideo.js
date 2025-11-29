@@ -1,5 +1,7 @@
 import React from "react";
+
 import { WebView } from "react-native-webview";
+import { View } from "react-native";
 import YoutubePlayer from "react-native-youtube-iframe";
 
 const renderVideo = (url) => {
@@ -20,15 +22,21 @@ const renderVideo = (url) => {
       videoId = url.split("/v/")[1]?.split("?")[0];
     }
 
-    if (videoId) {
-      return (
-        <YoutubePlayer
-            height={300}
-          play={false}
-          videoId={videoId}
-        />
-      );
-    }
+if (videoId) {
+  return (
+    <View style={{  width: "100%",
+        height: "100%",         // full screen height
+        justifyContent: "center",      // center vertically
+    }}>
+      <YoutubePlayer
+        height={300}
+        play={false}
+        videoId={videoId}
+      />
+    </View>
+  );
+}
+
   }
 
   // ------- VIMEO -------

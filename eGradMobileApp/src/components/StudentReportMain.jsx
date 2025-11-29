@@ -302,9 +302,9 @@ const styles = StyleSheet.create({
   headerText: { fontSize: 20, fontWeight: "bold" },
   backButton: { backgroundColor: "#198754", padding: 8, borderRadius: 5 },
   backButtonText: { color: "#fff" , fontWeight:"bold"},
-  testDetails: { marginBottom: 16 },
+  testDetails: { justifyContent:"space-between",width:"100%",flexDirection:"row", flexWrap:"wrap"},
   bold: { fontWeight: "bold" },
-  tabRow: { flexDirection: "row", marginBottom: 16 },
+  tabRow: { flexDirection: "row", marginBottom: 2 },
   tabBtn: {
     flex: 1,
     padding: 10,

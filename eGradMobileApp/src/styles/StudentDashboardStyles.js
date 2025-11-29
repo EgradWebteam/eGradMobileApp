@@ -61,6 +61,13 @@ export const styles = StyleSheet.create({
     // Android shadow
     elevation: 3,
   },
+     pickerContainer: {
+    borderWidth: 2,
+    borderColor: "#424242",
+    borderRadius: 10,
+    marginHorizontal: 10,
+    marginVertical: 5,
+  },
   detailText: { fontSize: 16, marginBottom: 5 },
   label: { fontWeight: "bold", marginBottom: 5 },
   inputContainer: {

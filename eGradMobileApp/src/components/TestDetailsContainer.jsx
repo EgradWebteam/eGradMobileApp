@@ -283,7 +283,7 @@ const TestDetailsContainer = ({ course, testDataLoading, refreshTriggerBundle, s
             </TouchableOpacity></View>
         </View>
       )}
-
+ <View style={styles.pickerContainer}>
       {/* Picker for test type / subject */}
       <Picker
         style={{}}
@@ -307,7 +307,7 @@ const TestDetailsContainer = ({ course, testDataLoading, refreshTriggerBundle, s
           <Picker.Item key={sub.id} label={sub.name} value={`subject-${sub.id}`} />
         ))}
       </Picker>
-
+</View>
       {/* Test Cards */}
       {filteredTests.length === 0 && (
         <Text style={{ marginTop: 20 }}>No tests available at the moment. Please check back later.</Text>

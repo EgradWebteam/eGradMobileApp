@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
   borderRadius: 8,
   overflow: "hidden",
   marginBottom: 20,
-  minWidth: 700, // force horizontal scroll if screen is smaller
+  minWidth: "100%", // force horizontal scroll if screen is smaller
 },
 
 tableHeader: {
