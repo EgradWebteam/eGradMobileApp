@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState,useEffect } from 'react'
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, Text, BackHandler,TextInput, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import Footer from '../components/Footer';
 import { LoginHomeHeader } from '../components/LoginHomeHeader';
@@ -79,6 +79,24 @@ const isPasswordValid = (criteria) =>
   criteria.specialChar;
 
  const { setStudentData } = useStudent();
+
+useEffect(() => {
+  const unsubscribe = navigation.addListener('focus', () => {
+    const onBackPress = () => {
+      navigation.navigate("Home"); // go directly home
+      return true; // block default behavior
+    };
+
+    BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+    return () => {
+      BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    };
+  });
+
+  return unsubscribe;
+}, [navigation]);
+
  const handleLogin = async () => {
 //   console.log("handleLogin called ✅");
   // await AsyncStorage.clear();
