@@ -163,49 +163,53 @@ if (loading) {
   </View>
 ) : selectedSection?.questions?.length ? (
   <ScrollView horizontal showsHorizontalScrollIndicator>
-    <View>
-      {/* Table Header */}
-      <View style={[styles.row, styles.headerRow]}>
-        <Text style={[styles.cell, styles.cellSmall, styles.headerText]}>Q. No</Text>
-        <Text style={[styles.cell, styles.cellMedium, styles.headerText]}>Status</Text>
-        <Text style={[styles.cell, styles.cellMedium, styles.headerText]}>User Time</Text>
-        <Text style={[styles.cell, styles.cellMedium, styles.headerText]}>Fastest</Text>
-        <Text style={[styles.cell, styles.cellLarge, styles.headerText]}>Corrected By</Text>
-        <Text style={[styles.cell, styles.cellLarge, styles.headerText]}>Incorrected By</Text>
-        <Text style={[styles.cell, styles.cellLarge, styles.headerText]}>Unattempted By</Text>
-      </View>
-
-      <FlatList
-        data={selectedSection.questions}
-        renderItem={({ item }) => (
-          <View style={styles.row}>
-            <Text style={[styles.cell, styles.cellSmall]}>
-              {item.question_sort_id}
-              {item.subject_type === "1" ? "-Extra" : ""}
-            </Text>
-            <Text style={[styles.cell, styles.cellMedium]}>
-              {item.student_answer_status === 1
-                ? "Correct"
-                : item.student_answer_status === 0
-                ? "Wrong"
-                : item.student_answer_status === 2
-                ? "Partially Correct"
-                : "Not Attempted"}
-            </Text>
-            <Text style={[styles.cell, styles.cellMedium]}>
-              {formatTime(item.time_spent_on_question)}
-            </Text>
-            <Text style={[styles.cell, styles.cellMedium]}>
-              {formatTime(item.fastest_correct_time)}
-            </Text>
-            <Text style={[styles.cell, styles.cellLarge]}>{item.corrected_by}</Text>
-            <Text style={[styles.cell, styles.cellLarge]}>{item.incorrected_by}</Text>
-            <Text style={[styles.cell, styles.cellLarge]}>{item.unattempted_by}</Text>
-          </View>
-        )}
-        keyExtractor={(item) => String(item.question_id)}
-      />
+<View style={styles.table}>
+    {/* Header */}
+    <View style={[styles.row, styles.headerRow]}>
+      <Text style={[styles.cell, styles.cellSmall, styles.headerText]}>Q. No</Text>
+      <Text style={[styles.cell, styles.cellLarge, styles.headerText]}>Response Status</Text>
+      <Text style={[styles.cell, styles.cellLarge, styles.headerText]}>Time Spent (HH:MM:SS)</Text>
+      <Text style={[styles.cell, styles.cellLarge, styles.headerText]}>Fastest Correct (HH:MM:SS)</Text>
+      <Text style={[styles.cell, styles.cellMedium, styles.headerText]}>Correct Responses</Text>
+      <Text style={[styles.cell, styles.cellMedium, styles.headerText]}>Incorrect Responses</Text>
+      <Text style={[styles.cell, styles.cellMedium, styles.headerText]}>Unattempted Responses</Text>
     </View>
+
+    <FlatList
+      data={selectedSection.questions}
+      keyExtractor={(item) => String(item.question_id)}
+      renderItem={({ item }) => (
+        <View style={styles.row}>
+          <Text style={[styles.cell, styles.cellSmall]}>
+            {item.question_sort_id}
+            {item.subject_type === "1" ? "-Extra" : ""}
+          </Text>
+
+          <Text style={[styles.cell, styles.cellLarge]}>
+            {item.student_answer_status === 1
+              ? "Correct"
+              : item.student_answer_status === 0
+              ? "Wrong"
+              : item.student_answer_status === 2
+              ? "Partially Correct"
+              : "Not Attempted"}
+          </Text>
+
+          <Text style={[styles.cell, styles.cellLarge]}>
+            {formatTime(item.time_spent_on_question)}
+          </Text>
+
+          <Text style={[styles.cell, styles.cellLarge]}>
+            {formatTime(item.fastest_correct_time)}
+          </Text>
+
+          <Text style={[styles.cell, styles.cellMedium]}>{item.corrected_by}</Text>
+          <Text style={[styles.cell, styles.cellMedium]}>{item.incorrected_by}</Text>
+          <Text style={[styles.cell, styles.cellMedium]}>{item.unattempted_by}</Text>
+        </View>
+      )}
+    />
+  </View>
   </ScrollView>
 ) : (
   <Text>No questions available in this section.</Text>
@@ -240,21 +244,39 @@ const styles = StyleSheet.create({
   activeButton: { backgroundColor: "#01c3ff" },
   buttonText: { color: "#000" },
   activeButtonText: { color: "#fff", fontWeight: "bold" },
-  row: {
-    flexDirection: "row",
-    borderBottomWidth: 1,
-    borderColor: "#ccc",
-    paddingVertical: 6,
-  },
- cell: {
-  fontSize: 12,
-  textAlign: "center",
-  paddingHorizontal: 6,
+ row: {
+  flexDirection: "row",
+  alignItems: "center",
+  borderBottomWidth: 1,
+  borderColor: "#ddd",
+  minHeight: 40,
 },
 
-cellSmall: { minWidth: 60 },   
-cellMedium: { minWidth: 100 }, 
-cellLarge: { minWidth: 120 }, 
+cell: {
+  paddingVertical: 8,
+  paddingHorizontal: 6,
+  fontSize: 12,
+  textAlign: "center",
+  justifyContent: "center",
+  alignItems: "center",
+},
+
+table: {
+  borderWidth: 1,
+  borderColor: "#ccc",
+  borderRadius: 8,
+  overflow: "hidden",
+  backgroundColor: "#fff",
+},
+
+cellSmall: { width: 60 },
+cellMedium: { width: 100 },
+cellLarge: { width: 130 },
+
+
+headerText: {
+  fontWeight: "bold",
+},
 
   headerRow: { backgroundColor: "#f0f0f0" },
   headerText: { fontWeight: "bold" },
