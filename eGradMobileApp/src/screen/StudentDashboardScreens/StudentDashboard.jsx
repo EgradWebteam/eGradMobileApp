@@ -24,6 +24,8 @@ import StudentDashboardBuyCourses from '../../components/StudentDashboardBuyCour
 import StudentDashboardBookMarks from '../../components/StudentDashboardBookMarks';
 import StudentDashboardMyResults from '../../components/StudentDashboardMyResults';
 import StudentDashboard_AccountSettings from '../../components/StudentDashboard_AccountSettings';
+
+import BackButtonsHandler from '../../hooks/BackButtonHandler.jsx';
 import { ActivityIndicator } from 'react-native-paper';
 
 export const StudentDashboard = () => {
@@ -184,6 +186,8 @@ const handleSectionChange = useCallback(async (section, portalId = null) => {
         activeSection={activeSection}
         handleSectionChange={handleSectionChange}
       />
+
+      <BackButtonsHandler/>
     </View>
   );
 };
