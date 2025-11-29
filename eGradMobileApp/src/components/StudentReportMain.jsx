@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
   headerText: { fontSize: 20, fontWeight: "bold" },
   backButton: { backgroundColor: "#198754", padding: 8, borderRadius: 5 },
   backButtonText: { color: "#fff" , fontWeight:"bold"},
-  testDetails: { justifyContent:"space-between",width:"100%",flexDirection:"row", flexWrap:"wrap"},
+  testDetails: { justifyContent:"space-between",width:"100%",flexDirection:"row", flexWrap:"wrap",marginBottom:7},
   bold: { fontWeight: "bold" },
   tabRow: { flexDirection: "row", marginBottom: 2 },
   tabBtn: {

@@ -168,7 +168,7 @@ console.log("pieData2", pieData2);
   </View>
 </ScrollView>
 
-
+<View style={styles.charts}>
 {/* Correct/Wrong/Not Attempted Pie */}
 <View style={styles.chartContainer}>
   {isAllZero ? (
@@ -215,6 +215,7 @@ console.log("pieData2", pieData2);
       )}
     />
   </View>
+  </View>
 </ScrollView>
 
   );
@@ -243,6 +244,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginVertical: 15,
     paddingHorizontal: 10,
+  },
+  charts: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    flexWrap: "wrap",
   },
   timeBox: {
     alignItems: "center",
