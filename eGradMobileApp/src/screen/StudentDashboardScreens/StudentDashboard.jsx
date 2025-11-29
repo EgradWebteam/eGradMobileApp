@@ -25,7 +25,6 @@ import StudentDashboardBookMarks from '../../components/StudentDashboardBookMark
 import StudentDashboardMyResults from '../../components/StudentDashboardMyResults';
 import StudentDashboard_AccountSettings from '../../components/StudentDashboard_AccountSettings';
 
-import BackButtonsHandler from '../../hooks/BackButtonHandler.jsx';
 import { ActivityIndicator } from 'react-native-paper';
 
 export const StudentDashboard = () => {
@@ -82,22 +81,64 @@ const handleSectionChange = useCallback(async (section, portalId = null) => {
     restoreDashboardState();
   }, []);
 
-  const handleLogout = async () => {
+  // const handleLogout = async () => {
+  //   try {
+  //     await fetch(`${backEndUrl}/login/studentLogout`, {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({ sessionId: await AsyncStorage.getItem('sessionId') }),
+  //     });
+
+  //     await AsyncStorage.clear();
+  //     // closeTestWindowIfOpen();
+  //     navigation.reset({
+  //       index: 0,
+  //       routes: [{ name: 'login' }],
+  //     });
+  //   } catch (err) {
+  //     console.error('Logout error', err);
+  //   }
+  // };
+    const handleLogout = async () => {
+console.log("Attempting logout...");
+
+    const sessionId = await AsyncStorage.getItem('sessionId');
+    console.log("Session ID:", sessionId);
+
+    if (!sessionId) {
+      await AsyncStorage.clear();
+      Alert.alert('Session Error', 'No session found. Please log in again.');
+      navigation.navigate('login');
+      return;
+    }
+
     try {
-      await fetch(`${backEndUrl}/login/studentLogout`, {
+      console.log("hhhh");
+      const response = await fetch(`${ backEndUrl}/login/studentLogout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId: await AsyncStorage.getItem('sessionId') }),
+        body: JSON.stringify({ sessionId }),
       });
 
-      await AsyncStorage.clear();
-      // closeTestWindowIfOpen();
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'login' }],
-      });
-    } catch (err) {
-      console.error('Logout error', err);
+      const data = await response.json();
+     console.log("hffhhh");
+      if (response.ok) {
+         console.log("hffhhh44");
+         await AsyncStorage.clear();
+        // closeTestWindowIfOpen();
+        navigation.navigate('login');
+      } else {
+        Alert.alert('Logout Failed', data.message || 'Logout failed');
+            await AsyncStorage.clear();
+        // closeTestWindowIfOpen();
+        navigation.navigate('login');
+      }
+    } catch (error) {
+      console.error('Logout Error:', error);
+      Alert.alert('Error', 'Something went wrong. Please try again.');
+          await AsyncStorage.clear();
+        // closeTestWindowIfOpen();
+        navigation.navigate('login');
     }
   };
 
@@ -155,6 +196,59 @@ const handleSectionChange = useCallback(async (section, portalId = null) => {
     }
   };
 
+
+//   useEffect(() => {
+//   const onBackPress = () => {
+//     Alert.alert(
+//       "Logout Confirmation",
+//       "Are you sure you want to logout?",
+//       [
+//         {
+//           text: "No",
+//           onPress: () => {},
+//           style: "cancel"
+//         },
+//         {
+//           text: "Yes",
+//           onPress: () => {
+//             handleLogout();  
+//           }
+//         }
+//       ]
+//     );
+
+//     return true; // prevent default back action
+//   };
+
+//   BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+//   return () => {
+//     BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+//   };
+// }, []);
+
+useFocusEffect(
+  useCallback(() => {
+    const onBackPress = () => {
+      Alert.alert(
+        "Logout Confirmation",
+        "Are you sure you want to logout?",
+        [
+          { text: "No", style: "cancel" },
+          { text: "Yes", onPress: () => handleLogout() }
+        ]
+      );
+      return true;
+    };
+
+    BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+    return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+  }, [handleLogout])
+);
+
+
+
   if (isLoading || !activeSection) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -162,6 +256,7 @@ const handleSectionChange = useCallback(async (section, portalId = null) => {
       </View>
     );
   }
+
 
   return (
     <View style={styles.container}>
@@ -187,7 +282,6 @@ const handleSectionChange = useCallback(async (section, portalId = null) => {
         handleSectionChange={handleSectionChange}
       />
 
-      <BackButtonsHandler/>
     </View>
   );
 };

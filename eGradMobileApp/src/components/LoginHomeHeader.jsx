@@ -2,6 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { Image, View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 const portalImageDefault = require('../assets/EGTLogoExamHeaderCompressed.png');
+import Icon from "react-native-vector-icons/MaterialIcons";
 export const LoginHomeHeader = ({portalData}) => {
      const navigation = useNavigation();
     return (
@@ -19,6 +20,9 @@ export const LoginHomeHeader = ({portalData}) => {
                 {/* <TouchableOpacity  onPress={() => navigation.navigate('login')}style={styles.button} >
                     <Text style={styles.buttonText}> Login </Text>
                 </TouchableOpacity> */}
+                 <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+        <Icon name="home" size={32} color="#000" style={styles.homeIcon} />
+      </TouchableOpacity>
             </View>
         </View>
     );
