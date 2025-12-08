@@ -14,7 +14,7 @@ import { useSession } from '../hooks/SessionContext';
 
 const images = [image1, image2, image3];
 
-const BundleCourseCard = ({ exam_id, exam_name, Portal2data, onGoToCourse, setCourseIds }) => {
+const BundleCourseCard = ({ exam_id, exam_name,year, Portal2data, onGoToCourse, setCourseIds }) => {
   // const imageToShow = images[exam_id % images.length];
   const imageToShow = images[Math.floor(Math.random() * images.length)];
 
@@ -35,7 +35,7 @@ return (
     
     {/* TOP HEADER */}
     <View style={styles.cardTop}>
-      <Text style={styles.cardHeaderText}>ONLINE VIDEO COURSES</Text>
+      <Text style={styles.cardHeaderText}>ONLINE VIDEO COURSES - {year}</Text>
     </View>
 
     {/* IMAGE SECTION */}
@@ -92,7 +92,8 @@ const styles = StyleSheet.create({
 
   cardHeaderText: {
     color: '#FFFFFF',
-    fontSize: 20,
+    fontSize: 16,
+    fontWeight: 700,
     textAlign: 'center',
     textTransform: 'uppercase',
     fontFamily: 'Arial',

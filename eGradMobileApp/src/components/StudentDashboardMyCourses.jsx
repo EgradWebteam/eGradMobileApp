@@ -10,7 +10,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
+import { Picker } from "@react-native-picker/picker";
 import CourseCards from './CourseCards';
 import BundleCourseCard from './BundleCourseCard';
 import TestDetailsContainer from './TestDetailsContainer';
@@ -342,7 +342,9 @@ const {validateSession} = useSession()
                 }}
               >
                 <Text style={styles.breadcrumbText}>
-                  {selectedTestCourse.course_name || "ONLINE VIDEO COURSES"}
+                             {selectedTestCourse.course_name ?? "ONLINE VIDEO COURSES"} {
+      filteredCourses.find(c => c.course_id === courseIds[0])?.course_end_date?.slice(0, 4) || ""
+    }
                 </Text>
               </TouchableOpacity>
             </>
@@ -407,76 +409,96 @@ const {validateSession} = useSession()
           )}
 
           {/* =================== DEPARTMENT SELECTOR (IF EXISTS) =================== */}
-          {examHasDepartments &&  selectedExam.usingTable === true && (
-            <ScrollView horizontal style={styles.departmentButtons}>
-              {examDepartments.map((dept) => (
-                <TouchableOpacity
-                  key={dept.department_id}
-                  style={[
-                    styles.deptBtn,
-                    selectedDepartment === dept.department_name &&
-                      styles.deptActive,
-                  ]}
-                  onPress={() => setSelectedDepartment(dept.department_name)}
-                >
-                  <Text
-                    style={[
-                      styles.deptText,
-                      selectedDepartment === dept.department_name &&
-                        styles.deptTextActive,
-                    ]}
-                  >
-                    {dept.department_name === "No Department"
-                      ? "Common"
-                      : dept.department_name}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          )}
+              {examHasDepartments &&  selectedExam.usingTable === true && (
+ <View style={styles.pickerContainer}>
+    <Picker
+      selectedValue={selectedDepartment}
+      onValueChange={(value) => setSelectedDepartment(value)}
+    >
+     
 
+      {examDepartments.map((dept) => (
+        <Picker.Item
+          key={dept.department_id}
+          label={dept.department_name}
+          value={dept.department_name}
+        />
+      ))}
+    </Picker>
+  </View>
+)}
           {/* =================== COURSE CARDS =================== */}
-          {loading ? (
-            <ActivityIndicator size="large" color="#0000ff" />
-          ) : !filteredCourses.length ? (
-            <View style={styles.noCoursesContainer}>
-              <Text style={styles.noCourses}>No courses found for selected criteria.</Text>
-              <Text style={styles.noCoursesSubtitle}>
-                {selectedDepartment ? `Department: ${selectedDepartment}` : ''}
-                {selectedExam ? ` | Exam: ${selectedExam.exam_name}` : ''}
-              </Text>
-            </View>
-          ) : selectedPortalId === 2 ? (
-            /* ---------------------- PORTAL 2 (ORVL) ---------------------- */
-            <BundleCourseCard
-              exam_id={selectedExam.exam_id}
-              exam_name={selectedExam.exam_name}
-              studentId={studentId}
-              Portal2data={{
-                courses: filteredCourses.map((c) => ({
-                  ...c,
-                  department_id: selectedDepartment === "No Department" ? "common" : c.department_id,
-                }))
-              }}
-              setCourseIds={setCourseIds}
-              onGoToCourse={(course) => handleGoToTest(course)}
-            />
-          ) : (
-            /* ---------------------- NORMAL PORTAL COURSE CARDS ---------------------- */
-            filteredCourses.map((course) => (
-              <CourseCards
-                key={course.course_id}
-                cardImage={course.course_img}
-                title={course.course_name}
-                context="myCourses"
-                actionLabel="Go to Test"
-                onGoToTest={() => handleGoToTest(course)}
-              />
-            ))
-          )}
+     {loading ? (
+  <ActivityIndicator size="large" color="#0000ff" />
+) : !filteredCourses.length ? (
+  <View style={styles.noCoursesContainer}>
+    <Text style={styles.noCourses}>No courses found for selected criteria.</Text>
+    <Text style={styles.noCoursesSubtitle}>
+      {selectedDepartment ? `Department: ${selectedDepartment}` : ''}
+      {selectedExam ? ` | Exam: ${selectedExam.exam_name}` : ''}
+    </Text>
+  </View>
+) : selectedPortalId === 2 ? (
+  /* ---------------------- PORTAL 2 (ORVL) YEAR-BASED BUNDLES ---------------------- */
+  <View style={styles.cardHolder}>
+    {selectedExam && (
+      <>
+        {Object.entries(
+          filteredCourses.reduce((acc, course) => {
+            // Extract year from course_name OR course_end_date
+            const yearMatch =
+              course.course_name?.match(/(\d{4})/) ||
+              course.course_end_date?.match(/^(\d{4})/);
+
+            const year = yearMatch ? yearMatch[1] : "No Year";
+
+            if (!acc[year]) acc[year] = [];
+
+            acc[year].push({
+              ...course,
+              department_id:
+                selectedDepartment === "No Department"
+                  ? "common"
+                  : course.department_id,
+            });
+
+            return acc;
+          }, {})
+        ).map(([year, courses]) => (
+          <BundleCourseCard
+            key={`${selectedExam.exam_id}-${year}`}
+            exam_id={selectedExam.exam_id}
+            exam_name={`${selectedExam.exam_name} ${year}`}
+            year={year}
+            Portal2data={{
+              courses: courses,
+              year: year,
+            }}
+            setCourseIds={setCourseIds}
+            onGoToCourse={(courseArray) => handleGoToTest(courseArray)}
+          />
+        ))}
+      </>
+    )}
+  </View>
+) : (
+  /* ---------------------- NORMAL PORTAL COURSE CARDS ---------------------- */
+  <View style={styles.cardHolder}>
+    {filteredCourses.map((course) => (
+      <CourseCards
+        key={course.course_id}
+        cardImage={course.course_img}
+        title={course.course_name}
+        context="myCourses"
+        actionLabel="Go to Test"
+        onGoToTest={() => handleGoToTest(course)}
+      />
+    ))}
+  </View>
+)}
+
         </>
       )}
-
       {/* =================== COURSE DETAIL / PQB / BUNDLE =================== */}
       {selectedTestCourse &&
         (courseContainer && selectedPortalId === 2 ? (

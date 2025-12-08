@@ -265,7 +265,8 @@ const styles = StyleSheet.create({
 
   cardTitle: {
     color: "#FFFFFF",
-    fontSize: 20,
+    fontSize: 16,
+    fontWeight: 700,
     textAlign: "center",
     textTransform: "uppercase",
     fontFamily: "Arial",

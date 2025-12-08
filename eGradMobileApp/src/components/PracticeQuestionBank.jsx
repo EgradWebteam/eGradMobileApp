@@ -52,7 +52,7 @@ const fetchPracticeData = async () => {
     const subjectsSet = new Set();
     testDetails.forEach((group) => {
       group.tests
-        ?.filter((test) => test.test_status === "1" || test.test_status === 1)
+
         .forEach((test) => {
           test.subject_names
             ?.split(",")

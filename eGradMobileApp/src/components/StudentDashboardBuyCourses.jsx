@@ -3,18 +3,21 @@ import {
   View, 
   Text, 
   StyleSheet, 
+  TouchableOpacity,
   Pressable, 
   ScrollView, 
   ActivityIndicator, 
   Image, 
   Modal 
 } from "react-native";
+import { Picker } from "@react-native-picker/picker";
 import RazorpayCheckout from "react-native-razorpay";
 import { backEndUrl, frontEndUrl,backEndPort } from "../apiConfig";
 import { useSession } from "../hooks/SessionContext";
 import CourseCards from "./CourseCards";
 import { styles } from '../styles/StudentDashboardStyles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 // import { styles } from '../styles/StudentDashboardStyles';
 const StudentDashboardBuyCourses = ({ setActiveSection, studentId, preselectedPortalId }) => {
 
@@ -23,7 +26,7 @@ const StudentDashboardBuyCourses = ({ setActiveSection, studentId, preselectedPo
   const [selectedPortal, setSelectedPortal] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedDepartment, setSelectedDepartment] = useState("");
-
+const [selectedYear, setSelectedYear] = useState("");
   const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
 
   const { validateSession } = useSession();
@@ -101,6 +104,37 @@ const StudentDashboardBuyCourses = ({ setActiveSection, studentId, preselectedPo
       ).entries()
     ];
   }, [flatCourses]);
+  const availableYears = useMemo(() => {
+  if (!selectedPortal || !selectedExam) return [];
+  
+  const years = new Set();
+  
+  // Filter courses for current portal, exam, AND selected department
+  let filteredCourses = flatCourses.filter(
+    c => c.course_portal_id === selectedPortal && 
+    c.exam_name === selectedExam
+  );
+  
+  // If department is selected, filter by department too
+  if (selectedDepartment) {
+    filteredCourses = filteredCourses.filter(
+      c => c.department_name === selectedDepartment
+    );
+  }
+  
+  // Extract years from filtered courses
+  filteredCourses.forEach(course => {
+    if (course.course_end_date) {
+      const endDate = new Date(course.course_end_date);
+      const year = endDate.getFullYear();
+      if (!isNaN(year)) {
+        years.add(year.toString());
+      }
+    }
+  });
+  
+  return Array.from(years).sort((a, b) => a - b); // Sort descending (newest first)
+}, [flatCourses, selectedPortal, selectedExam, selectedDepartment]);
   const examNames = useMemo(() => {
     if (!selectedPortal) return [];
 
@@ -146,7 +180,18 @@ const StudentDashboardBuyCourses = ({ setActiveSection, studentId, preselectedPo
       setSelectedDepartment(departments[0].department_name);
     }
   }, [selectedExam, departments]);
-
+useEffect(() => {
+  if (availableYears.length > 0) {
+    // Check if current selectedYear exists in availableYears
+    // if (!availableYears.includes(selectedYear)) {
+      // Auto-select the latest year (first in sorted array)
+      setSelectedYear(availableYears[0]);
+  //   }
+  } else {
+    // No years available for current selection
+    setSelectedYear("");
+  }
+}, [availableYears]);
   useEffect(() => {
     if (preselectedPortalId) setSelectedPortal(preselectedPortalId);
   }, [preselectedPortalId]);
@@ -247,6 +292,13 @@ console.log("purchased depts",purchased);
   if (count >= 2) {
     return directPayment(course);
   }
+};
+const handleYearSelect = async (year) => {
+  const isValid = await validateSession();
+  if (!isValid) return;
+  
+  // If same year is clicked, keep it selected (don't toggle)
+  setSelectedYear(year);
 };
 
 const directPayment = (course) => {
@@ -452,7 +504,11 @@ console.log( orderData, razorpayKey)
 
 
       {/* Exam Buttons */}
-<View style={styles.row}>
+<ScrollView
+  horizontal
+  showsHorizontalScrollIndicator={false}
+  contentContainerStyle={{ paddingHorizontal: 10 }}
+>
   {examNames.map((examName) => (
     <Pressable
       key={examName}
@@ -472,36 +528,52 @@ console.log( orderData, razorpayKey)
       </Text>
     </Pressable>
   ))}
-</View>
+</ScrollView>
 
 
 
       {/* Departments */}
-      {departments.length > 0 && (
-        <View style={styles.row}>
-       {departments.map((dept) => (
-  <Pressable
-    key={dept.department_id}
-    style={[
-      styles.deptBtn,
-      selectedDepartment === dept.department_name && styles.deptActive
-    ]}
-    onPress={() => setSelectedDepartment(dept.department_name)}
-  >
-    <Text
-      style={[
-        styles.deptText,
-        selectedDepartment === dept.department_name && styles.deptTextActive
-      ]}
+    {departments.length > 0 && (
+ <View style={styles.pickerContainer}>
+    <Picker
+      selectedValue={selectedDepartment}
+      onValueChange={(value) => setSelectedDepartment(value)}
     >
-      {dept.department_name}
-    </Text>
-  </Pressable>
-))}
+    
 
-        </View>
+      {departments.map((dept) => (
+        <Picker.Item
+          key={dept.department_id}
+          label={dept.department_name}
+          value={dept.department_name}
+        />
+      ))}
+    </Picker>
+  </View>
+)}
+{availableYears.length > 0 && (
+  <ScrollView
+  horizontal
+  showsHorizontalScrollIndicator={false}
+  contentContainerStyle={{ paddingHorizontal: 10 }}
+>
+          {availableYears.map((year, idx) => (
+            <TouchableOpacity
+              key={idx}
+              style={[
+                styles.deptBtn,
+                selectedYear === year && styles.deptActive
+              ]}
+              onPress={() => handleYearSelect(year)}
+            >
+              <Text     style={[
+                styles.deptText,
+                selectedYear === year && styles.deptTextActive
+              ]}>{year}</Text>
+            </TouchableOpacity>
+          ))}
+</ScrollView>
       )}
-
    {/* PORTAL 2 – FULL + SUBJECT-WISE VIEW */}
 {selectedPortal === 2 && (fullCourses.length > 0 || subjectWiseGroups.length > 0) ? (
   <>

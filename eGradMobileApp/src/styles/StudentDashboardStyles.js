@@ -65,8 +65,12 @@ export const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#424242",
     borderRadius: 10,
+    justifyContent: "center",
+   
+    height: 40,
+
     marginHorizontal: 10,
-    marginVertical: 5,
+    marginVertical: 10,
   },
   detailText: { fontSize: 16, marginBottom: 5 },
   label: { fontWeight: "bold", marginBottom: 5 },
@@ -407,7 +411,7 @@ cancelRedText: {
   examButtons: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginVertical: 10,
+   
   },
   examButton: {
     padding: 8,
