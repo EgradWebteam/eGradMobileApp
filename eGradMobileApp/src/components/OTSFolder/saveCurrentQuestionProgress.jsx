@@ -14,7 +14,7 @@ export const saveCurrentQuestionProgress = async ({
   realStudentId,
   realTestId,
   realCourseId,
-  autoSaveNATIfNeeded,
+  // autoSaveNATIfNeeded,
 }) => {
   const currentSubject = testData?.subjects?.find(
     (sub) => sub.SubjectName === activeSubject
@@ -29,7 +29,7 @@ export const saveCurrentQuestionProgress = async ({
   const subjectId = currentSubject?.subjectId;
   const sectionId = currentSection?.sectionId;
 
-  if (currentQuestion && subjectId && qid && ![5, 6].includes(qTypeId)) {
+  if (currentQuestion && subjectId && qid) {
     const existingAnswer = userAnswers?.[qid];
     const timeSpent =
       getElapsedTimeForCurrentQuestion() +
@@ -67,7 +67,8 @@ export const saveCurrentQuestionProgress = async ({
     } catch (err) {
       console.error("Error saving time on subject change:", err);
     }
-  } else if ([5, 6].includes(qTypeId)) {
-    autoSaveNATIfNeeded();
-  }
+  } 
+  // else if ([5, 6].includes(qTypeId)) {
+  //   autoSaveNATIfNeeded();
+  // }
 };

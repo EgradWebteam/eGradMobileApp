@@ -22,6 +22,7 @@
     "react-native-blob-util": "^0.22.2",
     "react-native-calendar-picker": "^8.0.5",
     "react-native-fs": "^2.20.0",
+    "react-native-gesture-handler": "^2.30.0",
     "react-native-gifted-charts": "^1.4.64",
     "react-native-image-picker": "^8.2.1",
     "react-native-linear-gradient": "^2.5.6",

@@ -275,169 +275,169 @@ useEffect(() => {
     };
     saveIfNewQuestion();
   }, [activeQuestionIndex, userAnswers]);
-const autoSaveNATIfNeeded = async () => {
-  try {
-    const subject = testData?.subjects?.find(
-      (sub) => sub.SubjectName === activeSubject
-    );
-    const section = subject?.sections?.find(
-      (sec) => sec.SectionName === activeSection
-    );
-    const question = section?.questions?.[activeQuestionIndex];
-    const qTypeId = question?.questionType?.quesionTypeId;
+// const autoSaveNATIfNeeded = async () => {
+//   try {
+//     const subject = testData?.subjects?.find(
+//       (sub) => sub.SubjectName === activeSubject
+//     );
+//     const section = subject?.sections?.find(
+//       (sec) => sec.SectionName === activeSection
+//     );
+//     const question = section?.questions?.[activeQuestionIndex];
+//     const qTypeId = question?.questionType?.quesionTypeId;
 
-    if (!question) return;
+//     if (!question) return;
 
-    const qid = question.question_id;
-    const subjectId = subject.subjectId;
-    const sectionId = section.sectionId;
+//     const qid = question.question_id;
+//     const subjectId = subject.subjectId;
+//     const sectionId = section.sectionId;
 
-    const existingAnswer = userAnswers?.[qid];
-    const timeLimitPerQuestion = getElapsedTimeForCurrentQuestion();
-    const timeSpent =
-      timeLimitPerQuestion + (existingAnswer?.TimeSpentOnQuestion ?? 0);
+//     const existingAnswer = userAnswers?.[qid];
+//     const timeLimitPerQuestion = getElapsedTimeForCurrentQuestion();
+//     const timeSpent =
+//       timeLimitPerQuestion + (existingAnswer?.TimeSpentOnQuestion ?? 0);
 
-    if (!realStudentId || !realTestId || !realCourseId) {
-      console.warn("Missing required IDs for autoSaveNATIfNeeded. Skipping.");
-      return;
-    }
+//     if (!realStudentId || !realTestId || !realCourseId) {
+//       console.warn("Missing required IDs for autoSaveNATIfNeeded. Skipping.");
+//       return;
+//     }
 
-    const prevAnswer = userAnswers?.[qid];
-    const wasMarkedForReview =
-      prevAnswer?.buttonClass === `AnsMarkedForReview`;
-    const wasPreviouslyAnswered =
-      prevAnswer?.type === "NAT" && prevAnswer?.natAnswer?.trim();
+//     const prevAnswer = userAnswers?.[qid];
+//     const wasMarkedForReview =
+//       prevAnswer?.buttonClass === `AnsMarkedForReview`;
+//     const wasPreviouslyAnswered =
+//       prevAnswer?.type === "NAT" && prevAnswer?.natAnswer?.trim();
 
-    // ✅ NAT Handling (Type ID 5 or 6)
-    if ([5, 6].includes(qTypeId)) {
-      if (natValue?.trim() !== "") {
-        const savedData = {
-          subjectId,
-          sectionId,
-          questionId: qid,
-          natAnswer: natValue,
-          type: "NAT",
-          TimeSpentOnQuestion: timeSpent,
-          buttonClass: wasMarkedForReview
-            ? `AnsMarkedForReview`
-            : `AnswerdBtnCls`,
-        };
+//     // ✅ NAT Handling (Type ID 5 or 6)
+//     if ([5, 6].includes(qTypeId)) {
+//       if (natValue?.trim() !== "") {
+//         const savedData = {
+//           subjectId,
+//           sectionId,
+//           questionId: qid,
+//           natAnswer: natValue,
+//           type: "NAT",
+//           TimeSpentOnQuestion: timeSpent,
+//           buttonClass: wasMarkedForReview
+//             ? `AnsMarkedForReview`
+//             : `AnswerdBtnCls`,
+//         };
 
-        // Save locally
-        setUserAnswers((prev) => ({
-          ...prev,
-          [qid]: savedData,
-        }));
+//         // Save locally
+//         setUserAnswers((prev) => ({
+//           ...prev,
+//           [qid]: savedData,
+//         }));
 
-        // Save to backend
-        await saveUserResponse({
-          realStudentId,
-          realTestId,
-          realCourseId,
-          subject_id: subjectId,
-          section_id: sectionId,
-          questionId: qid,
-          questionTypeId: qTypeId,
-          optionIndexes1: "",
-          optionIndexes1CharCodes: [],
-          calculatorInputValue: natValue,
-          TimeSpentOnQuestion: timeSpent,
-          answered: "1",
-        });
-      } else if (wasPreviouslyAnswered) {
-        // Case 2: NAT cleared → Remove if previously answered
-        setUserAnswers((prev) => ({
-          ...prev,
-          [qid]: {
-            subjectId,
-            sectionId,
-            questionId: qid,
-            type: "",
-            TimeSpentOnQuestion: timeSpent,
-            buttonClass: `NotAnsweredBtnCls`,
-          },
-        }));
+//         // Save to backend
+//         await saveUserResponse({
+//           realStudentId,
+//           realTestId,
+//           realCourseId,
+//           subject_id: subjectId,
+//           section_id: sectionId,
+//           questionId: qid,
+//           questionTypeId: qTypeId,
+//           optionIndexes1: "",
+//           optionIndexes1CharCodes: [],
+//           calculatorInputValue: natValue,
+//           TimeSpentOnQuestion: timeSpent,
+//           answered: "1",
+//         });
+//       } else if (wasPreviouslyAnswered) {
+//         // Case 2: NAT cleared → Remove if previously answered
+//         setUserAnswers((prev) => ({
+//           ...prev,
+//           [qid]: {
+//             subjectId,
+//             sectionId,
+//             questionId: qid,
+//             type: "",
+//             TimeSpentOnQuestion: timeSpent,
+//             buttonClass: `NotAnsweredBtnCls`,
+//           },
+//         }));
 
-        await saveUserResponse({
-          realStudentId,
-          realTestId,
-          realCourseId,
-          subject_id: subjectId,
-          section_id: sectionId,
-          questionId: qid,
-          questionTypeId: qTypeId,
-          optionIndexes1: "",
-          optionIndexes1CharCodes: [],
-          calculatorInputValue: natValue,
-          TimeSpentOnQuestion: timeSpent,
-          answered: "3",
-        });
-      } else {
-        // Just save the time
-        setUserAnswers((prev) => ({
-          ...prev,
-          [qid]: {
-            ...(prev[qid] || {}),
-            subjectId,
-            sectionId,
-            questionId: qid,
-            TimeSpentOnQuestion: timeSpent,
-            type: prev[qid]?.type || "",
-            buttonClass: prev[qid]?.buttonClass || `NotAnsweredBtnCls`,
-          },
-        }));
+//         await saveUserResponse({
+//           realStudentId,
+//           realTestId,
+//           realCourseId,
+//           subject_id: subjectId,
+//           section_id: sectionId,
+//           questionId: qid,
+//           questionTypeId: qTypeId,
+//           optionIndexes1: "",
+//           optionIndexes1CharCodes: [],
+//           calculatorInputValue: natValue,
+//           TimeSpentOnQuestion: timeSpent,
+//           answered: "3",
+//         });
+//       } else {
+//         // Just save the time
+//         setUserAnswers((prev) => ({
+//           ...prev,
+//           [qid]: {
+//             ...(prev[qid] || {}),
+//             subjectId,
+//             sectionId,
+//             questionId: qid,
+//             TimeSpentOnQuestion: timeSpent,
+//             type: prev[qid]?.type || "",
+//             buttonClass: prev[qid]?.buttonClass || `NotAnsweredBtnCls`,
+//           },
+//         }));
 
-        if (Number(timeLimitPerQuestion) > 0) {
-          await fetch(`${backEndUrl}/OTSTestPaper/SaveTimeOnly`, {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              realStudentId,
-              realTestId,
-              realCourseId,
-              question_id: qid,
-              time_spent_on_question: timeSpent,
-            }),
-          });
-        }
-      }
-    } else {
-      // Not NAT → Save time only
-      setUserAnswers((prev) => ({
-        ...prev,
-        [qid]: {
-          ...(prev[qid] || {}),
-          subjectId,
-          sectionId,
-          questionId: qid,
-          TimeSpentOnQuestion: timeSpent,
-          type: prev[qid]?.type || "",
-          buttonClass: prev[qid]?.buttonClass ||`NotAnsweredBtnCls`,
-        },
-      }));
+//         if (Number(timeLimitPerQuestion) > 0) {
+//           await fetch(`${backEndUrl}/OTSTestPaper/SaveTimeOnly`, {
+//             method: "PATCH",
+//             headers: {
+//               "Content-Type": "application/json",
+//             },
+//             body: JSON.stringify({
+//               realStudentId,
+//               realTestId,
+//               realCourseId,
+//               question_id: qid,
+//               time_spent_on_question: timeSpent,
+//             }),
+//           });
+//         }
+//       }
+//     } else {
+//       // Not NAT → Save time only
+//       setUserAnswers((prev) => ({
+//         ...prev,
+//         [qid]: {
+//           ...(prev[qid] || {}),
+//           subjectId,
+//           sectionId,
+//           questionId: qid,
+//           TimeSpentOnQuestion: timeSpent,
+//           type: prev[qid]?.type || "",
+//           buttonClass: prev[qid]?.buttonClass ||`NotAnsweredBtnCls`,
+//         },
+//       }));
 
-      if (Number(timeLimitPerQuestion) > 0) {
-        await fetch(`${backEndUrl}/OTSTestPaper/SaveTimeOnly`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            realStudentId,
-            realTestId,
-            realCourseId,
-            question_id: qid,
-            time_spent_on_question: timeSpent,
-          }),
-        });
-      }
-    }
-  } catch (error) {
-    console.error("Error in autoSaveNATIfNeeded:", error);
-  }
-};
+//       if (Number(timeLimitPerQuestion) > 0) {
+//         await fetch(`${backEndUrl}/OTSTestPaper/SaveTimeOnly`, {
+//           method: "PATCH",
+//           headers: {
+//             "Content-Type": "application/json",
+//           },
+//           body: JSON.stringify({
+//             realStudentId,
+//             realTestId,
+//             realCourseId,
+//             question_id: qid,
+//             time_spent_on_question: timeSpent,
+//           }),
+//         });
+//       }
+//     }
+//   } catch (error) {
+//     console.error("Error in autoSaveNATIfNeeded:", error);
+//   }
+// };
 
   // ✅ Auto-save time every 20 seconds
   useEffect(() => {
@@ -519,7 +519,7 @@ const  saveUserResponse = async(payload) => {
         setActiveSubject={setActiveSubject}
         activeSection={activeSection}
         setActiveSection={setActiveSection}
-        autoSaveNATIfNeeded={autoSaveNATIfNeeded}
+        // autoSaveNATIfNeeded={autoSaveNATIfNeeded}
         setUserAnswers={setUserAnswers}
         userAnswers={userAnswers}
         setActiveQuestionIndex={setActiveQuestionIndex}
@@ -549,7 +549,7 @@ const  saveUserResponse = async(payload) => {
           setActiveQuestionIndex={setActiveQuestionIndex}
           realCourseId={realCourseId}
           setUserAnswers={setUserAnswers}
-          autoSaveNATIfNeeded={autoSaveNATIfNeeded}
+          // autoSaveNATIfNeeded={autoSaveNATIfNeeded}
           testData={testData}
           activeSubject={activeSubject}
           activeSection={activeSection}
@@ -601,7 +601,7 @@ const  saveUserResponse = async(payload) => {
             realCourseId={realCourseId}
             activeSubject={activeSubject}
             activeSection={activeSection}
-            autoSaveNATIfNeeded={autoSaveNATIfNeeded}
+            // autoSaveNATIfNeeded={autoSaveNATIfNeeded}
             activeQuestionIndex={activeQuestionIndex}
             setActiveQuestionIndex={setActiveQuestionIndex}
             userAnswers={userAnswers}

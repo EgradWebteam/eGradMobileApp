@@ -29,7 +29,7 @@ const QuestionsMainContainer = ({
   activeSubject,
   realCourseId,
   setUserAnswers,
-  autoSaveNATIfNeeded,
+  // autoSaveNATIfNeeded,
   activeSection,
   activeQuestionIndex,
   setSelectedOption,
@@ -107,48 +107,93 @@ console.log("COMPONENT RENDERED, activeQuestionIndex =", activeQuestionIndex);
       }
     }
   }, [activeSubject, activeSection, activeQuestionIndex, userAnswers]);
+const savePreviousQuestionTime = async () => {
+  const subject = testData?.subjects?.find(
+    (sub) => sub.SubjectName === activeSubject
+  );
+  const section = subject?.sections?.find(
+    (sec) => sec.SectionName === activeSection
+  );
 
-  const handleQuestionClick = async (index) => {
-    console.log("indexxxx",index)
-        if(activeQuestionIndex === index) return;
-    // Commented session validation for now
-    // const isValid = await validateSessionWithoutNavigation();
-      const isValid = await validateSessionWithoutNavigation();
-  if (!isValid) {
-    window.close();
-    return;
-  }
-await autoSaveNATIfNeeded();
-    const question = section?.questions?.[index];
-    if (!question) return;
+  const prevQuestion = section?.questions?.[activeQuestionIndex];
+  if (!prevQuestion) return;
 
-    const existing = userAnswers?.[question.question_id];
-    if (!existing) {
-      setUserAnswers((prev) => ({
-        ...prev,
-        [question.question_id]: {
-          subjectId: subject.subjectId,
-          sectionId: section.sectionId,
-          questionId: question.question_id,
-          buttonClass: 'NotAnsweredBtnCls',
-          type: '',
-        },
-      }));
+  const qid = prevQuestion.question_id;
+  const existingAnswer = userAnswers?.[qid];
+  const elapsed = getElapsedTimeForCurrentQuestion();
 
-      await saveUserResponse({
+  const timeSpent =
+    Number(elapsed) + (existingAnswer?.TimeSpentOnQuestion ?? 0);
+
+  if (!elapsed || !realStudentId) return;
+
+  try {
+    await fetch(`${BASE_URL}/OTSTestPaper/SaveTimeOnly`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
         realStudentId,
         realTestId,
         realCourseId,
-        subject_id: subject.subjectId,
-        section_id: section.sectionId,
-        question_id: question.question_id,
-        question_type_id: question?.questionType?.quesionTypeId,
-        answered: '3',
-      });
-    }
+        question_id: qid,
+        time_spent_on_question: timeSpent,
+      }),
+    });
+  } catch (err) {
+    console.error("Save time failed", err);
+  }
+};
 
-    setActiveQuestionIndex(index);
-  };
+const handleQuestionClick = async (index) => {
+  if (index === activeQuestionIndex) return;
+
+  const isValid = await validateSessionWithoutNavigation();
+  if (!isValid) return;
+
+  // 🚀 Switch UI FIRST
+  setActiveQuestionIndex(index);
+
+  // 🧠 Save previous question in background
+  savePreviousQuestionTime();
+
+  const subject = testData?.subjects?.find(
+    (sub) => sub.SubjectName === activeSubject
+  );
+  const section = subject?.sections?.find(
+    (sec) => sec.SectionName === activeSection
+  );
+
+  const nextQuestion = section?.questions?.[index];
+  if (!nextQuestion) return;
+
+  const existing = userAnswers?.[nextQuestion.question_id];
+
+  if (!existing) {
+    setUserAnswers((prev) => ({
+      ...prev,
+      [nextQuestion.question_id]: {
+        subjectId: subject.subjectId,
+        sectionId: section.sectionId,
+        questionId: nextQuestion.question_id,
+        buttonClass: 'NotAnsweredBtnCls',
+        type: "",
+      },
+    }));
+
+    // ⏳ Save response async (don’t block UI)
+    saveUserResponse({
+      realStudentId,
+      realTestId,
+      realCourseId,
+      subject_id: subject.subjectId,
+      section_id: section.sectionId,
+      question_id: nextQuestion.question_id,
+      question_type_id:
+        nextQuestion.questionType?.quesionTypeId,
+      answered: "3",
+    });
+  }
+};
 
   const saveUserResponse = async ({
     realStudentId,

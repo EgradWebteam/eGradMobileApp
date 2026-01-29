@@ -19,7 +19,7 @@ const SubjectsAndSectionsContainer = ({
   setActiveSubject,
   activeSection,
   setActiveSection,
-  autoSaveNATIfNeeded,
+  // autoSaveNATIfNeeded,
   setActiveQuestionIndex,
   activeQuestionIndex,
   userAnswers,
@@ -190,7 +190,7 @@ const saveUserResponse = async ({
       realStudentId,
       realTestId,
       realCourseId,
-      autoSaveNATIfNeeded
+      // autoSaveNATIfNeeded
     });
     console.log(subjectName, "this is the subject name");
     console.log("hi2");
@@ -253,7 +253,7 @@ const saveUserResponse = async ({
       return;
     }
         console.log("hi2");
-    autoSaveNATIfNeeded();
+    // autoSaveNATIfNeeded();
     const optionalSelected = selectedSubjects.filter((s) =>
       isOptionalSubject(s)
     );
@@ -342,7 +342,7 @@ const saveUserResponse = async ({
       realStudentId,
       realTestId,
       realCourseId,
-      autoSaveNATIfNeeded
+      // autoSaveNATIfNeeded
     });
 
     setActiveSection(section.SectionName);

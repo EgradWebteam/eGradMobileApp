@@ -37,7 +37,7 @@ const QuestionNavigationButtons = ({
   setFullTestData,
   isDisabled,
   setIsBonusLoaded,
-  autoSaveNATIfNeeded,
+  // autoSaveNATIfNeeded,
   isBonusLoaded,
   setResumeTime,
 }) => {
@@ -681,7 +681,7 @@ const handlePrevious = async () => {
 
   try {
     if (timeLimitPerQuestion > 0) {
-      if (![5, 6].includes(qTypeId)) {
+      // if (![5, 6].includes(qTypeId)) {
         await fetch(`${backEndUrl}/OTSTestPaper/SaveTimeOnly`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -693,9 +693,9 @@ const handlePrevious = async () => {
             time_spent_on_question: timeSpent,
           }),
         });
-      } else {
-        await autoSaveNATIfNeeded();
-      }
+      // } else {
+      //   await autoSaveNATIfNeeded();
+      // }
     }
   } catch (err) {
     console.error("Error saving time before navigating to previous:", err);

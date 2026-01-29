@@ -251,50 +251,104 @@ const OTSRightSideBar = ({
   //     return savedAnswer?.buttonClass === "AnswerMarkedForReview";
   //   }).length || 0;
 
-  // const handleQuestionClick = async (index) => {
-  //   // const isValid = await validateSessionWithoutNavigation();
-  //   // if (isValid) {
-  //     await autoSaveNATIfNeeded();
-
-  //     const subject = testData?.subjects?.find(
-  //       (sub) => sub.SubjectName === activeSubject
-  //     );
-  //     const section = subject?.sections?.find(
-  //       (sec) => sec.SectionName === activeSection
-  //     );
-  //     const question = section?.questions?.[index];
-  //     if (!question) return;
-  //     const existing = userAnswers?.[question.question_id];
-  //     if (!existing) {
-  //       setUserAnswers((prev) => ({
-  //         ...prev,
-  //         [question.question_id]: {
-  //           subjectId: subject.subjectId,
-  //           sectionId: section.sectionId,
-  //           questionId: question.question_id,
-  //           buttonClass: "NotAnswered",
-  //           type: "",
-  //         },
-  //       }));
-  //       await saveUserResponse({
-  //         realStudentId,
-  //         realTestId,
-  //         realCourseId,
-  //         subject_id: subject.subjectId,
-  //         section_id: section.sectionId,
-  //         question_id: question.question_id,
-  //         question_type_id: question?.questionType?.quesionTypeId,
-  //         answered: "3",
-  //       });
-  //     }
-  //     setActiveQuestionIndex(index);
-  //   // } else {
-  //     // On invalid session, you might want to navigate or logout
-  //     // window.close() is not applicable in RN
-  //     // So, handle accordingly
-  //   //   console.warn("Invalid session");
-  //   // }
-  // };
+//   const handleQuestionClick = async (index) => {
+//    const isValid = await validateSessionWithoutNavigation();
+//    if (!isValid) {
+//      window.close();
+//      return;
+//    }
+ 
+//    // Do nothing if same question clicked
+//    if (index === activeQuestionIndex) return;
+ 
+//    const subject = testData?.subjects?.find(
+//         (sub) => sub.SubjectName === activeSubject
+//       );
+//       const section = subject?.sections?.find(
+//         (sec) => sec.SectionName === activeSection
+//       );
+ 
+ 
+//    /* ---------------------------
+//       1️⃣ SAVE PREVIOUS QUESTION TIME
+//    ---------------------------- */
+//    const prevQuestion = section?.questions?.[activeQuestionIndex];
+ 
+//    if (prevQuestion) {
+//      const qid = prevQuestion.question_id;
+//      const existingAnswer = userAnswers?.[qid];
+ 
+//      const timeLimitPerQuestion = getElapsedTimeForCurrentQuestion();
+//      const timeSpent =
+//        Number(timeLimitPerQuestion) +
+//        (existingAnswer?.TimeSpentOnQuestion ?? 0);
+ 
+//      if (
+//        Number(timeLimitPerQuestion) > 0 &&
+//        realStudentId &&
+//        realTestId &&
+//        realCourseId
+//      ) {
+//        try {
+//          await fetch(`${BASE_URL}/OTSTestPaper/SaveTimeOnly`, {
+//            method: "PATCH",
+//            headers: {
+//              "Content-Type": "application/json",
+//            },
+//            body: JSON.stringify({
+//              realStudentId,
+//              realTestId,
+//              realCourseId,
+//              question_id: qid,
+//              time_spent_on_question: timeSpent,
+//            }),
+//          });
+//        } catch (err) {
+//          console.error("Error saving previous question time:", err);
+//        }
+//      }
+//    }
+ 
+//    /* ---------------------------
+//       2️⃣ HANDLE NEXT QUESTION
+//    ---------------------------- */
+//    const nextQuestion = section?.questions?.[index];
+//    if (!nextQuestion) return;
+ 
+//    const existing = userAnswers?.[nextQuestion.question_id];
+ 
+//    // Mark as Not Answered if untouched
+//    if (!existing) {
+//      setUserAnswers((prev) => ({
+//        ...prev,
+//        [nextQuestion.question_id]: {
+//          subjectId: subject.subjectId,
+//          sectionId: section.sectionId,
+//          questionId: nextQuestion.question_id,
+//          buttonClass: styles.NotAnsweredBtnCls,
+//          type: "",
+//        },
+//      }));
+ 
+//      if (realStudentId && realTestId && realCourseId) {
+//        await saveUserResponse({
+//          realStudentId,
+//          realTestId,
+//          realCourseId,
+//          subject_id: subject.subjectId,
+//          section_id: section.sectionId,
+//          question_id: nextQuestion.question_id,
+//          question_type_id:nextQuestion.questionType?.quesionTypeId,
+//          answered: "3", // Not Answered
+//        });
+//      }
+//    }
+ 
+//    /* ---------------------------
+//       3️⃣ SWITCH QUESTION
+//    ---------------------------- */
+//    setActiveQuestionIndex(index);
+//  };
 
   // const toggleSidebar = () => {
   //   setShowSidebar((prev) => !prev);
